@@ -83,15 +83,40 @@ WORDS = ['a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a',
          'a I u a I a I a I I I I a a I u I a a u a I I u a I a u a I a a I a',
          'a i u a i a i E a i i E i i a a i u i a a u a i i u a a i E a E a a',
          'a i u a i o a i e a i o a i e o o i i a e i u e a o e i i o a o a o',
-         'a i u a i o a i e a i o u i e o e i i a a i u i o a a o u y a i i u y o y a a y i o a a o i u y u y a i u o a e a o u u a a i i a e o',  # i o e a o i a i o o a o a o',
-         'pa i up a i o pa i e a i o u i e o e  i a a i up i op a a o u y a i i u y o y a a y ip pop a a po  u y puppy a i up o a e a op up u',  # a a i i a e po i o pe a o i a i o op a op a op',
-         'pa i up a i no pa i en an i on u i en o en i in an a i up i op an an on u y a i i unny o y an a y ip pop a an po i nu y puppy an i up on an en a op up',  # u an an i i a e po i o pe an o i a i o op an op an op',
-         'pat i up a i not pa i ten an it on tu i tent o en ti in an a it up ti top an tan on u ty at it i unny o y an a y ip pop at tan pot i nutty puppy an i up on an tent a',  # op up u an an it i a e pot i to pet an to i a i to op an op an op',
-         'pat i up a i not pa i ten and it on tu i tent o end ti in and a it up ti top and tand on du ty at it i unny o y and daddy ip pop at tand pot i nutty puppy ad i up on an tent dad op up',  # ud and and it i ad e pot i to pet and to i dad i to op and op and op',
-         "pat is up a is not pa is ten and it on tu i tent o ends ti in and a it up ti top and tands on du ty at it is unny o y and daddy ip pop op up ud and and it is ad e pot",  # is to pet and to is dad's i to op and op and op",
-         "pat is up am is not pam is ten and it on tump in tent mom ends tim in and am it up tim top and tands on du ty mat it is unny mommy and daddy ip pop at tand pot is nutty puppy",  # and is up on man's tent dad mop up mud and and it is ad ttempt pot is tom's pet and tom is dad's i tom mop and mop and mop",
-         "pat-is-up sam-is-not pam-is-ten-and-sits-on-stump-in-tent mom-sends-tim-in-and-sam-sits-up tim-stops-and-stands-on-dusty-mat it-is-sunny mommy-and-daddy-sip-pop-at-stand spot-is-nutty-puppy-and-is-up-on-man's-tent dad-mops-up-mund-and-sand it-is-sad ttempt spot-is-tom's-pet-and-tom-is-dad's-ssist tom-mops-and-mops-and-mops",
-         "pat-is-up sam-is-not pam-is-ten-and-sits-on-A-stump-in-A-tent mom-sends-tim-in-and-sam-sits-up tim-stops-and-stands-on-A-dusty-mat it-is-sunny mommy-and-daddy-sip-pop-at-A-stand spot-is-A-nutty-puppy-and-is-up-on-A-man's-tent dad-mops-up-mud-and-sand it-is-A-sad-Attempt spot-is-tom's-pet-and-tom-is-dad's-AssistAnt] # tom-mops-and-mops-and-mops"]
+         'a i u a i o a i e a i o u i e o e i i a a i u i o a a o u y a i i u \
+y o y a a y i o a a o i u y u y a i u o a e a o u u a a i i a e o i o e a o i \
+a i o o a o a o',
+         'pa i up a i o pa i e a i o u i e o e  i a a i up i op a a o u y a i \
+i u y o y a a y ip pop a a po  u y puppy a i up o a e a op up u a a i i a e \
+po i o pe a o i a i o op a op a op',
+         'pa i up a i no pa i en an i on u i en o en i in an a i up i op an \
+an on u y a i i unny o y an a y ip pop a an po i nu y puppy an i up on an en \
+a op up u an an i i a e po i o pe an o i a i o op an op an op',
+         'pat i up a i not pa i ten an it on tu i tent o en ti in an a it up \
+ti top an tan on u ty at it i unny o y an a y ip pop at tan pot i nutty puppy \
+an i up on an tent a op up u an an it i a e pot i to pet an to i a i to op an \
+op an op',
+         'pat i up a i not pa i ten and it on tu i tent o end ti in and a it \
+up ti top and tand on du ty at it i unny o y and daddy ip pop at tand pot i \
+nutty puppy ad i up on an tent dad op up ud and and it i ad e pot i to pet \
+and to i dad i to op and op and op',
+         "pat is up a is not pa is ten and it on tu i tent o ends ti in and a \
+it up ti top and tands on du ty at it is unny o y and daddy ip pop op up ud \
+and and it is ad e pot is to pet and to is dad's i to op and op and op",
+         "pat is up am is not pam is ten and it on tump in tent mom ends tim \
+in and am it up tim top and tands on du ty mat it is unny mommy and daddy ip \
+pop at tand pot is nutty puppy and is up on man's tent dad mop up mud and and \
+it is ad ttempt pot is tom's pet and tom is dad's i tom mop and mop and mop",
+         "pat-is-up sam-is-not pam-is-ten-and-sits-on-stump-in-tent mom-sends-\
+tim-in-and-sam-sits-up tim-stops-and-stands-on-dusty-mat it-is-sunny mommy-and\
+-daddy-sip-pop-at-stand spot-is-nutty-puppy-and-is-up-on-man's-tent dad-mops-\
+up-mund-and-sand it-is-sad ttempt spot-is-tom's-pet-and-tom-is-dad's-ssist tom\
+-mops-and-mops-and-mops",
+         "pat-is-up sam-is-not pam-is-ten-and-sits-on-A-stump-in-A-tent mom-\
+sends-tim-in-and-sam-sits-up tim-stops-and-stands-on-A-dusty-mat it-is-sunny \
+mommy-and-daddy-sip-pop-at-A-stand spot-is-A-nutty-puppy-and-is-up-on-A-man's-\
+tent dad-mops-up-mud-and-sand it-is-A-sad-Attempt spot-is-tom's-pet-and-tom-is\
+-dad's-AssistAnt] # tom-mops-and-mops-and-mops"]
 
 STROKES = [1, 4, 13]
 
@@ -104,7 +129,8 @@ MSGS = [[_('This %s sign is said\n'), _('%s like %s.')],
 
 MSG_INDEX = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2]
 
-KERN = {'i':0.6, 'I':0.6, 'l':0.6, 't':0.8, 'r':0.8, 'm':1.6, 'w':1.3, "'":0.4}
+KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'r': 0.8, 'm': 1.6, 'w': 1.3,
+        "'": 0.4}
 ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'"
 ALIGN = 11
 
@@ -151,16 +177,18 @@ class Page():
 
         self._background = Sprite(self._sprites, 0, 0, svg_str_to_pixbuf(
                 generate_card(string='', colors=['#FFFFFF', '#FFFFFF'],
-                              scale=self._scale*4)))
+                              scale=self._scale * 4)))
         self._background.set_layer(1)
         self._background.set_label_attributes(32)
         self._like_card = Sprite(self._sprites, 0, int(self._height * 4 / 5.0),
-                                gtk.gdk.Pixmap(self._canvas.window, self._width,
+                                gtk.gdk.Pixmap(self._canvas.window,
+                                               self._width,
                                                int(self._height / 5.0), -1))
         self._like_card.set_layer(2)
         self._like_gc = self._like_card.images[0].new_gc()
         self._my_canvas = Sprite(self._sprites, 0, 0,
-                                gtk.gdk.Pixmap(self._canvas.window, self._width,
+                                gtk.gdk.Pixmap(self._canvas.window,
+                                               self._width,
                                                self._height, -1))
         self._my_canvas.set_layer(0)
         self._my_gc = self._my_canvas.images[0].new_gc()
@@ -181,8 +209,9 @@ class Page():
             if self._sugar:
                 self._activity.status.set_label('')
         if self.page == len(self._cards):
-            self._cards.append(Sprite(self._sprites, self._left, GRID_CELL_SIZE,
-                                     svg_str_to_pixbuf(generate_card(
+            self._cards.append(Sprite(self._sprites, self._left,
+                                      GRID_CELL_SIZE,
+                                      svg_str_to_pixbuf(generate_card(
                             string=CARDS[self.page][0].lower(),
                             colors=[COLORS[self.page][0], '#000000'],
                             scale=self._scale,
@@ -252,7 +281,8 @@ class Page():
         self._like_card.set_layer(0)
 
         if self._sugar:
-            self._activity.status.set_label(_('Read the sounds one at a time.'))
+            self._activity.status.set_label(
+                _('Read the sounds one at a time.'))
         rect = gtk.gdk.Rectangle(0, 0, self._width, self._height)
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
@@ -274,7 +304,7 @@ class Page():
             if self.page > ALIGN:
                 self._x += self._offset
             else:
-                self._x += int(uniform(30, self._width/8))
+                self._x += int(uniform(30, self._width / 8))
             if self._x > self._width * 7 / 8.0:
                 self._x, self._y = self._xy(self._y)
 
@@ -368,10 +398,9 @@ class Page():
         self._canvas.window.invalidate_rect(
             gtk.gdk.Rectangle(int(x), int(y), int(w), int(h)), False)
 
-#
-# Load pixbuf from SVG string
-#
+
 def svg_str_to_pixbuf(svg_string):
+    ''' Load pixbuf from SVG string '''
     pl = gtk.gdk.PixbufLoader('svg')
     pl.write(svg_string)
     pl.close()

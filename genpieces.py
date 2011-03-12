@@ -15,10 +15,10 @@
 
 import os
 
-#
-# SVG generators
-#
+
 class SVG:
+    ''' SVG generators '''
+
     def __init__(self):
         self._scale = 1
         self._stroke_width = 1
@@ -39,11 +39,11 @@ class SVG:
             align = ''
         svg_string = "<text x=\"%d\" y=\"%d\" " % (x, y)
         if stroke:
-            svg_string += "style=\"font-size:%dpx;font-family:Sans;fill:%s;stroke:#000000;%s\">" % \
-                (font_size, self._stroke, align)
+            svg_string += "style=\"font-size:%dpx;font-family:Sans;fill:%s;\
+stroke:#000000;%s\">" % (font_size, self._stroke, align)
         else:
-            svg_string += "style=\"font-size:%dpx;font-family:Sans;fill:%s;%s\">" % \
-                (font_size, self._stroke, align)
+            svg_string += "style=\"font-size:%dpx;font-family:Sans;fill:%s;\
+%s\">" % (font_size, self._stroke, align)
         svg_string += "<tspan x=\"%d\" y=\"%d\">%s</tspan></text>" % \
             (x, y, text_string)
         return svg_string
@@ -81,7 +81,7 @@ class SVG:
                                   "\"\n")
         svg_string += "%s%f%s" % ("   height=\"", scale * 45 * self._scale,
                                   "\">\n")
-        svg_string += "%s%f%s%f%s" % ("<g\n       transform=\"matrix(", 
+        svg_string += "%s%f%s%f%s" % ("<g\n       transform=\"matrix(",
                                       self._scale, ",0,0,", self._scale,
                                       ",0,0)\">\n")
         if background:
@@ -93,9 +93,6 @@ class SVG:
         svg_string += "</svg>\n"
         return svg_string
 
-    #
-    # Utility functions
-    #
     def set_scale(self, scale=1.0):
         self._scale = scale
 
@@ -106,9 +103,7 @@ class SVG:
     def set_stroke_width(self, stroke_width=1.0):
         self._stroke_width = stroke_width
 
-#
-# Card generators
-#
+
 def generate_card(string='a', colors=['#FF0000', '#FFFFFF'],
                   background=True, scale=1, stroke=False, center=False):
     svg = SVG()
@@ -124,9 +119,7 @@ def generate_card(string='a', colors=['#FF0000', '#FFFFFF'],
     svg_string += svg.footer()
     return svg_string
 
-#
-# Command line utilities used for testing purposed only
-#
+
 def open_file(datapath, filename):
     return file(os.path.join(datapath, filename), "w")
 

@@ -90,7 +90,7 @@ class InfusedActivity(activity.Activity):
 
     def __init__(self, handle):
         """ Initialize the toolbars and the reading board """
-        super(InfusedActivity,self).__init__(handle)
+        super(InfusedActivity, self).__init__(handle)
         self.reading = False
 
         self._setup_toolbars(_have_toolbox)
@@ -142,9 +142,9 @@ class InfusedActivity(activity.Activity):
 
             # no sharing
             if hasattr(toolbox, 'share'):
-               toolbox.share.hide()
+                toolbox.share.hide()
             elif hasattr(toolbox, 'props'):
-               toolbox.props.visible = False
+                toolbox.props.visible = False
 
         self._new_page_button = _button_factory('new-page',
                                                 _('Next letter'),
