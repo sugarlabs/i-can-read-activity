@@ -138,9 +138,12 @@ MSGS = [[_('This %s sign is said\n'), _('%s like %s.')],
         [_('This %s sign is said\ntogether with other sounds\nas in:\n'),
          _('%s')],
         [_('This %s sign is\nlightly said\n'), _('%s like %s.')],
-        [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), '']]
+        [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), ''],
+        [_('This %s sign is said\n\nReading from left to right, read the\n\
+sounds one at a time. You can\nuse your finger to follow along.'),
+         _('%s like %s.')]]
 
-MSG_INDEX = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
+MSG_INDEX = [4, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
 SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
               True, True, True, True, False, False, False]
 
@@ -205,7 +208,7 @@ class Page():
         self._like_card = Sprite(self._sprites, 0, int(self._height * 4 / 5.0),
                                 gtk.gdk.Pixmap(self._canvas.window,
                                                self._width,
-                                               int(self._height / 5.0), -1))
+                                               int(self._height / 10.0), -1))
         self._like_card.set_layer(2)
         self._like_gc = self._like_card.images[0].new_gc()
         self._my_canvas = Sprite(self._sprites, 0, 0,
@@ -283,9 +286,9 @@ class Page():
         self._background.set_layer(1)
         self._page_2.set_layer(1)
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height / 5.0))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height / 10.0))
         self._like_card.images[0].draw_rectangle(self._my_gc, True, *rect)
-        self.invalt(0, 0, self._width, int(self._height / 5.0))
+        self.invalt(0, 0, self._width, int(self._height / 10.0))
         self._x = 0
         self._y = 0
         if MSG_INDEX[self.page] == 1:
@@ -427,9 +430,9 @@ class Page():
                     play_audio_from_file(self, os.path.join(
                             os.path.abspath('.'), 'sounds',
                             SOUNDS[self.page][0]))
-            else:
-                os.system('espeak "%s" --stdout | aplay' % \
-                              (SOUNDS[self.page][1]))
+                else:
+                    os.system('espeak "%s" --stdout | aplay' % \
+                                  (SOUNDS[self.page][1]))
 
     def _game_over(self, msg=_('Game over')):
         if self._sugar:
