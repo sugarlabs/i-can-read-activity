@@ -33,7 +33,9 @@ from utils.sprites import Sprites, Sprite
 
 CARDS = [['a', _('pat')],
          ['u', _('up')],
+         # use I so that i in like is not highlighted
          ['I', _('It')],
+         # use E so that e in like is not highlighted
          ['E', _('pEt')],
          ['o', _('pot')],
          ['y', _('tummy')],
@@ -44,10 +46,10 @@ CARDS = [['a', _('pat')],
          ['s', _('is, as, was, says')],
          ['m', _('mom')],
          ['s', _("sam, stop, it's")],
+         # use A instead of a to distingush from a above
          ['A', _('read A book')],
-         ['.', ''],
-         ['.', '']]
-
+         ['', ''],
+         ['', '']]
 
 COLORS = [['#FFB0B0', _('light pink')],
           ['#FFFF80', _('yellow')],
@@ -62,9 +64,7 @@ COLORS = [['#FFB0B0', _('light pink')],
           ['#A000A0', _('purple')],
           ['#A08080', _('dark pink')],
           ['#00A000', _('curly green')],
-          ['#FFFF00', _('bright yellow')],
-          ['#000000', ''],
-          ['#000000', '']]
+          ['#FFFF00', _('bright yellow')]]
 
 SOUNDS = [['a-as-in-pat.ogg', 'ah'],
           ['u-as-in-up.ogg', 'uh'],
@@ -80,7 +80,6 @@ SOUNDS = [['a-as-in-pat.ogg', 'ah'],
           ['m-as-in-mom.ogg', 'm'],
           ['s-as-in-stop.ogg', 's'],
           ['a-as-in-read-a-book.ogg', 'a']]
-
 
 WORDS = ['a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a',
          'a u a a a a a u a a u a a u a u a a a u u a u a a a a a u a a a a a',
@@ -131,7 +130,7 @@ test. a-pup-steps-past-and-tempts-sam. sam-is-a-pest-and-sits-in-a-muddy-spot.\
 mom-is-mad-at-sam's-messy-pants-and-sends-pam-and-a-pen. pam's-study-tip-\
 assists-sam. pam-is-an-asset!"]
 
-STROKES = [1, 4, 13]
+STROKES = [1, 4, 13]  # These characters have stroke colors for visibility
 
 # TRANS: e.g., This yellow sign is said u like up.
 MSGS = [[_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
@@ -150,7 +149,7 @@ SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
 KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'r': 0.8, 'm': 1.6, 'w': 1.3,
         "'": 0.4}
 ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'!"
-ALIGN = 11
+ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 
 class Page():
