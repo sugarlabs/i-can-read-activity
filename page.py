@@ -141,7 +141,7 @@ MSGS = [[_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
         [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), ''],
         [_('This %s sign is said\n\nReading from left to right, read the\n\
 sounds one at a time. You can\nuse your finger to follow along.'),
-         '%s ' + _('like') + ' %s.')]]
+         '%s ' + _('like') + ' %s.']]
 
 MSG_INDEX = [4, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
 SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
