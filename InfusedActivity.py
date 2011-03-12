@@ -160,7 +160,7 @@ class InfusedActivity(activity.Activity):
                                                 _('Click to read'),
                                                 self._read_cb, toolbar)
 
-        self.status = _label_factory(_(''), toolbar)
+        self.status = _label_factory('', toolbar)
 
         if _have_toolbox:
             _separator_factory(toolbox.toolbar, False, True)

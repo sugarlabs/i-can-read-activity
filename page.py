@@ -134,14 +134,14 @@ assists-sam. pam-is-an-asset!"]
 STROKES = [1, 4, 13]
 
 # TRANS: e.g., This yellow sign is said u as in up.
-MSGS = [[_('This %s sign is said\n'), _('%s like %s.')],
+MSGS = [[_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
         [_('This %s sign is said\ntogether with other sounds\nas in:\n'),
-         _('%s')],
-        [_('This %s sign is\nlightly said\n'), _('%s like %s.')],
+         '%s'],
+        [_('This %s sign is\nlightly said\n'), '%s ' + _('like') + ' %s.'],
         [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), ''],
         [_('This %s sign is said\n\nReading from left to right, read the\n\
 sounds one at a time. You can\nuse your finger to follow along.'),
-         _('%s like %s.')]]
+         '%s ' + _('like') + ' %s.')]]
 
 MSG_INDEX = [4, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
 SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
@@ -324,7 +324,7 @@ class Page():
         else:
             self.read()
         if self._sugar:
-            self._activity.status.set_label(_(''))
+            self._activity.status.set_label('')
 
     def read(self):
         for c in self._cards:
