@@ -1,0 +1,202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-12 17:19-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: activity/activity.info:2
+msgid "Infused"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:142
+msgid "Page"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:154
+msgid "Next letter"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:160
+msgid "Click to read"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:179
+#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:187
+msgid "Show letter"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:192
+msgid "Read"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:34
+#: /home/walter/Desktop/Activities/infused/page.py:40
+msgid "pat"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:35
+msgid "up"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:36
+msgid "It"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:37
+msgid "pEt"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:38
+msgid "pot"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:39
+msgid "tummy"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:41
+msgid "not, tennis"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:42
+msgid "tap"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:43
+msgid "dad"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:44
+msgid "is, as, was, says"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:45
+msgid "mom"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:46
+msgid "sam, stop, it's"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:47
+msgid "read A book"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:52
+msgid "light pink"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:53
+msgid "yellow"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:54
+msgid "pink"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:55
+msgid "blue"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:56
+msgid "white"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:57
+msgid "red"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:58
+msgid "brown"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:59
+#: /home/walter/Desktop/Activities/infused/page.py:62
+msgid "purple"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:60
+#: /home/walter/Desktop/Activities/infused/page.py:63
+msgid "dark pink"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:61
+msgid "green"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:64
+msgid "curly green"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:65
+msgid "bright yellow"
+msgstr ""
+
+#. TRANS: e.g., This yellow sign is said u as in up.
+#: /home/walter/Desktop/Activities/infused/page.py:137
+#, python-format
+msgid "This %s sign is said\n"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:137
+#: /home/walter/Desktop/Activities/infused/page.py:140
+#: /home/walter/Desktop/Activities/infused/page.py:144
+msgid "like"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:138
+#, python-format
+msgid ""
+"This %s sign is said\n"
+"together with other sounds\n"
+"as in:\n"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:140
+#, python-format
+msgid ""
+"This %s sign is\n"
+"lightly said\n"
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:141
+msgid ""
+"When it looks like this\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"we read it the same way."
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:142
+#, python-format
+msgid ""
+"This %s sign is said\n"
+"\n"
+"Reading from left to right, read the\n"
+"sounds one at a time. You can\n"
+"use your finger to follow along."
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:341
+msgid "Read the sounds one at a time."
+msgstr ""
+
+#: /home/walter/Desktop/Activities/infused/page.py:437
+msgid "Game over"
+msgstr ""
