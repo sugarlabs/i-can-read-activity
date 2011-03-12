@@ -103,9 +103,7 @@ class InfusedActivity(activity.Activity):
         canvas.show()
         self.show_all()
 
-        self._page = Page(canvas,
-                          parent=self,
-                          colors= profile.get_color().to_string().split(','))
+        self._page = Page(canvas, parent=self)
 
         # Restore game state from Journal or start new game
         if 'page' in self.metadata:
@@ -170,7 +168,7 @@ class InfusedActivity(activity.Activity):
 
     def _new_page_cb(self, button=None):
         ''' Start a new letter. '''
-        self._page.page_index += 1
+        self._page.page += 1
         self._page.new_page()
         self.reading = False
         self._read_button.set_icon('media-playback-start')
@@ -193,7 +191,7 @@ class InfusedActivity(activity.Activity):
         ''' Write status to the Journal '''
         if not hasattr(self, '_page'):
             return
-        self.metadata['page'] = str(self._page.page_index)
+        self.metadata['page'] = str(self._page.page)
 
     def _restore(self):
         ''' Load up cards until we get to the page we stopped on. '''

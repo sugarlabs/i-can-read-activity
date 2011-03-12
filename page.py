@@ -113,66 +113,62 @@ ALIGN = 11
 
 class Page():
 
-    def __init__(self, canvas, parent=None, colors=['#A0FFA0', '#FF8080']):
-        self.activity = parent
-        self.colors = colors
+    def __init__(self, canvas, parent=None):
+        self._activity = parent
 
         # Starting from command line
-        if parent is None:
-            self.sugar = False
-            self.canvas = canvas
+        if self._activity is None:
+            self._sugar = False
+            self._canvas = canvas
         else:
-            self.sugar = True
-            self.canvas = canvas
-            parent.show_all()
+            self._sugar = True
+            self._canvas = canvas
+            self._activity.show_all()
 
-        self.canvas.set_flags(gtk.CAN_FOCUS)
-        self.canvas.add_events(gtk.gdk.BUTTON_PRESS_MASK)
-        self.canvas.add_events(gtk.gdk.BUTTON_RELEASE_MASK)
-        self.canvas.connect("expose-event", self._expose_cb)
-        self.canvas.connect("button-press-event", self._button_press_cb)
-        self.canvas.connect("button-release-event", self._button_release_cb)
-        self.canvas.connect("key_press_event", self._keypress_cb)
-        self.width = gtk.gdk.screen_width()
-        self.height = gtk.gdk.screen_height() - GRID_CELL_SIZE
-        self.scale = self.width / 240.
-        self.left = int((self.width - self.scale * 60) / 2.)
-        self.sprites = Sprites(self.canvas)
-        self.page_index = 0
-        self.cards = []
-        self.letters = []
-        self.colored_letters = []
-        self.press = None
-        self.release = None
+        self._canvas.set_flags(gtk.CAN_FOCUS)
+        self._canvas.add_events(gtk.gdk.BUTTON_PRESS_MASK)
+        self._canvas.add_events(gtk.gdk.BUTTON_RELEASE_MASK)
+        self._canvas.connect("expose-event", self._expose_cb)
+        self._canvas.connect("button-press-event", self._button_press_cb)
+        self._canvas.connect("button-release-event", self._button_release_cb)
+        self._canvas.connect("key_press_event", self._keypress_cb)
+        self._width = gtk.gdk.screen_width()
+        self._height = gtk.gdk.screen_height() - GRID_CELL_SIZE
+        self._scale = self._width / 240.
+        self._left = int((self._width - self._scale * 60) / 2.)
+        self._sprites = Sprites(self._canvas)
+        self.page = 0
+        self._cards = []
+        self._letters = []
+        self._colored_letters = []
+        self._press = None
+        self._release = None
         self.gplay = None
-        self.x = 10
-        self.y = 10
-        self.final_x = 0
-        self.offset = int(self.width / 30.)
+        self._x = 10
+        self._y = 10
+        self._final_x = 0
+        self._offset = int(self._width / 30.)
 
-        self.background = Sprite(self.sprites, 0, 0, svg_str_to_pixbuf(
+        self._background = Sprite(self._sprites, 0, 0, svg_str_to_pixbuf(
                 generate_card(string='', colors=['#FFFFFF', '#FFFFFF'],
-                              scale=self.scale*4)))
-        self.background.set_layer(1)
-        self.background.set_label_attributes(32)
-        self.like_card = Sprite(self.sprites, 0, int(self.height * 4 / 5.0),
-                                gtk.gdk.Pixmap(self.canvas.window, self.width,
-                                               int(self.height / 5.0), -1))
-        self.like_card.set_layer(2)
-        self.like_gc = self.like_card.images[0].new_gc()
-        self.like_cm = self.like_gc.get_colormap()
-        self.bgcolor = self.like_cm.alloc_color('#FFFFFF')
-        self.my_canvas = Sprite(self.sprites, 0, 0,
-                                gtk.gdk.Pixmap(self.canvas.window, self.width,
-                                               self.height, -1))
-        self.my_canvas.set_layer(0)
-        self.my_gc = self.my_canvas.images[0].new_gc()
-        self.cm = self.my_gc.get_colormap()
-        self.bgcolor = self.cm.alloc_color('#FFFFFF')
-        self.my_gc.set_foreground(self.bgcolor)
+                              scale=self._scale*4)))
+        self._background.set_layer(1)
+        self._background.set_label_attributes(32)
+        self._like_card = Sprite(self._sprites, 0, int(self._height * 4 / 5.0),
+                                gtk.gdk.Pixmap(self._canvas.window, self._width,
+                                               int(self._height / 5.0), -1))
+        self._like_card.set_layer(2)
+        self._like_gc = self._like_card.images[0].new_gc()
+        self._my_canvas = Sprite(self._sprites, 0, 0,
+                                gtk.gdk.Pixmap(self._canvas.window, self._width,
+                                               self._height, -1))
+        self._my_canvas.set_layer(0)
+        self._my_gc = self._my_canvas.images[0].new_gc()
+        self._my_gc.set_foreground(
+            self._my_gc.get_colormap().alloc_color('#FFFFFF'))
 
         for c in ALPHABET:
-            self.letters.append(Sprite(self.sprites, 0, 0,
+            self._letters.append(Sprite(self._sprites, 0, 0,
                 svg_str_to_pixbuf(generate_card(string=c,
                                                 colors=['#000000', '#000000'],
                                                 background=False))))
@@ -180,132 +176,136 @@ class Page():
 
     def new_page(self, saved_state=None, deck_index=0):
         ''' Load a new page. '''
-        if self.page_index == len(CARDS):
-            self.page_index = 0
-            self.activity.status.set_label('')
-        if self.page_index == len(self.cards):
-            self.cards.append(Sprite(self.sprites, self.left, GRID_CELL_SIZE,
+        if self.page == len(CARDS):
+            self.page = 0
+            if self._sugar:
+                self._activity.status.set_label('')
+        if self.page == len(self._cards):
+            self._cards.append(Sprite(self._sprites, self._left, GRID_CELL_SIZE,
                                      svg_str_to_pixbuf(generate_card(
-                            string=CARDS[self.page_index][0].lower(),
-                            colors=[COLORS[self.page_index][0], '#000000'],
-                            scale=self.scale,
+                            string=CARDS[self.page][0].lower(),
+                            colors=[COLORS[self.page][0], '#000000'],
+                            scale=self._scale,
                             center=True))))
-            self.activity.status.set_label('')
-            if self.page_index in STROKES:
+            if self._sugar:
+                self._activity.status.set_label('')
+            if self.page in STROKES:
                 stroke = True
             else:
                 stroke = False
-            self.colored_letters.append(Sprite(self.sprites, 0, 0,
+            self._colored_letters.append(Sprite(self._sprites, 0, 0,
                     svg_str_to_pixbuf(generate_card(
-                                string=CARDS[self.page_index][0].lower(),
-                                colors=[COLORS[self.page_index][0], '#000000'],
+                                string=CARDS[self.page][0].lower(),
+                                colors=[COLORS[self.page][0], '#000000'],
                                 background=False, stroke=stroke))))
 
-        for c in self.cards:
+        for c in self._cards:
             c.set_layer(0)
         self._load_card()
 
     def _load_card(self):
-        self.cards[self.page_index].set_layer(2)
+        self._cards[self.page].set_layer(2)
 
-        if MSG_INDEX[self.page_index] == 1:
-            self.background.set_label(MSGS[1][0] % (COLORS[self.page_index][1]))
+        if MSG_INDEX[self.page] == 1:
+            self._background.set_label(MSGS[1][0] % (COLORS[self.page][1]))
         else:
-            self.background.set_label(MSGS[MSG_INDEX[self.page_index]][0] % \
-                                     (COLORS[self.page_index][1]))
-        self.background.set_layer(1)
+            self._background.set_label(MSGS[MSG_INDEX[self.page]][0] % \
+                                     (COLORS[self.page][1]))
+        self._background.set_layer(1)
 
-        rect = gtk.gdk.Rectangle(0, 0, self.width, int(self.height / 5.0))
-        self.like_card.images[0].draw_rectangle(self.my_gc, True, *rect)
-        self.invalt(0, 0, self.width, int(self.height / 5.0))
-        self.x = 0
-        self.y = 0
-        if MSG_INDEX[self.page_index] == 1:
-            self._render_phrase(MSGS[1][1] % (CARDS[self.page_index][1]),
-                                self.like_card, self.like_gc)
-            self.like_card.move((int((self.width - self.final_x) / 2.0),
-                                 int(4 * self.height / 5.0)))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height / 5.0))
+        self._like_card.images[0].draw_rectangle(self._my_gc, True, *rect)
+        self.invalt(0, 0, self._width, int(self._height / 5.0))
+        self._x = 0
+        self._y = 0
+        if MSG_INDEX[self.page] == 1:
+            self._render_phrase(MSGS[1][1] % (CARDS[self.page][1]),
+                                self._like_card, self._like_gc)
+            self._like_card.move((int((self._width - self._final_x) / 2.0),
+                                 int(4 * self._height / 5.0)))
         else:
-            self._render_phrase(MSGS[MSG_INDEX[self.page_index]][1] % \
-                                    (CARDS[self.page_index][0],
-                                     CARDS[self.page_index][1]),
-                                self.like_card, self.like_gc)
-            self.like_card.move((int((self.width - self.final_x) / 2.0),
-                                 int(3 * self.height / 5.0)))
-        self.like_card.set_layer(1)
+            self._render_phrase(MSGS[MSG_INDEX[self.page]][1] % \
+                                    (CARDS[self.page][0],
+                                     CARDS[self.page][1]),
+                                self._like_card, self._like_gc)
+            self._like_card.move((int((self._width - self._final_x) / 2.0),
+                                 int(3 * self._height / 5.0)))
+        self._like_card.set_layer(1)
 
         # Hide all the letter sprites
-        for l in self.letters:
+        for l in self._letters:
             l.set_layer(0)
-        for l in self.colored_letters:
+        for l in self._colored_letters:
             l.set_layer(0)
-        self.my_canvas.set_layer(0)
+        self._my_canvas.set_layer(0)
 
     def reload(self):
         self._load_card()
-        self.activity.status.set_label(_(''))
+        if self._sugar:
+            self._activity.status.set_label(_(''))
 
     def read(self):
-        for c in self.cards:
+        for c in self._cards:
             c.set_layer(0)
-        self.background.set_label('')
-        self.background.set_layer(0)
-        self.like_card.set_layer(0)
+        self._background.set_label('')
+        self._background.set_layer(0)
+        self._like_card.set_layer(0)
 
-        self.activity.status.set_label(_('Read the sounds one at a time.'))
-        rect = gtk.gdk.Rectangle(0, 0, self.width, self.height)
-        self.my_canvas.images[0].draw_rectangle(self.my_gc, True, *rect)
-        self.invalt(0, 0, self.width, self.height)
-        self.my_canvas.set_layer(1)
+        if self._sugar:
+            self._activity.status.set_label(_('Read the sounds one at a time.'))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height)
+        self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
+        self.invalt(0, 0, self._width, self._height)
+        self._my_canvas.set_layer(1)
         p = 0
-        my_list = WORDS[self.page_index].split(' ')
+        my_list = WORDS[self.page].split(' ')
 
         # Some pages are aligned left
-        if self.page_index > ALIGN:
-            self.x, self.y = 10, 10
+        if self.page > ALIGN:
+            self._x, self._y = 10, 10
         else:
-            self.x, self.y = self._xy(0)
+            self._x, self._y = self._xy(0)
 
         # Each list is a collection of phrases, separated by spaces
         for phrase in my_list:
-            self._render_phrase(phrase, self.my_canvas, self.my_gc)
+            self._render_phrase(phrase, self._my_canvas, self._my_gc)
 
             # Put a long space between each phrase
-            if self.page_index > ALIGN:
-                self.x += self.offset
+            if self.page > ALIGN:
+                self._x += self._offset
             else:
-                self.x += int(uniform(30, self.width/8))
-            if self.x > self.width * 7 / 8.0:
-                self.x, self.y = self._xy(self.y)
+                self._x += int(uniform(30, self._width/8))
+            if self._x > self._width * 7 / 8.0:
+                self._x, self._y = self._xy(self._y)
 
     def _render_phrase(self, phrase, canvas, gc):
-            # The words in the list are separated by dashes
-            words = phrase.split('-')
-            for word in words:
-                # Will word run off the right edge?
-                if self.x + len(word) * self.offset > self.width:
-                    self.x, self.y = self._xy(self.y)
+        # The words in the list are separated by dashes
+        words = phrase.split('-')
+        for word in words:
+            # Will word run off the right edge?
+            if self._x + len(word) * self._offset > self._width:
+                self._x, self._y = self._xy(self._y)
 
-                # Process each character in the word
-                for c in range(len(word)):
-                    if word[c] == CARDS[self.page_index][0]:
-                        self._draw_pixbuf(
-                            self.colored_letters[self.page_index].images[0],
-                            self.x, self.y, canvas, gc)
-                    else:
-                        if word[c] in ALPHABET:
-                            i = ALPHABET.index(word[c])
-                            self._draw_pixbuf(self.letters[i].images[0],
-                                              self.x, self.y, canvas, gc)
-                    if word[c] in KERN:
-                        self.x += self.offset * KERN[word[c]]
-                    else:
-                        self.x += self.offset
+            # Process each character in the word
+            for c in range(len(word)):
+                if word[c] == CARDS[self.page][0]:
+                    self._draw_pixbuf(
+                        self._colored_letters[self.page].images[0],
+                        self._x, self._y, canvas, gc)
+                else:
+                    if word[c] in ALPHABET:
+                        i = ALPHABET.index(word[c])
+                        self._draw_pixbuf(self._letters[i].images[0],
+                                          self._x, self._y, canvas, gc)
+                if word[c] in KERN:
+                    self._x += self._offset * KERN[word[c]]
+                else:
+                    self._x += self._offset
 
-                self.final_x = self.x
-                # Put a space after each word
-                if self.x > 10:
-                    self.x += int(self.offset / 1.6)
+            self._final_x = self._x
+            # Put a space after each word
+            if self._x > 10:
+                self._x += int(self._offset / 1.6)
 
     def _draw_pixbuf(self, pixbuf, x, y, canvas, gc):
         w = pixbuf.get_width()
@@ -315,20 +315,20 @@ class Page():
         self.invalt(x, y, w, h)
 
     def _xy(self, y):
-        if self.page_index > ALIGN:
-            return 10, int(self.height / 10.0) + y
+        if self.page > ALIGN:
+            return 10, int(self._height / 10.0) + y
         else:
-            return int(uniform(40, self.width / 8.0)), \
-                   int(uniform(40, self.height / 10.0)) + y
+            return int(uniform(40, self._width / 8.0)), \
+                   int(uniform(40, self._height / 10.0)) + y
 
     def _button_press_cb(self, win, event):
         win.grab_focus()
         x, y = map(int, event.get_coords())
         self.start_drag = [x, y]
 
-        spr = self.sprites.find_sprite((x, y))
-        self.press = spr
-        self.release = None
+        spr = self._sprites.find_sprite((x, y))
+        self._press = spr
+        self._release = None
 
         return True
 
@@ -336,21 +336,28 @@ class Page():
         win.grab_focus()
 
         x, y = map(int, event.get_coords())
-        spr = self.sprites.find_sprite((x, y))
-        if spr == self.cards[self.page_index]:
-            play_audio_from_file(self, 'sounds/a-as-in-pat.ogg')
-            ''' os.system('espeak "%s" --stdout | aplay' % \
-                          (SOUNDS[self.page_index][1])) '''
+        spr = self._sprites.find_sprite((x, y))
+        if spr == self._cards[self.page]:
+            print os.path.join(os.path.abspath('.'), 'sounds',
+                               SOUNDS[self.page][0])
+            if os.path.exists(os.path.join(os.path.abspath('.'), 'sounds',
+                                           SOUNDS[self.page][0])):
+                play_audio_from_file(self, os.path.join(os.path.abspath('.'),
+                                                        'sounds',
+                                                        SOUNDS[self.page][0]))
+            else:
+                os.system('espeak "%s" --stdout | aplay' % \
+                              (SOUNDS[self.page][1]))
 
     def _game_over(self, msg=_('Game over')):
-        if self.sugar:
-            self.activity.status.set_label(msg)
+        if self._sugar:
+            self._activity.status.set_label(msg)
 
     def _keypress_cb(self, area, event):
         return True
 
     def _expose_cb(self, win, event):
-        self.sprites.redraw_sprites()
+        self._sprites.redraw_sprites()
         return True
 
     def _destroy_cb(self, win, event):
@@ -358,7 +365,7 @@ class Page():
 
     def invalt(self, x, y, w, h):
         """ Mark a region for refresh """
-        self.canvas.window.invalidate_rect(
+        self._canvas.window.invalidate_rect(
             gtk.gdk.Rectangle(int(x), int(y), int(w), int(h)), False)
 
 #
