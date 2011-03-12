@@ -268,6 +268,7 @@ class Page():
         if MSG_INDEX[self.page] < 0:
             self._background.set_label('')
             self._like_card.set_layer(0)
+            self.read()
         else:
             self._load_card()
 
@@ -317,6 +318,8 @@ class Page():
     def reload(self):
         if MSG_INDEX[self.page] >= 0:
             self._load_card()
+        else:
+            self.read()
         if self._sugar:
             self._activity.status.set_label(_(''))
 
