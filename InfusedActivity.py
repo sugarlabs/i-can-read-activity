@@ -96,12 +96,16 @@ class InfusedActivity(activity.Activity):
         self._setup_toolbars(_have_toolbox)
 
         # Create a canvas
+        self.sw = gtk.ScrolledWindow()
+        self.set_canvas(self.sw)
+        self.sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.sw.show()
         canvas = gtk.DrawingArea()
-        canvas.set_size_request(gtk.gdk.screen_width(), \
-                                gtk.gdk.screen_height())
-        self.set_canvas(canvas)
+        width = gtk.gdk.screen_width()
+        height = gtk.gdk.screen_height() * 2
+        canvas.set_size_request(width, height)
+        self.sw.add_with_viewport(canvas)
         canvas.show()
-        self.show_all()
 
         self._page = Page(canvas, parent=self)
 

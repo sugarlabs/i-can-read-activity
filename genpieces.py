@@ -105,7 +105,8 @@ stroke:#000000;%s\">" % (font_size, self._stroke, align)
 
 
 def generate_card(string='a', colors=['#FF0000', '#FFFFFF'],
-                  background=True, scale=1, stroke=False, center=False):
+                  background=True, scale=1, stroke=False, center=False,
+                  font_size=40):
     svg = SVG()
     svg.set_scale(scale)
     svg.set_colors(colors)
@@ -114,7 +115,7 @@ def generate_card(string='a', colors=['#FF0000', '#FFFFFF'],
         x = 30
     else:
         x = 5
-    svg_string += svg._svg_text(x, 35, 40, string, stroke=stroke,
+    svg_string += svg._svg_text(x, 35, font_size, string, stroke=stroke,
                                     center=center)
     svg_string += svg.footer()
     return svg_string

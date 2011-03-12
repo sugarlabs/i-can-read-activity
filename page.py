@@ -44,7 +44,10 @@ CARDS = [['a', _('pat')],
          ['s', _('is, as, was, says')],
          ['m', _('mom')],
          ['s', _("sam, stop, it's")],
-         ['A', _('read A book')]]
+         ['A', _('read A book')],
+         ['.', ''],
+         ['.', '']]
+
 
 COLORS = [['#FFB0B0', _('light pink')],
           ['#FFFF80', _('yellow')],
@@ -59,8 +62,9 @@ COLORS = [['#FFB0B0', _('light pink')],
           ['#A000A0', _('purple')],
           ['#A08080', _('dark pink')],
           ['#00A000', _('curly green')],
-          ['#FFFF00', _('bright yellow')]]
-
+          ['#FFFF00', _('bright yellow')],
+          ['#000000', ''],
+          ['#000000', '']]
 
 SOUNDS = [['a-as-in-pat.ogg', 'ah'],
           ['u-as-in-up.ogg', 'uh'],
@@ -116,7 +120,16 @@ up-mund-and-sand it-is-sad ttempt spot-is-tom's-pet-and-tom-is-dad's-ssist tom\
 sends-tim-in-and-sam-sits-up tim-stops-and-stands-on-A-dusty-mat it-is-sunny \
 mommy-and-daddy-sip-pop-at-A-stand spot-is-A-nutty-puppy-and-is-up-on-A-man's-\
 tent dad-mops-up-mud-and-sand it-is-A-sad-Attempt spot-is-tom's-pet-and-tom-is\
--dad's-AssistAnt] # tom-mops-and-mops-and-mops"]
+-dad's-AssistAnt tom-mops-and-mops-and-mops",
+         "pat-is-up,-sam-is-not. pam-is-ten-and-sits-on-a-stump-in-a-tent. mom-\
+sends-tim-in-and-sam-sits-on-a-dusty-mat. it-is-sunny. mommy-and-daddy-sip-pop\
+-at-a-stand. spot-is-a-nutty-puppy-and-is-up-on-a-man's-tent. dad-mops-up-mud-\
+and-sand. it-is-a-sad-attempt. spot-is-tom's-pet-and-tom-is-dad's-assistant. \
+tom-mops-and-mops-and-mops.",
+         "mom-insists-sam-must-study-and-pass-a-test. sam-did-not-pass-a-past-\
+test. a-pup-steps-past-and-tempts-sam. sam-is-a-pest-and-sits-in-a-muddy-spot.\
+mom-is-mad-at-sam's-messy-pants-and-sends-pam-and-a-pen. pam's-study-tip-\
+assists-sam. pam-is-an-asset!"]
 
 STROKES = [1, 4, 13]
 
@@ -125,13 +138,15 @@ MSGS = [[_('This %s sign is said\n'), _('%s like %s.')],
         [_('This %s sign is said\ntogether with other sounds\nas in:\n'),
          _('%s')],
         [_('This %s sign is\nlightly said\n'), _('%s like %s.')],
-        [_('When it looks like this,\nwe read it the same way.'), '']]
+        [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), '']]
 
-MSG_INDEX = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2]
+MSG_INDEX = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
+SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
+              True, True, True, True, False, False, False]
 
 KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'r': 0.8, 'm': 1.6, 'w': 1.3,
         "'": 0.4}
-ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'"
+ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'!"
 ALIGN = 11
 
 # TODO: finish sound stuff
@@ -165,6 +180,7 @@ class Page():
         self._sprites = Sprites(self._canvas)
         self.page = 0
         self._cards = []
+        self._double_cards = []
         self._letters = []
         self._colored_letters = []
         self._press = None
@@ -180,6 +196,12 @@ class Page():
                               scale=self._scale * 4)))
         self._background.set_layer(1)
         self._background.set_label_attributes(32)
+        self._page_2 = Sprite(self._sprites, 0, self._height,
+                                  svg_str_to_pixbuf(
+                generate_card(string='', colors=['#FFFFFF', '#FFFFFF'],
+                              scale=self._scale * 4)))
+        self._page_2.set_layer(1)
+        self._page_2.set_label_attributes(32, vert_align='top')
         self._like_card = Sprite(self._sprites, 0, int(self._height * 4 / 5.0),
                                 gtk.gdk.Pixmap(self._canvas.window,
                                                self._width,
@@ -189,7 +211,7 @@ class Page():
         self._my_canvas = Sprite(self._sprites, 0, 0,
                                 gtk.gdk.Pixmap(self._canvas.window,
                                                self._width,
-                                               self._height, -1))
+                                               self._height * 2, -1))
         self._my_canvas.set_layer(0)
         self._my_gc = self._my_canvas.images[0].new_gc()
         self._my_gc.set_foreground(
@@ -209,28 +231,45 @@ class Page():
             if self._sugar:
                 self._activity.status.set_label('')
         if self.page == len(self._cards):
-            self._cards.append(Sprite(self._sprites, self._left,
-                                      GRID_CELL_SIZE,
-                                      svg_str_to_pixbuf(generate_card(
-                            string=CARDS[self.page][0].lower(),
-                            colors=[COLORS[self.page][0], '#000000'],
-                            scale=self._scale,
-                            center=True))))
-            if self._sugar:
-                self._activity.status.set_label('')
-            if self.page in STROKES:
-                stroke = True
-            else:
-                stroke = False
-            self._colored_letters.append(Sprite(self._sprites, 0, 0,
+            if MSG_INDEX[self.page] >= 0:
+                self._cards.append(Sprite(self._sprites, self._left,
+                                          GRID_CELL_SIZE,
+                                          svg_str_to_pixbuf(generate_card(
+                                string=CARDS[self.page][0].lower(),
+                                colors=[COLORS[self.page][0], '#000000'],
+                                scale=self._scale,
+                                center=True))))
+                self._double_cards.append(Sprite(self._sprites, self._left,
+                    self._height + GRID_CELL_SIZE * 2,
+                    svg_str_to_pixbuf(generate_card(
+                                string=CARDS[self.page][0].lower() + \
+                                    CARDS[self.page][0].lower(),
+                                colors=[COLORS[self.page][0], '#000000'],
+                                scale=self._scale,
+                                font_size=32,
+                                center=True))))
+                if self.page in STROKES:
+                    stroke = True
+                else:
+                    stroke = False
+                self._colored_letters.append(Sprite(self._sprites, 0, 0,
                     svg_str_to_pixbuf(generate_card(
                                 string=CARDS[self.page][0].lower(),
                                 colors=[COLORS[self.page][0], '#000000'],
                                 background=False, stroke=stroke))))
 
+            if self._sugar:
+                self._activity.status.set_label('')
+
         for c in self._cards:
             c.set_layer(0)
-        self._load_card()
+        for c in self._double_cards:
+            c.set_layer(0)
+        if MSG_INDEX[self.page] < 0:
+            self._background.set_label('')
+            self._like_card.set_layer(0)
+        else:
+            self._load_card()
 
     def _load_card(self):
         self._cards[self.page].set_layer(2)
@@ -241,6 +280,7 @@ class Page():
             self._background.set_label(MSGS[MSG_INDEX[self.page]][0] % \
                                      (COLORS[self.page][1]))
         self._background.set_layer(1)
+        self._page_2.set_layer(1)
 
         rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height / 5.0))
         self._like_card.images[0].draw_rectangle(self._my_gc, True, *rect)
@@ -261,6 +301,12 @@ class Page():
                                  int(3 * self._height / 5.0)))
         self._like_card.set_layer(1)
 
+        if SHOW_MSG2[self.page]:
+            self._page_2.set_label(MSGS[3][0])
+            self._double_cards[self.page].set_layer(2)
+        else:
+            self._page_2.set_label('')
+
         # Hide all the letter sprites
         for l in self._letters:
             l.set_layer(0)
@@ -269,21 +315,25 @@ class Page():
         self._my_canvas.set_layer(0)
 
     def reload(self):
-        self._load_card()
+        if MSG_INDEX[self.page] >= 0:
+            self._load_card()
         if self._sugar:
             self._activity.status.set_label(_(''))
 
     def read(self):
         for c in self._cards:
             c.set_layer(0)
+        for c in self._double_cards:
+            c.set_layer(0)
         self._background.set_label('')
         self._background.set_layer(0)
         self._like_card.set_layer(0)
+        self._page_2.set_layer(0)
 
         if self._sugar:
             self._activity.status.set_label(
                 _('Read the sounds one at a time.'))
-        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height)
+        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
@@ -313,12 +363,12 @@ class Page():
         words = phrase.split('-')
         for word in words:
             # Will word run off the right edge?
-            if self._x + len(word) * self._offset > self._width:
+            if self._x + len(word) * self._offset > self._width - 20:
                 self._x, self._y = self._xy(self._y)
 
             # Process each character in the word
             for c in range(len(word)):
-                if word[c] == CARDS[self.page][0]:
+                if MSG_INDEX[self.page] >= 0 and word[c] == CARDS[self.page][0]:
                     self._draw_pixbuf(
                         self._colored_letters[self.page].images[0],
                         self._x, self._y, canvas, gc)
@@ -368,13 +418,12 @@ class Page():
         x, y = map(int, event.get_coords())
         spr = self._sprites.find_sprite((x, y))
         if spr == self._cards[self.page]:
-            print os.path.join(os.path.abspath('.'), 'sounds',
-                               SOUNDS[self.page][0])
-            if os.path.exists(os.path.join(os.path.abspath('.'), 'sounds',
-                                           SOUNDS[self.page][0])):
-                play_audio_from_file(self, os.path.join(os.path.abspath('.'),
-                                                        'sounds',
-                                                        SOUNDS[self.page][0]))
+            if MSG_INDEX[self.page] >= 0:
+                if os.path.exists(os.path.join(os.path.abspath('.'), 'sounds',
+                                               SOUNDS[self.page][0])):
+                    play_audio_from_file(self, os.path.join(
+                            os.path.abspath('.'), 'sounds',
+                            SOUNDS[self.page][0]))
             else:
                 os.system('espeak "%s" --stdout | aplay' % \
                               (SOUNDS[self.page][1]))
