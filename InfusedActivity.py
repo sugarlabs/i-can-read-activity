@@ -157,7 +157,7 @@ class InfusedActivity(activity.Activity):
         _separator_factory(toolbar)
 
         self._read_button = _button_factory('media-playback-start',
-                                                _('Read'),
+                                                _('Click to read'),
                                                 self._read_cb, toolbar)
 
         self.status = _label_factory(_(''), toolbar)
