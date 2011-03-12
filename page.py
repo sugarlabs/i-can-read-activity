@@ -220,6 +220,7 @@ class Page():
 
     def reload(self):
         self._load_card()
+        self.activity.status.set_label(_(''))
 
     def read(self):
         for c in self.cards:
