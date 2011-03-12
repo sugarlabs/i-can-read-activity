@@ -16,7 +16,7 @@ import os
 
 from random import uniform
 
-from gplay import play_audio_from_file
+from utils.gplay import play_audio_from_file
 
 from gettext import gettext as _
 import logging
@@ -29,7 +29,7 @@ except ImportError:
     GRID_CELL_SIZE = 0
 
 from genpieces import generate_card
-from sprites import Sprites, Sprite
+from utils.sprites import Sprites, Sprite
 
 CARDS = [['a', _('pat')],
          ['u', _('up')],
