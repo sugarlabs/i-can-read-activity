@@ -133,7 +133,7 @@ assists-sam. pam-is-an-asset!"]
 
 STROKES = [1, 4, 13]
 
-# TRANS: e.g., This yellow sign is said u as in up.
+# TRANS: e.g., This yellow sign is said u like up.
 MSGS = [[_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
         [_('This %s sign is said\ntogether with other sounds\nas in:\n'),
          '%s'],
@@ -151,8 +151,6 @@ KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'r': 0.8, 'm': 1.6, 'w': 1.3,
         "'": 0.4}
 ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'!"
 ALIGN = 11
-
-# TODO: finish sound stuff
 
 
 class Page():
