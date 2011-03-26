@@ -31,41 +31,40 @@ except ImportError:
 from genpieces import generate_card
 from utils.sprites import Sprites, Sprite
 
-CARDS = [['a', _('pat')],
-         ['u', _('up')],
-         # use I so that i in like is not highlighted
+CARDS = [['A', _('pAt')],  # Use CAPS for highlight.
+         ['U', _('Up')],
          ['I', _('It')],
-         # use E so that e in like is not highlighted
          ['E', _('pEt')],
-         ['o', _('pot')],
-         ['y', _('tummy')],
-         ['p', _('pat')],
-         ['n', _('not, tennis')],
-         ['t', _('tap')],
-         ['d', _('dad')],
-         ['s', _('is, as, was, says')],
-         ['m', _('mom')],
-         ['s', _("sam, stop, it's")],
-         # use A instead of a to distingush from a above
+         ['O', _('pOt')],
+         ['Y', _('tummY')],
+         ['P', _('Pat')],
+         ['N', _('Not, teNNis')],
+         ['T', _('Tap')],
+         ['D', _('Dad')],
+         ['S', _('iS, aS, waS, sayS')],
+         ['M', _('MoM')],
+         ['S', _("Sam, Stop, it'S")],
          ['A', _('read A book')],
          ['', ''],
          ['', '']]
 
-COLORS = [['#FFB0B0', _('light pink')],
-          ['#FFFF80', _('yellow')],
-          ['#FF6060', _('pink')],
-          ['#8080FF', _('blue')],
-          ['#FFFFFF', _('white')],
-          ['#FF0000', _('red')],
-          ['#A00000', _('brown')],
-          ['#A000A0', _('purple')],
-          ['#A08080', _('dark pink')],
-          ['#00A000', _('green')],
-          ['#A000A0', _('purple')],
-          ['#A08080', _('dark pink')],
-          ['#00A000', _('curly green')],
-          ['#FFFF00', _('bright yellow')]]
+# [RGB color, color name, outline stroke]
+COLORS = [['#FFB0B0', _('light pink'), False],
+          ['#FFFF80', _('yellow'), True],
+          ['#FF6060', _('pink'), False],
+          ['#8080FF', _('blue'), False],
+          ['#FFFFFF', _('white'), True],
+          ['#FF0000', _('red'), False],
+          ['#A00000', _('brown'), False],
+          ['#A000A0', _('purple'), False],
+          ['#A08080', _('dark pink'), False],
+          ['#00A000', _('green'), False],
+          ['#A000A0', _('purple'), False],
+          ['#A08080', _('dark pink'), False],
+          ['#00A000', _('curly green'), False],
+          ['#FFFF00', _('bright yellow'), True]]
 
+# [sound file, sound string for espeak]
 SOUNDS = [['a-as-in-pat.ogg', 'ah'],
           ['u-as-in-up.ogg', 'uh'],
           ['i-as-in-it.ogg', 'ih'],
@@ -81,40 +80,40 @@ SOUNDS = [['a-as-in-pat.ogg', 'ah'],
           ['s-as-in-stop.ogg', 's'],
           ['a-as-in-read-a-book.ogg', 'a']]
 
-WORDS = ['a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a',
-         'a u a a a a a u a a u a a u a u a a a u u a u a a a a a u a a a a a',
+WORDS = ['A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A',
+         'a U a a a a a U a a U a a U a U a a a U U a U a a a a a U a a a a a',
          'a I u a I a I a I I I I a a I u I a a u a I I u a I a u a I a a I a',
          'a i u a i a i E a i i E i i a a i u i a a u a i i u a a i E a E a a',
-         'a i u a i o a i e a i o a i e o o i i a e i u e a o e i i o a o a o',
-         'a i u a i o a i e a i o u i e o e i i a a i u i o a a o u y a i i u \
-y o y a a y i o a a o i u y u y a i u o a e a o u u a a i i a e o i o e a o i \
+         'a i u a i O a i e a i O a i e O O i i a e i u e a O e i i O a O a O',
+         'a i u a i o a i e a i o u i e o e i i a a i u i o a a o u Y a i i u \
+Y o Y a a Y i o a a o i u Y u Y a i u o a e a o u u a a i i a e o i o e a o i \
 a i o o a o a o',
-         'pa i up a i o pa i e a i o u i e o e  i a a i up i op a a o u y a i \
-i u y o y a a y ip pop a a po  u y puppy a i up o a e a op up u a a i i a e \
-po i o pe a o i a i o op a op a op',
-         'pa i up a i no pa i en an i on u i en o en i in an a i up i op an \
-an on u y a i i unny o y an a y ip pop a an po i nu y puppy an i up on an en \
-a op up u an an i i a e po i o pe an o i a i o op an op an op',
-         'pat i up a i not pa i ten an it on tu i tent o en ti in an a it up \
-ti top an tan on u ty at it i unny o y an a y ip pop at tan pot i nutty puppy \
-an i up on an tent a op up u an an it i a e pot i to pet an to i a i to op an \
+         'Pa i uP a i o Pa i e a i o u i e o e  i a a i uP i oP a a o u y a i \
+i u y o y a a y iP PoP a a Po  u y PuPPy a i uP o a e a oP uP u a a i i a e \
+Po i o Pe a o i a i o oP a oP a oP',
+         'pa i up a i No pa i eN aN i oN u i eN o eN i iN aN a i up i op aN \
+aN oN u y a i i uNNy o y aN a y ip pop a aN po i Nu y puppy aN i up on aN eN \
+a op up u aN aN i i a e po i o pe aN o i a i o op aN op aN op',
+         'paT i up a i noT pa i Ten an iT on Tu i TenT o en Ti in an a iT up \
+Ti Top an Tan on u Ty aT iT i unny o y an a y ip pop aT Tan poT i nuTTy puppy \
+an i up on an TenT a op up u an an iT i a e poT i To peT an To i a i To op an \
 op an op',
-         'pat i up a i not pa i ten and it on tu i tent o end ti in and a it \
-up ti top and tand on du ty at it i unny o y and daddy ip pop at tand pot i \
-nutty puppy ad i up on an tent dad op up ud and and it i ad e pot i to pet \
-and to i dad i to op and op and op',
-         "pat is up a is not pa is ten and it on tu i tent o ends ti in and a \
-it up ti top and tands on du ty at it is unny o y and daddy ip pop op up ud \
-and and it is ad e pot is to pet and to is dad's i to op and op and op",
-         "pat is up am is not pam is ten and it on tump in tent mom ends tim \
-in and am it up tim top and tands on du ty mat it is unny mommy and daddy ip \
-pop at tand pot is nutty puppy and is up on man's tent dad mop up mud and and \
-it is ad ttempt pot is tom's pet and tom is dad's i tom mop and mop and mop",
-         "pat-is-up sam-is-not pam-is-ten-and-sits-on-stump-in-tent mom-sends-\
-tim-in-and-sam-sits-up tim-stops-and-stands-on-dusty-mat it-is-sunny mommy-and\
--daddy-sip-pop-at-stand spot-is-nutty-puppy-and-is-up-on-man's-tent dad-mops-\
-up-mund-and-sand it-is-sad ttempt spot-is-tom's-pet-and-tom-is-dad's-ssist tom\
--mops-and-mops-and-mops",
+         'pat i up a i not pa i ten and it on tu i tent o enD ti in anD a it \
+up ti top anD tanD on Du ty at it i unny o y anD DaDDy ip pop at tand pot i \
+nutty puppy ad i up on an tent DaD op up uD anD anD it i aD e pot i to pet \
+anD to i DaD i to op anD op anD op',
+         "pat iS up a iS not pa iS ten and it on tu i tent o endS ti in and a \
+it up ti top and tandS on du ty at it iS unny o y and daddy ip pop op up ud \
+and and it iS ad e pot iS to pet and to iS dad'S i to op and op and op",
+         "pat is up aM is not paM is ten and it on tuMp in tent MoM ends tiM \
+in and aM it up tiM top and tands on du ty Mat it is unny MoMMy and daddy ip \
+pop at tand pot is nutty puppy and is up on Man's tent dad Mop up Mud and and \
+it is ad ttempt pot is toM's pet and toM is dad's i toM Mop and Mop and Mop",
+         "pat-is-up Sam-is-not pam-is-ten-and-SitS-on-Stump-in-tent mom-Sends-\
+tim-in-and-Sam-SitS-up tim-StopS-and-StandS-on-duSty-mat it-is-Sunny mommy-and\
+-daddy-Sip-pop-at-Stand Spot-is-nutty-puppy-and-is-up-on-man's-tent dad-mopS-\
+up-mund-and-Sand it-is-Sad ttempt Spot-is-tom's-pet-and-tom-is-dad's-SSiSt tom\
+-mopS-and-mopS-and-mopS",
          "pat-is-up sam-is-not pam-is-ten-and-sits-on-A-stump-in-A-tent mom-\
 sends-tim-in-and-sam-sits-up tim-stops-and-stands-on-A-dusty-mat it-is-sunny \
 mommy-and-daddy-sip-pop-at-A-stand spot-is-A-nutty-puppy-and-is-up-on-A-man's-\
@@ -130,8 +129,6 @@ test. a-pup-steps-past-and-tempts-sam. sam-is-a-pest-and-sits-in-a-muddy-spot.\
 mom-is-mad-at-sam's-messy-pants-and-sends-pam-and-a-pen. pam's-study-tip-\
 assists-sam. pam-is-an-asset!"]
 
-STROKES = [1, 4, 13]  # These characters have stroke colors for visibility
-
 # TRANS: e.g., This yellow sign is said u like up.
 MSGS = [[_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
         [_('This %s sign is said\ntogether with other sounds\nas in:\n'),
@@ -146,8 +143,8 @@ MSG_INDEX = [4, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
 SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
               True, True, True, True, False, False, False]
 
-KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'r': 0.8, 'm': 1.6, 'w': 1.3,
-        "'": 0.4}
+KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
+        'w': 1.3, "'": 0.4, 'M': 1.6}
 ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'!"
 ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
@@ -190,6 +187,7 @@ class Page():
         self._y = 10
         self._final_x = 0
         self._offset = int(self._width / 30.)
+        self._looking_at_word_list = False
 
         self._background = Sprite(self._sprites, 0, 0, svg_str_to_pixbuf(
                 generate_card(string='', colors=['#FFFFFF', '#FFFFFF'],
@@ -224,6 +222,54 @@ class Page():
                                                 background=False))))
         self.new_page()
 
+    def page_list(self):
+        ''' Index into all the cards in the form of a list of phrases '''
+        # Already here? Then jump back to current page.
+        if self._looking_at_word_list:
+            self.new_page()
+            return
+
+        save_page = self.page
+        for c in self._cards:
+            c.set_layer(0)
+        for c in self._double_cards:
+            c.set_layer(0)
+        self._background.set_label('')
+        self._background.set_layer(0)
+        self._like_card.set_layer(0)
+        self._page_2.set_layer(0)
+
+        if self._sugar:
+            self._activity.status.set_label(
+                _('Select a page.'))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
+        self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
+        self.invalt(0, 0, self._width, self._height)
+        self._my_canvas.set_layer(1)
+        p = 0
+
+        self._x, self._y = 10, 10
+
+        # Each list is a collection of phrases, separated by spaces
+        for i, card in enumerate(CARDS):
+            if card[0] == '':
+                break
+            if i < len(self._colored_letters):
+                self.page = i
+                self._render_phrase(card[0]+'-like-'+card[1],
+                                    self._my_canvas, self._my_gc)
+            else:
+                self.page = 14
+                self._render_phrase(
+                    card[0].lower() + '-' + _('as in') + '-' + card[1].lower(),
+                    self._my_canvas, self._my_gc)
+
+            self._x = 10
+            self._y += 40
+
+        self.page = save_page
+        self._looking_at_word_list = True
+
     def new_page(self, saved_state=None, deck_index=0):
         ''' Load a new page. '''
         if self.page == len(CARDS):
@@ -248,7 +294,7 @@ class Page():
                                 scale=self._scale,
                                 font_size=32,
                                 center=True))))
-                if self.page in STROKES:
+                if COLORS[self.page][2]:
                     stroke = True
                 else:
                     stroke = False
@@ -271,6 +317,7 @@ class Page():
             self.read()
         else:
             self._load_card()
+        self._looking_at_word_list = False
 
     def _load_card(self):
         self._cards[self.page].set_layer(2)
@@ -308,7 +355,7 @@ class Page():
         else:
             self._page_2.set_label('')
 
-        # Hide all the letter sprites
+        # Hide all the letter sprites.
         for l in self._letters:
             l.set_layer(0)
         for l in self._colored_letters:
@@ -361,6 +408,8 @@ class Page():
             if self._x > self._width * 7 / 8.0:
                 self._x, self._y = self._xy(self._y)
 
+        self._looking_at_word_list = False
+
     def _render_phrase(self, phrase, canvas, gc):
         # The words in the list are separated by dashes
         words = phrase.split('-')
@@ -407,29 +456,41 @@ class Page():
     def _button_press_cb(self, win, event):
         win.grab_focus()
         x, y = map(int, event.get_coords())
-        self.start_drag = [x, y]
 
-        spr = self._sprites.find_sprite((x, y))
-        self._press = spr
-        self._release = None
-
+        if self._looking_at_word_list:
+            self._goto_page = int(y / 40.)
+        else:
+            spr = self._sprites.find_sprite((x, y))
+            self._press = spr
+            self._release = None
         return True
 
     def _button_release_cb(self, win, event):
         win.grab_focus()
 
-        x, y = map(int, event.get_coords())
-        spr = self._sprites.find_sprite((x, y))
-        if spr == self._cards[self.page]:
-            if MSG_INDEX[self.page] >= 0:
-                if os.path.exists(os.path.join(os.path.abspath('.'), 'sounds',
-                                               SOUNDS[self.page][0])):
-                    play_audio_from_file(self, os.path.join(
+        if self._looking_at_word_list:
+            self._looking_at_word_list = False
+            if self._goto_page > self.page:
+                for _i in range(self._goto_page - self.page):
+                    self.page += 1
+                    self.new_page()
+            else:
+                self.page = self._goto_page
+                self.new_page()
+        else:
+            x, y = map(int, event.get_coords())
+            spr = self._sprites.find_sprite((x, y))
+            if spr == self._cards[self.page]:
+                if MSG_INDEX[self.page] >= 0:
+                    if os.path.exists(os.path.join(
                             os.path.abspath('.'), 'sounds',
-                            SOUNDS[self.page][0]))
-                else:
-                    os.system('espeak "%s" --stdout | aplay' % \
-                                  (SOUNDS[self.page][1]))
+                            SOUNDS[self.page][0])):
+                        play_audio_from_file(self, os.path.join(
+                                os.path.abspath('.'), 'sounds',
+                                SOUNDS[self.page][0]))
+                    else:
+                        os.system('espeak "%s" --stdout | aplay' % \
+                                      (SOUNDS[self.page][1]))
 
     def _game_over(self, msg=_('Game over')):
         if self._sugar:

@@ -150,15 +150,21 @@ class InfusedActivity(activity.Activity):
             elif hasattr(toolbox, 'props'):
                 toolbox.props.visible = False
 
-        self._new_page_button = _button_factory('new-page',
-                                                _('Next letter'),
-                                                self._new_page_cb, toolbar)
+        self._list_button = _button_factory(
+            'format-justify-fill', _('Letter list'), self._list_cb, toolbar)
 
         _separator_factory(toolbar)
 
-        self._read_button = _button_factory('media-playback-start',
-                                                _('Click to read'),
-                                                self._read_cb, toolbar)
+        self._prev_page_button = _button_factory(
+            'list-remove', _('Previous letter'), self._prev_page_cb, toolbar)
+
+        self._next_page_button = _button_factory(
+            'list-add', _('Next letter'), self._next_page_cb, toolbar)
+
+        _separator_factory(toolbar)
+
+        self._read_button = _button_factory(
+            'go-down', _('Click to read'), self._read_cb, toolbar)
 
         self.status = _label_factory('', toolbar)
 
@@ -170,12 +176,26 @@ class InfusedActivity(activity.Activity):
             toolbox.toolbar.insert(stop_button, -1)
             stop_button.show()
 
-    def _new_page_cb(self, button=None):
+    def _list_cb(self, button=None):
+        ''' Letter list '''
+        self._page.page_list()
+        self.reading = False
+
+    def _prev_page_cb(self, button=None):
+        ''' Start a new letter. '''
+        if self._page.page > 0:
+            self._page.page -= 1
+        self._page.new_page()
+        self.reading = False
+        self._read_button.set_icon('go-down')
+        self._read_button.set_tooltip(_('Show letter'))
+
+    def _next_page_cb(self, button=None):
         ''' Start a new letter. '''
         self._page.page += 1
         self._page.new_page()
         self.reading = False
-        self._read_button.set_icon('media-playback-start')
+        self._read_button.set_icon('go-down')
         self._read_button.set_tooltip(_('Show letter'))
 
     def _read_cb(self, button=None):
@@ -183,12 +203,12 @@ class InfusedActivity(activity.Activity):
         if not self.reading:
             self.reading = True
             self._page.read()
-            self._read_button.set_icon('system-restart')
+            self._read_button.set_icon('go-up')
             self._read_button.set_tooltip(_('Show letter'))
         else:
             self.reading = False
             self._page.reload()
-            self._read_button.set_icon('media-playback-start')
+            self._read_button.set_icon('go-down')
             self._read_button.set_tooltip(_('Read'))
 
     def write_file(self, file_path):
@@ -204,4 +224,4 @@ class InfusedActivity(activity.Activity):
         except:
             n = 0
         for i in range(n):
-            self._new_page_cb()
+            self._next_page_cb()
