@@ -31,6 +31,10 @@ except ImportError:
 from genpieces import generate_card
 from utils.sprites import Sprites, Sprite
 
+#
+# These tables and dictionaries represent a level (Level 1 in English)
+# CARDS, COLORS, SOUNDS, and WORDS
+#
 CARDS = [['A', _('pAt')],  # Use CAPS for highlight.
          ['U', _('Up')],
          ['I', _('It')],
@@ -49,20 +53,20 @@ CARDS = [['A', _('pAt')],  # Use CAPS for highlight.
          ['', '']]
 
 # [RGB color, color name, outline stroke]
-COLORS = [['#FFB0B0', _('light pink'), False],
-          ['#FFFF80', _('yellow'), True],
-          ['#FF6060', _('pink'), False],
-          ['#8080FF', _('blue'), False],
+COLORS = [['#BA6C71', _('light pink'), False],
+          ['#FFFCC0', _('yellow'), True],
+          ['#EF2891', _('pink'), False],
+          ['#70A9CE', _('blue'), False],
           ['#FFFFFF', _('white'), True],
-          ['#FF0000', _('red'), False],
-          ['#A00000', _('brown'), False],
-          ['#A000A0', _('purple'), False],
-          ['#A08080', _('dark pink'), False],
-          ['#00A000', _('green'), False],
-          ['#A000A0', _('purple'), False],
-          ['#A08080', _('dark pink'), False],
-          ['#00A000', _('curly green'), False],
-          ['#FFFF00', _('bright yellow'), True]]
+          ['#DE1C23', _('red'), False],
+          ['#A4221E', _('brown'), False],
+          ['#7A6BBD', _('purple'), False],
+          ['#C72098', _('dark pink'), False],
+          ['#2EA539', _('green'), False],
+          ['#B139A2', _('purple'), False],
+          ['#EE3C1E', _('dark pink'), False],
+          ['#7EC93C', _('curly green'), False],
+          ['#FFF200', _('bright yellow'), True]]
 
 # [sound file, sound string for espeak]
 SOUNDS = [['a-as-in-pat.ogg', 'ah'],
@@ -142,11 +146,11 @@ sounds one at a time. You can\nuse your finger to follow along.'),
 MSG_INDEX = [4, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
 SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
               True, True, True, True, False, False, False]
+ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
         'w': 1.3, "'": 0.4, 'M': 1.6}
 ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'!"
-ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 
 class Page():
