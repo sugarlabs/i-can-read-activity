@@ -42,13 +42,13 @@ CARDS = [['A', _('pAt')],  # Use CAPS for highlight.
          ['O', _('pOt')],
          ['Y', _('tummY')],
          ['P', _('Pat')],
-         ['N', _('Not, teNNis')],
+         ['N', _('Not,-teNNis')],
          ['T', _('Tap')],
-         ['D', _('Dad')],
-         ['S', _('iS, aS, waS, sayS')],
+         ['D', _('DaD')],
+         ['S', _('iS,-aS,-waS,-sayS')],
          ['M', _('MoM')],
-         ['S', _("Sam, Stop, it'S")],
-         ['A', _('read A book')],
+         ['S', _("Sam,-Stop,-it'S")],
+         ['A', _('read-A-book')],
          ['', ''],
          ['', '']]
 
@@ -102,7 +102,7 @@ a op up u aN aN i i a e po i o pe aN o i a i o op aN op aN op',
 Ti Top an Tan on u Ty aT iT i unny o y an a y ip pop aT Tan poT i nuTTy puppy \
 an i up on an TenT a op up u an an iT i a e poT i To peT an To i a i To op an \
 op an op',
-         'pat i up a i not pa i ten and it on tu i tent o enD ti in anD a it \
+         'pat i up a i not pa i ten anD it on tu i tent o enD ti in anD a it \
 up ti top anD tanD on Du ty at it i unny o y anD DaDDy ip pop at tand pot i \
 nutty puppy ad i up on an tent DaD op up uD anD anD it i aD e pot i to pet \
 anD to i DaD i to op anD op anD op',
@@ -258,14 +258,17 @@ class Page():
         for i, card in enumerate(CARDS):
             if card[0] == '':
                 break
+            if card[0] in 'AEIOUY':
+                connector = '-' + _('like') + '-'
+            else:
+                connector = '-' + _('as-in') + '-'
             if i < len(self._colored_letters):
                 self.page = i
-                self._render_phrase(card[0]+'-like-'+card[1],
+                self._render_phrase(card[0] + connector +card[1],
                                     self._my_canvas, self._my_gc)
             else:
-                self.page = 14
                 self._render_phrase(
-                    card[0].lower() + '-' + _('as in') + '-' + card[1].lower(),
+                    card[0].lower() + connector + card[1].lower(),
                     self._my_canvas, self._my_gc)
 
             self._x = 10
@@ -481,6 +484,8 @@ class Page():
             else:
                 self.page = self._goto_page
                 self.new_page()
+            if self._sugar:
+                self._activity.status.set_label(_(''))
         else:
             x, y = map(int, event.get_coords())
             spr = self._sprites.find_sprite((x, y))
