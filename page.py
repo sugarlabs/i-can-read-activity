@@ -14,7 +14,7 @@
 import gtk
 import os
 
-from random import uniform
+from random import uniform, randrange
 
 from utils.gplay import play_audio_from_file
 
@@ -277,20 +277,9 @@ class Page():
             self._activity.status.set_label('')
 
     def read(self):
-        for c in self._cards:
-            c.set_layer(0)
-        for c in self._double_cards:
-            c.set_layer(0)
-        self._background.set_label('')
-        self._background.set_layer(0)
-        self._like_card.set_layer(0)
-        self._page_2.set_layer(0)
+        """ Read a word list """
+        self._clear_all()
 
-        '''
-        if self._sugar:
-            self._activity.status.set_label(
-                _('Read the sounds one at a time.'))
-        '''
         rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
@@ -298,33 +287,64 @@ class Page():
         p = 0
         my_list = self._word_level_data[self.page].split('/')
 
-        # Some pages are aligned left
         if self.page > ALIGN:
+            align = False
+        else:
+            align = True
+
+        # Some pages are aligned left
+        if align:
             self._x, self._y = 10, 10
         else:
             self._x, self._y = self._xy(0)
 
-        # Each list is a collection of phrases, separated by spaces
         for phrase in my_list:
             self._render_phrase(phrase, self._my_canvas, self._my_gc)
 
-            # Put a long space between each phrase
-            if self.page > ALIGN:
+            # Put a longer space between each phrase
+            if align:
                 self._x += self._offset
             else:
                 self._x += int(uniform(30, self._width / 8))
             if self._x > self._width * 7 / 8.0:
-                self._x, self._y = self._xy(self._y)
+                self._x, self._y = self._xy(self._y, align=align)
 
         self._looking_at_word_list = False
 
-    def _render_phrase(self, phrase, canvas, gc):
+    def test(self):
+        """ Generate a randomly ordered list of phrases """
+        self._clear_all()
+
+        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
+        self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
+        self.invalt(0, 0, self._width, self._height)
+        self._my_canvas.set_layer(1)
+        p = 0
+        phrase_list = self._test_level_data.split('/')
+        list_length = len(phrase_list)
+
+        for n in range(list_length):  # Randomize the phrase order.
+            i = randrange(list_length - n)
+            tmp = phrase_list[n]
+            phrase_list[n] = phrase_list[list_length - 1 - i]
+            phrase_list[list_length - 1 - i] = tmp
+
+        self._x, self._y = 10, 10
+
+        for phrase in phrase_list:
+            self._render_phrase(phrase, self._my_canvas, self._my_gc,
+                                align=True)
+            self._x, self._y = self._xy(self._y, align=True)
+
+        self._looking_at_word_list = False
+
+    def _render_phrase(self, phrase, canvas, gc, align=False):
         # The words in the list are separated by dashes
         words = phrase.split()
         for word in words:
             # Will word run off the right edge?
             if self._x + len(word) * self._offset > self._width - 20:
-                self._x, self._y = self._xy(self._y)
+                self._x, self._y = self._xy(self._y, align=align)
 
             # Process each character in the word
             for c in range(len(word)):
@@ -355,8 +375,8 @@ class Page():
                                              int(x), int(y))
         self.invalt(x, y, w, h)
 
-    def _xy(self, y):
-        if self.page > ALIGN:
+    def _xy(self, y, align=False):
+        if align:
             return 10, int(self._height / 10.0) + y
         else:
             return int(uniform(40, self._width / 8.0)), \
@@ -444,6 +464,12 @@ class Page():
         for line in f:
             if len(line) > 0 and line[0] != '#':
                 self._word_level_data.append(line)
+        f.close()
+
+        f = file(os.path.join(path, 'tests' + '.' + level), 'r')
+        for line in f:
+            if len(line) > 0 and line[0] != '#':
+                self._test_level_data = line
         f.close()
 
         self._clear_all()

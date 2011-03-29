@@ -107,6 +107,7 @@ class InfusedActivity(activity.Activity):
         """ Initialize the toolbars and the reading board """
         super(InfusedActivity, self).__init__(handle)
         self.reading = False
+        self.testing = False
 
         if 'LANG' in os.environ:
             language = os.environ['LANG'][0:2]
@@ -125,7 +126,7 @@ class InfusedActivity(activity.Activity):
         # Create a canvas
         self.sw = gtk.ScrolledWindow()
         self.set_canvas(self.sw)
-        self.sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        self.sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.sw.show()
         canvas = gtk.DrawingArea()
         width = gtk.gdk.screen_width()
@@ -202,6 +203,11 @@ class InfusedActivity(activity.Activity):
             'go-down', _('Read the sounds one at a time.'),
             self._read_cb, toolbar)
 
+        _separator_factory(toolbar)
+
+        self._test_button = _button_factory('go-right', _('Self test'),
+            self._test_cb, toolbar)
+
         self.status = _label_factory('', toolbar)
 
         if _have_toolbox:
@@ -234,6 +240,7 @@ class InfusedActivity(activity.Activity):
             self._page.page -= 1
         self._page.new_page()
         self.reading = False
+        self.testing = False
         self._read_button.set_icon('go-down')
         self._read_button.set_tooltip(_('Show letter'))
 
@@ -242,6 +249,7 @@ class InfusedActivity(activity.Activity):
         self._page.page += 1
         self._page.new_page()
         self.reading = False
+        self.testing = False
         self._read_button.set_icon('go-down')
         self._read_button.set_tooltip(_('Show letter'))
 
@@ -249,14 +257,29 @@ class InfusedActivity(activity.Activity):
         ''' Start a new page. '''
         if not self.reading:
             self.reading = True
+            self.testing = False
             self._page.read()
             self._read_button.set_icon('go-up')
             self._read_button.set_tooltip(_('Show letter'))
         else:
             self.reading = False
+            self.testing = False
             self._page.reload()
             self._read_button.set_icon('go-down')
             self._read_button.set_tooltip(_('Read the sounds one at a time.'))
+
+    def _test_cb(self, button=None):
+        ''' Start a test. '''
+        if not self.testing:
+            self.testing = True
+            self._page.test()
+            self._test_button.set_icon('go-left')
+            self._test_button.set_tooltip(_('Return to reading'))
+        else:
+            self.testing = False
+            self._page.reload()
+            self._test_button.set_icon('go-right')
+            self._test_button.set_tooltip(_('Self test'))
 
     def write_file(self, file_path):
         ''' Write status to the Journal '''
