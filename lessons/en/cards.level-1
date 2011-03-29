@@ -1,0 +1,19 @@
+# Copyright (c) 2011 Educational Solutions
+#
+# These words represent Level 1 in English
+# Use CAPS for highlighted letter in phrase.
+# letter, phrase, RGB color, color name, outline stroke, sound file, sound
+A pAt #BA6C71 light-pink False a-as-in-pat.ogg ah
+U Up #FFFCC0 yellow True u-as-in-up.ogg uh
+I It #EF2891 pink False i-as-in-it.ogg ih
+E pEt #70A9CE blue False e-as-in-pet.ogg eh
+O pOt #FFFFFF white True o-as-in-pot.ogg ah
+Y tummY #DE1C23 red False y-as-in-tummy.ogg e
+P Pat #A4221E brown False p-as-in-pat.ogg p
+N Not,-teNNis #7A6BBD purple False n-as-in-not.ogg n
+T Tap #C72098 dark-pink False t-as-in-tap.ogg t
+D DaD #2EA539 green False d-as-in-dog.ogg d
+S iS,-aS,-waS,-sayS #B139A2 purple False s-as-in-is.ogg s
+M MoM #EE3C1E dark-pink False m-as-in-mom.ogg m
+S Sam,-Stop,-it'S #7EC93C curly green False s-as-in-sam.ogg s
+A read-A-book #FFF200 bright-yellow True a-as-in-read-a-book.ogg a

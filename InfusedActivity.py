@@ -30,7 +30,8 @@ if _have_toolbox:
 
 from sugar.graphics.toolbutton import ToolButton
 from sugar.graphics.menuitem import MenuItem
-from sugar.graphics.icon import Icon
+from sugar.graphics.combobox import ComboBox
+from sugar.graphics.toolcombobox import ToolComboBox
 from sugar.datastore import datastore
 
 from gettext import gettext as _
@@ -76,6 +77,20 @@ def _label_factory(label, toolbar):
     return my_label
 
 
+def _combo_factory(options, tooltip, toolbar, callback, default=0):
+    """ Combo box factory """
+    combo = ComboBox()
+    if hasattr(combo, 'set_tooltip_text'):
+        combo.set_tooltip_text(tooltip)
+    combo.connect('changed', callback)
+    for i, o in enumerate(options):
+        combo.append_item(i, o, None)
+    combo.set_active(default)
+    tool = ToolComboBox(combo)
+    toolbar.insert(tool, -1)
+    return combo
+
+
 def _separator_factory(toolbar, visible=True, expand=False):
     """ Factory for adding a separator to a toolbar """
     separator = gtk.SeparatorToolItem()
@@ -93,6 +108,18 @@ class InfusedActivity(activity.Activity):
         super(InfusedActivity, self).__init__(handle)
         self.reading = False
 
+        if 'LANG' in os.environ:
+            language = os.environ['LANG'][0:2]
+        elif 'LANGUAGE' in os.environ:
+            language = os.environ['LANGUAGE'][0:2]
+        else:
+            language = 'en'
+        if os.path.exists(os.path.join('~', 'Activities', 'Infused.activity')):
+            self._path = os.path.join('~', 'Activities', 'Infused.activity',
+                                      'lessons', language)
+        else:
+            self._path = os.path.join('.', 'lessons', language)
+
         self._setup_toolbars(_have_toolbox)
 
         # Create a canvas
@@ -107,9 +134,11 @@ class InfusedActivity(activity.Activity):
         self.sw.add_with_viewport(canvas)
         canvas.show()
 
-        self._page = Page(canvas, parent=self)
+        self._level = self._levels_combo.get_active()
+        self._page = Page(canvas, self._path, self._levels[self._level],
+                          parent=self)
 
-        # Restore game state from Journal or start new game
+        # Restore state from Journal or start new session
         if 'page' in self.metadata:
             self._restore()
         else:
@@ -150,6 +179,12 @@ class InfusedActivity(activity.Activity):
             elif hasattr(toolbox, 'props'):
                 toolbox.props.visible = False
 
+        self._levels = self._get_levels(self._path)
+        self._levels_combo = _combo_factory(self._levels, _('Select lesson'),
+                                            toolbar, self._levels_cb)
+
+        _separator_factory(toolbar)
+
         self._list_button = _button_factory(
             'format-justify-fill', _('Letter list'), self._list_cb, toolbar)
 
@@ -164,7 +199,8 @@ class InfusedActivity(activity.Activity):
         _separator_factory(toolbar)
 
         self._read_button = _button_factory(
-            'go-down', _('Click to read'), self._read_cb, toolbar)
+            'go-down', _('Read the sounds one at a time.'),
+            self._read_cb, toolbar)
 
         self.status = _label_factory('', toolbar)
 
@@ -175,6 +211,17 @@ class InfusedActivity(activity.Activity):
             stop_button.props.accelerator = '<Ctrl>q'
             toolbox.toolbar.insert(stop_button, -1)
             stop_button.show()
+
+    def _levels_cb(self, combobox=None):
+        """ The combo box has changed. """
+        if hasattr(self, '_levels_combo'):
+            i = self._levels_combo.get_active()
+            if i != -1 and i != self._level:
+                self._level = i
+                self._page.load_level(self._path, self._levels[self._level])
+            self._page.page = 0
+            self._page.new_page()
+        return
 
     def _list_cb(self, button=None):
         ''' Letter list '''
@@ -209,19 +256,37 @@ class InfusedActivity(activity.Activity):
             self.reading = False
             self._page.reload()
             self._read_button.set_icon('go-down')
-            self._read_button.set_tooltip(_('Read'))
+            self._read_button.set_tooltip(_('Read the sounds one at a time.'))
 
     def write_file(self, file_path):
         ''' Write status to the Journal '''
         if not hasattr(self, '_page'):
             return
         self.metadata['page'] = str(self._page.page)
+        self.metadata['level'] = str(self._level)
 
     def _restore(self):
         ''' Load up cards until we get to the page we stopped on. '''
-        try:
+        if 'level' in self.metadata:
+            n = int(self.metadata['level'])
+            self._level = n
+            self._levels_combo.set_active(n)
+            self._page.load_level(self._path, self._levels[self._level])
+            self._page.page = 0
+            self._page.new_page()
+        if 'page' in self.metadata:
             n = int(self.metadata['page'])
-        except:
-            n = 0
-        for i in range(n):
-            self._next_page_cb()
+            for i in range(n):
+                self._next_page_cb()
+
+    def _get_levels(self, path):
+        """ Look for level files in lessons directory. """
+
+        level_files = []
+        if path is not None:
+            candidates = os.listdir(path)
+            for c in candidates:
+                if c[0:6] == 'cards.' and c[0] != '#' and c[0] != '.' and \
+                        c[-1] != '~':
+                    level_files.append(c.split('.')[1])
+        return level_files
