@@ -153,9 +153,9 @@ class Page():
             if card[0] == '':
                 break
             if card[0] in 'AEIOUY':
-                connector = '-' + _('like') + '-'
+                connector = ' ' + _('like') + ' '
             else:
-                connector = '-' + _('as-in') + '-'
+                connector = ' ' + _('as-in') + ' '
             if i < len(self._colored_letters):
                 self.page = i
                 self._render_phrase(card[0] + connector +card[1],
@@ -177,7 +177,8 @@ class Page():
             self.page = 0
             if self._sugar:
                 self._activity.status.set_label('')
-        if self.page == len(self._cards):
+        if self.page == len(self._cards) and \
+           self.page < len(self._card_level_data):
             self._cards.append(Sprite(self._sprites, self._left,
                                       GRID_CELL_SIZE,
                                       svg_str_to_pixbuf(generate_card(
@@ -295,7 +296,7 @@ class Page():
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
         p = 0
-        my_list = self._word_level_data[self.page].split(' ')
+        my_list = self._word_level_data[self.page].split('/')
 
         # Some pages are aligned left
         if self.page > ALIGN:
@@ -319,7 +320,7 @@ class Page():
 
     def _render_phrase(self, phrase, canvas, gc):
         # The words in the list are separated by dashes
-        words = phrase.split('-')
+        words = phrase.split()
         for word in words:
             # Will word run off the right edge?
             if self._x + len(word) * self._offset > self._width - 20:
