@@ -11,31 +11,23 @@
 # Boston, MA 02111-1307, USA.
 
 import gtk
-import gobject
 
-import sugar
 from sugar.activity import activity
-from sugar import profile
 try:
     from sugar.graphics.toolbarbox import ToolbarBox
-    _have_toolbox = True
+    _HAVE_TOOLBOX = True
 except ImportError:
-    _have_toolbox = False
+    _HAVE_TOOLBOX = False
 
-if _have_toolbox:
-    from sugar.bundle.activitybundle import ActivityBundle
+if _HAVE_TOOLBOX:
     from sugar.activity.widgets import ActivityToolbarButton
     from sugar.activity.widgets import StopButton
-    from sugar.graphics.toolbarbox import ToolbarButton
 
 from sugar.graphics.toolbutton import ToolButton
-from sugar.graphics.menuitem import MenuItem
 from sugar.graphics.combobox import ComboBox
 from sugar.graphics.toolcombobox import ToolComboBox
-from sugar.datastore import datastore
 
 from gettext import gettext as _
-import locale
 import os.path
 
 from page import Page
@@ -47,7 +39,7 @@ PATH = '/org/augarlabs/InfusedActivity'
 
 def _button_factory(icon_name, tooltip, callback, toolbar, cb_arg=None,
                     accelerator=None):
-    """Factory for making toolbar buttons"""
+    ''' Factory for making toolbar buttons '''
     my_button = ToolButton(icon_name)
     my_button.set_tooltip(tooltip)
     my_button.props.sensitive = True
@@ -66,7 +58,7 @@ def _button_factory(icon_name, tooltip, callback, toolbar, cb_arg=None,
 
 
 def _label_factory(label, toolbar):
-    """ Factory for adding a label to a toolbar """
+    ''' Factory for adding a label to a toolbar '''
     my_label = gtk.Label(label)
     my_label.set_line_wrap(True)
     my_label.show()
@@ -78,13 +70,13 @@ def _label_factory(label, toolbar):
 
 
 def _combo_factory(options, tooltip, toolbar, callback, default=0):
-    """ Combo box factory """
+    ''' Combo box factory '''
     combo = ComboBox()
     if hasattr(combo, 'set_tooltip_text'):
         combo.set_tooltip_text(tooltip)
     combo.connect('changed', callback)
-    for i, o in enumerate(options):
-        combo.append_item(i, o, None)
+    for i, option in enumerate(options):
+        combo.append_item(i, option, None)
     combo.set_active(default)
     tool = ToolComboBox(combo)
     toolbar.insert(tool, -1)
@@ -92,7 +84,7 @@ def _combo_factory(options, tooltip, toolbar, callback, default=0):
 
 
 def _separator_factory(toolbar, visible=True, expand=False):
-    """ Factory for adding a separator to a toolbar """
+    ''' Factory for adding a separator to a toolbar '''
     separator = gtk.SeparatorToolItem()
     separator.props.draw = visible
     separator.set_expand(expand)
@@ -101,10 +93,10 @@ def _separator_factory(toolbar, visible=True, expand=False):
 
 
 class InfusedActivity(activity.Activity):
-    """ Infused Reading guide """
+    ''' Infused Reading guide '''
 
     def __init__(self, handle):
-        """ Initialize the toolbars and the reading board """
+        ''' Initialize the toolbars and the reading board '''
         super(InfusedActivity, self).__init__(handle)
         self.reading = False
         self.testing = False
@@ -121,18 +113,18 @@ class InfusedActivity(activity.Activity):
         else:
             self._path = os.path.join('.', 'lessons', language)
 
-        self._setup_toolbars(_have_toolbox)
+        self._setup_toolbars()
 
         # Create a canvas
-        self.sw = gtk.ScrolledWindow()
-        self.set_canvas(self.sw)
-        self.sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        self.sw.show()
+        self.scrolled_window = gtk.ScrolledWindow()
+        self.set_canvas(self.scrolled_window)
+        self.scrolled_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        self.scrolled_window.show()
         canvas = gtk.DrawingArea()
         width = gtk.gdk.screen_width()
         height = gtk.gdk.screen_height() * 2
         canvas.set_size_request(width, height)
-        self.sw.add_with_viewport(canvas)
+        self.scrolled_window.add_with_viewport(canvas)
         canvas.show()
 
         self._level = self._levels_combo.get_active()
@@ -145,13 +137,13 @@ class InfusedActivity(activity.Activity):
         else:
             self._page.new_page()
 
-    def _setup_toolbars(self, have_toolbox):
-        """ Setup the toolbars.. """
+    def _setup_toolbars(self):
+        ''' Setup the toolbars.. '''
 
         # no sharing
         self.max_participants = 1
 
-        if have_toolbox:
+        if _HAVE_TOOLBOX:
             toolbox = ToolbarBox()
 
             # Activity toolbar
@@ -166,7 +158,7 @@ class InfusedActivity(activity.Activity):
 
         else:
             # Use pre-0.86 toolbar design
-            games_toolbar = gtk.Toolbar()
+            page_toolbar = gtk.Toolbar()
             toolbox = activity.ActivityToolbox(self)
             self.set_toolbox(toolbox)
             toolbox.add_toolbar(_('Page'), page_toolbar)
@@ -210,7 +202,7 @@ class InfusedActivity(activity.Activity):
 
         self.status = _label_factory('', toolbar)
 
-        if _have_toolbox:
+        if _HAVE_TOOLBOX:
             _separator_factory(toolbox.toolbar, False, True)
 
             stop_button = StopButton(self)
@@ -219,7 +211,7 @@ class InfusedActivity(activity.Activity):
             stop_button.show()
 
     def _levels_cb(self, combobox=None):
-        """ The combo box has changed. """
+        ''' The combo box has changed. '''
         if hasattr(self, '_levels_combo'):
             i = self._levels_combo.get_active()
             if i != -1 and i != self._level:
@@ -291,25 +283,30 @@ class InfusedActivity(activity.Activity):
     def _restore(self):
         ''' Load up cards until we get to the page we stopped on. '''
         if 'level' in self.metadata:
-            n = int(self.metadata['level'])
-            self._level = n
-            self._levels_combo.set_active(n)
+            level = int(self.metadata['level'])
+            self._level = level
+            self._levels_combo.set_active(level)
             self._page.load_level(self._path, self._levels[self._level])
             self._page.page = 0
             self._page.new_page()
         if 'page' in self.metadata:
-            n = int(self.metadata['page'])
-            for i in range(n):
+            page = int(self.metadata['page'])
+            for _i in range(page):
                 self._next_page_cb()
 
     def _get_levels(self, path):
-        """ Look for level files in lessons directory. """
-
+        ''' Look for level files in lessons directory. '''
         level_files = []
         if path is not None:
             candidates = os.listdir(path)
-            for c in candidates:
-                if c[0:6] == 'cards.' and c[0] != '#' and c[0] != '.' and \
-                        c[-1] != '~':
-                    level_files.append(c.split('.')[1])
+            for filename in candidates:
+                if filename[0:6] == 'cards.' and \
+                   not self._skip_this_file(filename):
+                    level_files.append(filename.split('.')[1])
         return level_files
+
+    def _skip_this_file(self, filename):
+        ''' Ignore tmp files '''
+        if filename[0] in '#.' or filename[-1] == '~':
+            return True
+        return False

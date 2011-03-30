@@ -31,7 +31,6 @@ except ImportError:
 from genpieces import generate_card
 from utils.sprites import Sprites, Sprite
 
-# TODO: Generalize all these special cases across levels
 # TRANS: e.g., This yellow sign is said u like up.
 MSGS = [[_('This %s sign is said\n\nReading from left to right, read the\n\
 sounds one at a time. You can\nuse your finger to follow along.'),
@@ -57,8 +56,10 @@ ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'!"
 
 
 class Page():
+    ''' Pages from Infuse Reading method '''
 
     def __init__(self, canvas, path, level, parent=None):
+        ''' The general stuff we need to track '''
         self._activity = parent
 
         # Starting from command line
@@ -90,8 +91,8 @@ class Page():
         self._press = None
         self._release = None
         self.gplay = None
-        self._x = 10
-        self._y = 10
+        self._xpos = 10
+        self._ypos = 10
         self._final_x = 0
         self._offset = int(self._width / 30.)
         self._looking_at_word_list = False
@@ -148,9 +149,8 @@ class Page():
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
-        p = 0
 
-        self._x, self._y = 10, 10
+        self._xpos, self._ypos = 10, 10
 
         # Each list is a collection of phrases, separated by spaces
         for i, card in enumerate(self._card_data):
@@ -162,21 +162,21 @@ class Page():
                 connector = ' ' + _('as-in') + ' '
             if i < len(self._colored_letters):
                 self.page = i
-                self._render_phrase(card[0] + connector +card[1],
+                self._render_phrase(card[0] + connector + card[1],
                                     self._my_canvas, self._my_gc)
             else:
                 self._render_phrase(
                     card[0].lower() + connector + card[1].lower(),
                     self._my_canvas, self._my_gc)
 
-            self._x = 10
-            self._y += 40
+            self._xpos = 10
+            self._ypos += 40
 
         self.page = save_page
         self._looking_at_word_list = True
 
-    def new_page(self, saved_state=None, deck_index=0):
-        ''' Load a new page. '''
+    def new_page(self):
+        ''' Load a new page: a card and a message '''
         if self.page == len(self._word_data):
             self.page = 0
         if self._sugar:
@@ -205,20 +205,16 @@ class Page():
                 stroke = True
             else:
                 stroke = False
-            self._colored_letters.append(Sprite(self._sprites, 0, 0,
-                                                svg_str_to_pixbuf(generate_card(
+            self._colored_letters.append(Sprite(
+                    self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
                             string=self._card_data[self.page][0].lower(),
-                            colors=[self._color_data[self.page][0],
-                                    '#000000'],
+                            colors=[self._color_data[self.page][0], '#000000'],
                             background=False, stroke=stroke))))
 
             if self._sugar:
                 self._activity.status.set_label('')
 
-        for c in self._cards:
-            c.set_layer(0)
-        for c in self._double_cards:
-            c.set_layer(0)
+        self._hide_cards()
         if self.page >= len(self._card_data):
             self._background.set_label('')
             self._like_card.set_layer(0)
@@ -228,6 +224,7 @@ class Page():
         self._looking_at_word_list = False
 
     def _load_card(self):
+        ''' a card is a sprite and a message. '''
         self._cards[self.page].set_layer(2)
 
         if self._msg_data[self.page] == CONSONANT:
@@ -242,8 +239,8 @@ class Page():
         rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height / 10.0))
         self._like_card.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, int(self._height / 10.0))
-        self._x = 0
-        self._y = 0
+        self._xpos = 0
+        self._ypos = 0
         if self._msg_data[self.page] == CONSONANT:
             self._render_phrase(MSGS[CONSONANT][1] % (
                     self._card_data[self.page][1]),
@@ -251,15 +248,16 @@ class Page():
             self._like_card.move((int((self._width - self._final_x) / 2.0),
                                  int(4 * self._height / 5.0)))
         elif self._msg_data[self.page] == LIGHT:
-            self._render_phrase(MSGS[LIGHT][1] % (self._card_data[self.page][0],
+            self._render_phrase(MSGS[LIGHT][1] % (
+                    self._card_data[self.page][0],
                     self._card_data[self.page][1]),
                                 self._like_card, self._like_gc)
             self._like_card.move((int((self._width - self._final_x) / 2.0),
                                  int(3.5 * self._height / 5.0)))
         else:
-            self._render_phrase(MSGS[self._msg_data[self.page]][1] % \
-                                    (self._card_data[self.page][0],
-                                     self._card_data[self.page][1]),
+            self._render_phrase(MSGS[self._msg_data[self.page]][1] % (
+                    self._card_data[self.page][0],
+                    self._card_data[self.page][1]),
                                 self._like_card, self._like_gc)
             self._like_card.move((int((self._width - self._final_x) / 2.0),
                                  int(3 * self._height / 5.0)))
@@ -279,6 +277,7 @@ class Page():
         self._my_canvas.set_layer(0)
 
     def reload(self):
+        ''' Switch back and forth between reading and displaying a card. '''
         if self.page < len(self._card_data):
             self._load_card()
         else:
@@ -287,14 +286,14 @@ class Page():
             self._activity.status.set_label('')
 
     def read(self):
-        """ Read a word list """
+        ''' Read a word list '''
         self._clear_all()
 
         rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
-        p = 0
+
         my_list = self._word_data[self.page].split('/')
 
         if self.page > ALIGN:
@@ -302,11 +301,10 @@ class Page():
         else:
             align = False
 
-        # Some pages are aligned left
-        if align:
-            self._x, self._y = 10, 10
+        if align:  # Some pages are aligned left
+            self._xpos, self._ypos = 10, 10
         else:
-            self._x, self._y = self._xy(0)
+            self._xpos, self._ypos = self._increment_xy(0)
 
         for phrase in my_list:
             self._render_phrase(phrase, self._my_canvas, self._my_gc,
@@ -314,48 +312,50 @@ class Page():
 
             # Put a longer space between each phrase
             if align:
-                self._x += self._offset
+                self._xpos += self._offset
             else:
-                self._x += int(uniform(30, self._width / 8))
-            if self._x > self._width * 7 / 8.0:
-                self._x, self._y = self._xy(self._y, align=align)
+                self._xpos += int(uniform(30, self._width / 8))
+            if self._xpos > self._width * 7 / 8.0:
+                self._xpos, self._ypos = self._increment_xy(self._ypos,
+                                                            align=align)
 
         self._looking_at_word_list = False
 
     def test(self):
-        """ Generate a randomly ordered list of phrases """
+        ''' Generate a randomly ordered list of phrases. '''
         self._clear_all()
 
         rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
-        p = 0
+
         phrase_list = self._test_data.split('/')
         list_length = len(phrase_list)
 
-        for n in range(list_length):  # Randomize the phrase order.
-            i = randrange(list_length - n)
-            tmp = phrase_list[n]
-            phrase_list[n] = phrase_list[list_length - 1 - i]
-            phrase_list[list_length - 1 - i] = tmp
+        for i in range(list_length):  # Randomize the phrase order.
+            j = randrange(list_length - i)
+            tmp = phrase_list[i]
+            phrase_list[i] = phrase_list[list_length - 1 - j]
+            phrase_list[list_length - 1 - j] = tmp
 
-        self._x, self._y = 10, 10
+        self._xpos, self._ypos = 10, 10
 
         for phrase in phrase_list:
             self._render_phrase(phrase, self._my_canvas, self._my_gc,
                                 align=True)
-            self._x, self._y = self._xy(self._y, align=True)
+            self._xpos, self._ypos = self._increment_xy(self._ypos, align=True)
 
         self._looking_at_word_list = False
 
     def _render_phrase(self, phrase, canvas, gc, align=False):
-        # The words in the list are separated by dashes
+        ''' Draw an individual phase onto the canvas. '''
         words = phrase.split()
         for word in words:
             # Will word run off the right edge?
-            if self._x + len(word) * self._offset > self._width - 20:
-                self._x, self._y = self._xy(self._y, align=align)
+            if self._xpos + len(word) * self._offset > self._width - 20:
+                self._xpos, self._ypos = self._increment_xy(self._ypos,
+                                                            align=align)
 
             # Process each character in the word
             for c in range(len(word)):
@@ -363,30 +363,32 @@ class Page():
                    word[c] == self._card_data[self.page][0]:
                     self._draw_pixbuf(
                         self._colored_letters[self.page].images[0],
-                        self._x, self._y, canvas, gc)
+                        self._xpos, self._ypos, canvas, gc)
                 else:
                     if word[c] in ALPHABET:
                         i = ALPHABET.index(word[c])
                         self._draw_pixbuf(self._letters[i].images[0],
-                                          self._x, self._y, canvas, gc)
+                                          self._xpos, self._ypos, canvas, gc)
                 if word[c] in KERN:
-                    self._x += self._offset * KERN[word[c]]
+                    self._xpos += self._offset * KERN[word[c]]
                 else:
-                    self._x += self._offset
+                    self._xpos += self._offset
 
-            self._final_x = self._x
+            self._final_x = self._xpos
             # Put a space after each word
-            if self._x > 10:
-                self._x += int(self._offset / 1.6)
+            if self._xpos > 10:
+                self._xpos += int(self._offset / 1.6)
 
     def _draw_pixbuf(self, pixbuf, x, y, canvas, gc):
+        ''' Draw a pixbuf onto the canvas '''
         w = pixbuf.get_width()
         h = pixbuf.get_height()
-        canvas.images[0].draw_pixbuf(gc, pixbuf, 0, 0,
-                                             int(x), int(y))
+        canvas.images[0].draw_pixbuf(gc, pixbuf, 0, 0, int(x), int(y))
         self.invalt(x, y, w, h)
 
-    def _xy(self, y, align=False):
+    def _increment_xy(self, y, align=False):
+        ''' Increment the xy postion for drawing the next phrase,
+        possibly with left-justified alignment. '''
         if align:
             return 10, int(self._height / 10.0) + y
         else:
@@ -394,6 +396,7 @@ class Page():
                    int(uniform(40, self._height / 10.0)) + y
 
     def _button_press_cb(self, win, event):
+        ''' Either a card or list entry was pressed. '''
         win.grab_focus()
         x, y = map(int, event.get_coords())
 
@@ -406,6 +409,7 @@ class Page():
         return True
 
     def _button_release_cb(self, win, event):
+        ''' Play a sound or jump to a card as indexed in the list. '''
         win.grab_focus()
 
         if self._looking_at_word_list:
@@ -432,22 +436,22 @@ class Page():
                         os.system('espeak "%s" --stdout | aplay' % \
                                       (self._sound_data[self.page][1]))
 
-    def _game_over(self, msg=_('Game over')):
-        if self._sugar:
-            self._activity.status.set_label(msg)
-
     def _keypress_cb(self, area, event):
+        ''' No keyboard shortcuts at the moment. Perhaps jump to the page
+        associated with the key pressed? '''
         return True
 
     def _expose_cb(self, win, event):
+        ''' When asked, we need to refresh the screen. '''
         self._sprites.redraw_sprites()
         return True
 
     def _destroy_cb(self, win, event):
+        ''' Make a clean exit. '''
         gtk.main_quit()
 
     def invalt(self, x, y, w, h):
-        """ Mark a region for refresh """
+        ''' Mark a region for refresh '''
         self._canvas.window.invalidate_rect(
             gtk.gdk.Rectangle(int(x), int(y), int(w), int(h)), False)
 
@@ -500,17 +504,23 @@ class Page():
         self._colored_letters = []
 
     def _clear_all(self):
-        for c in self._cards:
-            c.set_layer(0)
-        for c in self._double_cards:
-            c.set_layer(0)
+        ''' Hide everything so we can begin a new page. '''
+        self._hide_cards()
         self._background.set_label('')
         self._background.set_layer(0)
         self._like_card.set_layer(0)
         self._page_2.set_layer(0)
 
+    def _hide_cards(self):
+        ''' Hide any cards that might be around. '''
+        for card in self._cards:
+            card.set_layer(0)
+        for card in self._double_cards:
+            card.set_layer(0)
+
+
 def svg_str_to_pixbuf(svg_string):
-    ''' Load pixbuf from SVG string '''
+    ''' Load pixbuf from SVG string. '''
     pl = gtk.gdk.PixbufLoader('svg')
     pl.write(svg_string)
     pl.close()
