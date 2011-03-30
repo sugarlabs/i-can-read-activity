@@ -33,17 +33,21 @@ from utils.sprites import Sprites, Sprite
 
 # TODO: Generalize all these special cases across levels
 # TRANS: e.g., This yellow sign is said u like up.
-MSGS = [[_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
+MSGS = [[_('This %s sign is said\n\nReading from left to right, read the\n\
+sounds one at a time. You can\nuse your finger to follow along.'),
+         '%s ' + _('like') + ' %s.'],
+        [_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
+        [_('This %s sign is\nlightly said\n'), '%s ' + _('like') + ' %s.'],
         [_('This %s sign is said\ntogether with other sounds\nas in:\n'),
          '%s'],
-        [_('This %s sign is\nlightly said\n'), '%s ' + _('like') + ' %s.'],
-        [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), ''],
-        [_('This %s sign is said\n\nReading from left to right, read the\n\
-sounds one at a time. You can\nuse your finger to follow along.'),
-         '%s ' + _('like') + ' %s.']]
-MSG_INDEX = [4, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, -1, -1]
-SHOW_MSG2 = [False, False, False, False, False, False, True, True, True,
-              True, True, True, True, False, False, False]
+        [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), '']]
+FIRST_CARD = 0
+VOWEL = 1
+LIGHT = 2
+CONSONANT = 3
+SECOND_CARD = 4
+
+# TODO: make this a property of the word list
 ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 # Rendering-related constants
@@ -149,7 +153,7 @@ class Page():
         self._x, self._y = 10, 10
 
         # Each list is a collection of phrases, separated by spaces
-        for i, card in enumerate(self._card_level_data):
+        for i, card in enumerate(self._card_data):
             if card[0] == '':
                 break
             if card[0] in 'AEIOUY':
@@ -173,38 +177,38 @@ class Page():
 
     def new_page(self, saved_state=None, deck_index=0):
         ''' Load a new page. '''
-        if self.page == len(self._word_level_data):
+        if self.page == len(self._word_data):
             self.page = 0
-            if self._sugar:
-                self._activity.status.set_label('')
+        if self._sugar:
+            self._activity.status.set_label('')
         if self.page == len(self._cards) and \
-           self.page < len(self._card_level_data):
+           self.page < len(self._card_data):
             self._cards.append(Sprite(self._sprites, self._left,
                                       GRID_CELL_SIZE,
                                       svg_str_to_pixbuf(generate_card(
-                            string=self._card_level_data[self.page][0].lower(),
-                            colors=[self._color_level_data[self.page][0],
+                            string=self._card_data[self.page][0].lower(),
+                            colors=[self._color_data[self.page][0],
                                     '#000000'],
                             scale=self._scale,
                             center=True))))
             self._double_cards.append(Sprite(self._sprites, self._left,
                                              self._height + GRID_CELL_SIZE * 2,
                                              svg_str_to_pixbuf(generate_card(
-                            string=self._card_level_data[self.page][0].lower()\
-                                + self._card_level_data[self.page][0].lower(),
-                            colors=[self._color_level_data[self.page][0],
+                            string=self._card_data[self.page][0].lower()\
+                                + self._card_data[self.page][0].lower(),
+                            colors=[self._color_data[self.page][0],
                                     '#000000'],
                             scale=self._scale,
                             font_size=32,
                             center=True))))
-            if self._color_level_data[self.page][2]:
+            if self._color_data[self.page][2]:
                 stroke = True
             else:
                 stroke = False
             self._colored_letters.append(Sprite(self._sprites, 0, 0,
                                                 svg_str_to_pixbuf(generate_card(
-                            string=self._card_level_data[self.page][0].lower(),
-                            colors=[self._color_level_data[self.page][0],
+                            string=self._card_data[self.page][0].lower(),
+                            colors=[self._color_data[self.page][0],
                                     '#000000'],
                             background=False, stroke=stroke))))
 
@@ -215,7 +219,7 @@ class Page():
             c.set_layer(0)
         for c in self._double_cards:
             c.set_layer(0)
-        if MSG_INDEX[self.page] < 0:
+        if self.page >= len(self._card_data):
             self._background.set_label('')
             self._like_card.set_layer(0)
             self.read()
@@ -226,12 +230,12 @@ class Page():
     def _load_card(self):
         self._cards[self.page].set_layer(2)
 
-        if MSG_INDEX[self.page] == 1:
-            self._background.set_label(MSGS[1][0] % (
-                    self._color_level_data[self.page][1]))
+        if self._msg_data[self.page] == CONSONANT:
+            self._background.set_label(MSGS[CONSONANT][0] % (
+                    self._color_data[self.page][1]))
         else:
-            self._background.set_label(MSGS[MSG_INDEX[self.page]][0] % \
-                                     (self._color_level_data[self.page][1]))
+            self._background.set_label(MSGS[self._msg_data[self.page]][0] % \
+                                     (self._color_data[self.page][1]))
         self._background.set_layer(1)
         self._page_2.set_layer(1)
 
@@ -240,23 +244,29 @@ class Page():
         self.invalt(0, 0, self._width, int(self._height / 10.0))
         self._x = 0
         self._y = 0
-        if MSG_INDEX[self.page] == 1:
-            self._render_phrase(MSGS[1][1] % (
-                    self._card_level_data[self.page][1]),
+        if self._msg_data[self.page] == CONSONANT:
+            self._render_phrase(MSGS[CONSONANT][1] % (
+                    self._card_data[self.page][1]),
                                 self._like_card, self._like_gc)
             self._like_card.move((int((self._width - self._final_x) / 2.0),
                                  int(4 * self._height / 5.0)))
+        elif self._msg_data[self.page] == LIGHT:
+            self._render_phrase(MSGS[LIGHT][1] % (self._card_data[self.page][0],
+                    self._card_data[self.page][1]),
+                                self._like_card, self._like_gc)
+            self._like_card.move((int((self._width - self._final_x) / 2.0),
+                                 int(3.5 * self._height / 5.0)))
         else:
-            self._render_phrase(MSGS[MSG_INDEX[self.page]][1] % \
-                                    (self._card_level_data[self.page][0],
-                                     self._card_level_data[self.page][1]),
+            self._render_phrase(MSGS[self._msg_data[self.page]][1] % \
+                                    (self._card_data[self.page][0],
+                                     self._card_data[self.page][1]),
                                 self._like_card, self._like_gc)
             self._like_card.move((int((self._width - self._final_x) / 2.0),
                                  int(3 * self._height / 5.0)))
         self._like_card.set_layer(1)
 
-        if SHOW_MSG2[self.page]:
-            self._page_2.set_label(MSGS[3][0])
+        if self._msg_data[self.page] == CONSONANT:
+            self._page_2.set_label(MSGS[SECOND_CARD][0])
             self._double_cards[self.page].set_layer(2)
         else:
             self._page_2.set_label('')
@@ -269,7 +279,7 @@ class Page():
         self._my_canvas.set_layer(0)
 
     def reload(self):
-        if MSG_INDEX[self.page] >= 0:
+        if self.page < len(self._card_data):
             self._load_card()
         else:
             self.read()
@@ -285,12 +295,12 @@ class Page():
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
         p = 0
-        my_list = self._word_level_data[self.page].split('/')
+        my_list = self._word_data[self.page].split('/')
 
         if self.page > ALIGN:
-            align = False
-        else:
             align = True
+        else:
+            align = False
 
         # Some pages are aligned left
         if align:
@@ -299,7 +309,8 @@ class Page():
             self._x, self._y = self._xy(0)
 
         for phrase in my_list:
-            self._render_phrase(phrase, self._my_canvas, self._my_gc)
+            self._render_phrase(phrase, self._my_canvas, self._my_gc,
+                                align=align)
 
             # Put a longer space between each phrase
             if align:
@@ -320,7 +331,7 @@ class Page():
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
         p = 0
-        phrase_list = self._test_level_data.split('/')
+        phrase_list = self._test_data.split('/')
         list_length = len(phrase_list)
 
         for n in range(list_length):  # Randomize the phrase order.
@@ -348,8 +359,8 @@ class Page():
 
             # Process each character in the word
             for c in range(len(word)):
-                if MSG_INDEX[self.page] >= 0 and \
-                   word[c] == self._card_level_data[self.page][0]:
+                if self.page < len(self._card_data) and \
+                   word[c] == self._card_data[self.page][0]:
                     self._draw_pixbuf(
                         self._colored_letters[self.page].images[0],
                         self._x, self._y, canvas, gc)
@@ -406,22 +417,20 @@ class Page():
             else:
                 self.page = self._goto_page
                 self.new_page()
-            if self._sugar:
-                self._activity.status.set_label(_(''))
         else:
             x, y = map(int, event.get_coords())
             spr = self._sprites.find_sprite((x, y))
             if spr == self._cards[self.page]:
-                if MSG_INDEX[self.page] >= 0:
+                if self.page < len(self._card_data):
                     if os.path.exists(os.path.join(
                             os.path.abspath('.'), 'sounds',
-                            self._sound_level_data[self.page][0])):
+                            self._sound_data[self.page][0])):
                         play_audio_from_file(self, os.path.join(
                                 os.path.abspath('.'), 'sounds',
-                                self._sound_level_data[self.page][0]))
+                                self._sound_data[self.page][0]))
                     else:
                         os.system('espeak "%s" --stdout | aplay' % \
-                                      (self._sound_level_data[self.page][1]))
+                                      (self._sound_data[self.page][1]))
 
     def _game_over(self, msg=_('Game over')):
         if self._sugar:
@@ -444,32 +453,45 @@ class Page():
 
     def load_level(self, path, level):
         ''' Load a level from the lessons subdirectory '''
-        self._card_level_data = []
-        self._color_level_data = []
-        self._sound_level_data = []
+        self._card_data = []
+        self._color_data = []
+        self._msg_data = []
+        self._align_data = []
+        self._sound_data = []
         f = file(os.path.join(path, 'cards' + '.' + level), 'r')
         for line in f:
             if len(line) > 0 and line[0] != '#':
                 word = line.split()
-                self._card_level_data.append([word[0], word[1]])
+                self._card_data.append([word[0], word[1]])
                 if word[4] == 'False':
-                    self._color_level_data.append([word[2], word[3], False])
+                    self._color_data.append([word[2], word[3], False])
                 else:
-                    self._color_level_data.append([word[2], word[3], True])
-                self._sound_level_data.append([word[5], word[6]])
+                    self._color_data.append([word[2], word[3], True])
+                if len(self._msg_data) == 0:
+                    self._msg_data.append(FIRST_CARD)
+                elif word[5] == 'vowel':
+                    self._msg_data.append(VOWEL)
+                elif word[5] == 'light':
+                    self._msg_data.append(LIGHT)
+                elif word[5] == 'consonant':
+                    self._msg_data.append(CONSONANT)
+                else:
+                    print 'unknown message id %s' % (word[5])
+                    self._msg_data.append(CONSONANT)
+                self._sound_data.append([word[6], word[7]])
         f.close()
 
-        self._word_level_data = []
+        self._word_data = []
         f = file(os.path.join(path, 'words' + '.' + level), 'r')
         for line in f:
             if len(line) > 0 and line[0] != '#':
-                self._word_level_data.append(line)
+                self._word_data.append(line)
         f.close()
 
         f = file(os.path.join(path, 'tests' + '.' + level), 'r')
         for line in f:
             if len(line) > 0 and line[0] != '#':
-                self._test_level_data = line
+                self._test_data = line
         f.close()
 
         self._clear_all()
