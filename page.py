@@ -32,14 +32,15 @@ from genpieces import generate_card
 from utils.sprites import Sprites, Sprite
 
 # TRANS: e.g., This yellow sign is said u like up.
-MSGS = [[_('This %s sign is said\n\nReading from left to right, read the\n\
-sounds one at a time. You can\nuse your finger to follow along.'),
-         '%s ' + _('like') + ' %s.'],
-        [_('This %s sign is said\n'), '%s ' + _('like') + ' %s.'],
-        [_('This %s sign is\nlightly said\n'), '%s ' + _('like') + ' %s.'],
-        [_('This %s sign is said\ntogether with other sounds\nas in:\n'),
-         '%s'],
-        [_('When it looks like this\n\n\n\n\n\nwe read it the same way.'), '']]
+MSGS = [_('This %s sign is said') + '\n%s '  + _('like') + ' %s.\n' + \
+        _('Reading from left to right,\nread the sounds one at a time.') + \
+        '\n' + _('You can use your finger to') + '\n' + _('follow along.'),
+        _('This %s sign is said') + '\n%s ' + _('like') + ' %s.',
+        _('This %s sign is') +'\n' + _('lightly said') + '\n%s ' + _('like') + \
+       ' %s.',
+        _('This %s sign is said') + '\n' + _('together with other sounds') + \
+        '\n' +  _('as in:') + '%s',
+        _('When it looks like this') + '\n' + _('we read it the same way.')]
 FIRST_CARD = 0
 VOWEL = 1
 LIGHT = 2
@@ -51,8 +52,9 @@ ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 # Rendering-related constants
 KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
-        'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7}
-ALPHABET = "abcdefghijklmnopqrstuvwxyz.,'!"
+        'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6}
+# ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZáéíñóabcdefghijklmnopqrstuvwxyz:.,'!"
+ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!"
 
 
 class Page():
@@ -79,9 +81,8 @@ class Page():
         self._canvas.connect("button-release-event", self._button_release_cb)
         self._canvas.connect("key_press_event", self._keypress_cb)
         self._width = gtk.gdk.screen_width()
-        self._height = gtk.gdk.screen_height() - GRID_CELL_SIZE
+        self._height = gtk.gdk.screen_height()
         self._scale = self._width / 240.
-        self._left = int((self._width - self._scale * 60) / 2.)
         self._sprites = Sprites(self._canvas)
         self.page = 0
         self._cards = []
@@ -91,29 +92,15 @@ class Page():
         self._press = None
         self._release = None
         self.gplay = None
-        self._xpos = 10
-        self._ypos = 10
         self._final_x = 0
-        self._offset = int(self._width / 30.)
+        self._lead = int(self._scale * 12)
+        self._margin = int(self._scale * 3)
+        self._left = self._margin  # int((self._width - self._scale * 60) / 2.)
+        self._x_pos = self._margin
+        self._y_pos = self._lead
+        self._offset = int(self._scale * 8)  # self._width / 30.)
         self._looking_at_word_list = False
 
-        self._background = Sprite(self._sprites, 0, 0, svg_str_to_pixbuf(
-                generate_card(string='', colors=['#FFFFFF', '#FFFFFF'],
-                              scale=self._scale * 4)))
-        self._background.set_layer(1)
-        self._background.set_label_attributes(32)
-        self._page_2 = Sprite(self._sprites, 0, self._height,
-                                  svg_str_to_pixbuf(
-                generate_card(string='', colors=['#FFFFFF', '#FFFFFF'],
-                              scale=self._scale * 4)))
-        self._page_2.set_layer(1)
-        self._page_2.set_label_attributes(32, vert_align='top')
-        self._like_card = Sprite(self._sprites, 0, int(self._height * 4 / 5.0),
-                                gtk.gdk.Pixmap(self._canvas.window,
-                                               self._width,
-                                               int(self._height / 10.0), -1))
-        self._like_card.set_layer(2)
-        self._like_gc = self._like_card.images[0].new_gc()
         self._my_canvas = Sprite(self._sprites, 0, 0,
                                 gtk.gdk.Pixmap(self._canvas.window,
                                                self._width,
@@ -127,6 +114,7 @@ class Page():
             self._letters.append(Sprite(self._sprites, 0, 0,
                 svg_str_to_pixbuf(generate_card(string=c,
                                                 colors=['#000000', '#000000'],
+                                                font_size=12 * self._scale,
                                                 background=False))))
 
         self.load_level(path, level)
@@ -150,7 +138,7 @@ class Page():
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
 
-        self._xpos, self._ypos = 10, 10
+        self._x_pos, self._y_pos = self._margin, self._lead
 
         # Each list is a collection of phrases, separated by spaces
         for i, card in enumerate(self._card_data):
@@ -169,8 +157,8 @@ class Page():
                     card[0].lower() + connector + card[1].lower(),
                     self._my_canvas, self._my_gc)
 
-            self._xpos = 10
-            self._ypos += 40
+            self._x_pos = self._margin
+            self._y_pos += self._lead
 
         self.page = save_page
         self._looking_at_word_list = True
@@ -187,19 +175,17 @@ class Page():
                                       GRID_CELL_SIZE,
                                       svg_str_to_pixbuf(generate_card(
                             string=self._card_data[self.page][0].lower(),
-                            colors=[self._color_data[self.page][0],
-                                    '#000000'],
+                            colors=[self._color_data[self.page][0], '#000000'],
                             scale=self._scale,
                             center=True))))
             self._double_cards.append(Sprite(self._sprites, self._left,
                                              self._height + GRID_CELL_SIZE * 2,
                                              svg_str_to_pixbuf(generate_card(
-                            string=self._card_data[self.page][0].lower()\
-                                + self._card_data[self.page][0].lower(),
-                            colors=[self._color_data[self.page][0],
-                                    '#000000'],
+                            string=self._card_data[self.page][0].lower()
+                                 + self._card_data[self.page][0].lower(),
+                            colors=[self._color_data[self.page][0], '#000000'],
                             scale=self._scale,
-                            font_size=32,
+                            font_size=40,
                             center=True))))
             if self._color_data[self.page][2]:
                 stroke = True
@@ -209,6 +195,7 @@ class Page():
                     self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
                             string=self._card_data[self.page][0].lower(),
                             colors=[self._color_data[self.page][0], '#000000'],
+                            font_size=12 * self._scale,
                             background=False, stroke=stroke))))
 
             if self._sugar:
@@ -216,8 +203,6 @@ class Page():
 
         self._hide_cards()
         if self.page >= len(self._card_data):
-            self._background.set_label('')
-            self._like_card.set_layer(0)
             self.read()
         else:
             self._load_card()
@@ -227,47 +212,46 @@ class Page():
         ''' a card is a sprite and a message. '''
         self._cards[self.page].set_layer(2)
 
-        if self._msg_data[self.page] == CONSONANT:
-            self._background.set_label(MSGS[CONSONANT][0] % (
-                    self._color_data[self.page][1]))
-        else:
-            self._background.set_label(MSGS[self._msg_data[self.page]][0] % \
-                                     (self._color_data[self.page][1]))
-        self._background.set_layer(1)
-        self._page_2.set_layer(1)
+        self._x_pos = self._margin
+        self._y_pos = self._cards[self.page].rect.y + \
+                      self._cards[self.page].images[0].get_height() + self._lead
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2))
+        self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
+        self.invalt(0, 0, self._width, int(self._height * 2))
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height / 10.0))
-        self._like_card.images[0].draw_rectangle(self._my_gc, True, *rect)
-        self.invalt(0, 0, self._width, int(self._height / 10.0))
-        self._xpos = 0
-        self._ypos = 0
         if self._msg_data[self.page] == CONSONANT:
-            self._render_phrase(MSGS[CONSONANT][1] % (
-                    self._card_data[self.page][1]),
-                                self._like_card, self._like_gc)
-            self._like_card.move((int((self._width - self._final_x) / 2.0),
-                                 int(4 * self._height / 5.0)))
+            text = MSGS[CONSONANT] % (self._color_data[self.page][1],
+                                      self._card_data[self.page][1])
         elif self._msg_data[self.page] == LIGHT:
-            self._render_phrase(MSGS[LIGHT][1] % (
-                    self._card_data[self.page][0],
-                    self._card_data[self.page][1]),
-                                self._like_card, self._like_gc)
-            self._like_card.move((int((self._width - self._final_x) / 2.0),
-                                 int(3.5 * self._height / 5.0)))
+            text = MSGS[LIGHT] % (self._color_data[self.page][1],
+                                  self._card_data[self.page][0],
+                                  self._card_data[self.page][1])
         else:
-            self._render_phrase(MSGS[self._msg_data[self.page]][1] % (
-                    self._card_data[self.page][0],
-                    self._card_data[self.page][1]),
-                                self._like_card, self._like_gc)
-            self._like_card.move((int((self._width - self._final_x) / 2.0),
-                                 int(3 * self._height / 5.0)))
-        self._like_card.set_layer(1)
+            text = MSGS[self._msg_data[self.page]] % (
+                self._color_data[self.page][1],
+                self._card_data[self.page][0],
+                self._card_data[self.page][1])
+
+        for phrase in text.split('\n'):
+            self._render_phrase(phrase, self._my_canvas, self._my_gc,
+                                align=True)
+            self._x_pos = self._margin
+            self._y_pos += self._lead
 
         if self._msg_data[self.page] == CONSONANT:
-            self._page_2.set_label(MSGS[SECOND_CARD][0])
+            self._y_pos += self._lead
+            self._render_phrase(MSGS[SECOND_CARD].split('\n')[0],
+                                self._my_canvas, self._my_gc, align=True)
+            self._x_pos = self._margin
+            self._y_pos += self._lead * 2
+            self._double_cards[self.page].move((self._left, self._y_pos))
             self._double_cards[self.page].set_layer(2)
-        else:
-            self._page_2.set_label('')
+            self._x_pos = self._margin
+            self._y_pos = self._double_cards[self.page].rect.y + \
+                self._double_cards[self.page].images[0].get_height() + \
+                self._lead
+            self._render_phrase(MSGS[SECOND_CARD].split('\n')[1],
+                                self._my_canvas, self._my_gc, align=True)
 
         # Hide all the letter sprites.
         for l in self._letters:
@@ -302,9 +286,9 @@ class Page():
             align = False
 
         if align:  # Some pages are aligned left
-            self._xpos, self._ypos = 10, 10
+            self._x_pos, self._y_pos = self._margin, self._lead
         else:
-            self._xpos, self._ypos = self._increment_xy(0)
+            self._x_pos, self._y_pos = self._increment_xy(0)
 
         for phrase in my_list:
             self._render_phrase(phrase, self._my_canvas, self._my_gc,
@@ -312,11 +296,11 @@ class Page():
 
             # Put a longer space between each phrase
             if align:
-                self._xpos += self._offset
+                self._x_pos += self._offset
             else:
-                self._xpos += int(uniform(30, self._width / 8))
-            if self._xpos > self._width * 7 / 8.0:
-                self._xpos, self._ypos = self._increment_xy(self._ypos,
+                self._x_pos += int(uniform(self._margin, self._width / 8))
+            if self._x_pos > self._width * 7 / 8.0:
+                self._x_pos, self._y_pos = self._increment_xy(self._y_pos,
                                                             align=align)
 
         self._looking_at_word_list = False
@@ -339,12 +323,15 @@ class Page():
             phrase_list[i] = phrase_list[list_length - 1 - j]
             phrase_list[list_length - 1 - j] = tmp
 
-        self._xpos, self._ypos = 10, 10
+        self._x_pos, self._y_pos = self._margin, self._lead
 
         for phrase in phrase_list:
             self._render_phrase(phrase, self._my_canvas, self._my_gc,
                                 align=True)
-            self._xpos, self._ypos = self._increment_xy(self._ypos, align=True)
+            self._x_pos, self._y_pos = self._increment_xy(self._y_pos,
+                                                          align=True)
+            if self._y_pos > self._height * 2 - self._lead:
+                break
 
         self._looking_at_word_list = False
 
@@ -353,8 +340,9 @@ class Page():
         words = phrase.split()
         for word in words:
             # Will word run off the right edge?
-            if self._xpos + len(word) * self._offset > self._width - 20:
-                self._xpos, self._ypos = self._increment_xy(self._ypos,
+            if self._x_pos + len(word) * self._offset > \
+               self._width - self._margin:
+                self._x_pos, self._y_pos = self._increment_xy(self._y_pos,
                                                             align=align)
 
             # Process each character in the word
@@ -363,21 +351,21 @@ class Page():
                    word[c] == self._card_data[self.page][0]:
                     self._draw_pixbuf(
                         self._colored_letters[self.page].images[0],
-                        self._xpos, self._ypos, canvas, gc)
+                        self._x_pos, self._y_pos, canvas, gc)
                 else:
                     if word[c] in ALPHABET:
                         i = ALPHABET.index(word[c])
                         self._draw_pixbuf(self._letters[i].images[0],
-                                          self._xpos, self._ypos, canvas, gc)
+                                          self._x_pos, self._y_pos, canvas, gc)
                 if word[c] in KERN:
-                    self._xpos += self._offset * KERN[word[c]]
+                    self._x_pos += self._offset * KERN[word[c]]
                 else:
-                    self._xpos += self._offset
+                    self._x_pos += self._offset
 
-            self._final_x = self._xpos
+            self._final_x = self._x_pos
             # Put a space after each word
-            if self._xpos > 10:
-                self._xpos += int(self._offset / 1.6)
+            if self._x_pos > self._margin:
+                self._x_pos += int(self._offset / 1.6)
 
     def _draw_pixbuf(self, pixbuf, x, y, canvas, gc):
         ''' Draw a pixbuf onto the canvas '''
@@ -392,8 +380,8 @@ class Page():
         if align:
             return 10, int(self._height / 10.0) + y
         else:
-            return int(uniform(40, self._width / 8.0)), \
-                   int(uniform(40, self._height / 10.0)) + y
+            return int(uniform(self._margin, self._width / 8.0)), \
+                   int(uniform(self._lead, self._height / 10.0)) + y
 
     def _button_press_cb(self, win, event):
         ''' Either a card or list entry was pressed. '''
@@ -401,7 +389,7 @@ class Page():
         x, y = map(int, event.get_coords())
 
         if self._looking_at_word_list:
-            self._goto_page = int(y / 40.)
+            self._goto_page = int(y * 1.0 / self._lead)
         else:
             spr = self._sprites.find_sprite((x, y))
             self._press = spr
@@ -433,8 +421,8 @@ class Page():
                                 os.path.abspath('.'), 'sounds',
                                 self._sound_data[self.page][0]))
                     else:
-                        os.system('espeak "%s" --stdout | aplay' % \
-                                      (self._sound_data[self.page][1]))
+                        os.system('espeak "%s" --stdout | aplay' % (
+                                self._sound_data[self.page][1]))
 
     def _keypress_cb(self, area, event):
         ''' No keyboard shortcuts at the moment. Perhaps jump to the page
@@ -506,10 +494,6 @@ class Page():
     def _clear_all(self):
         ''' Hide everything so we can begin a new page. '''
         self._hide_cards()
-        self._background.set_label('')
-        self._background.set_layer(0)
-        self._like_card.set_layer(0)
-        self._page_2.set_layer(0)
 
     def _hide_cards(self):
         ''' Hide any cards that might be around. '''

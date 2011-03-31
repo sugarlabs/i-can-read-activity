@@ -67,7 +67,7 @@ stroke:#000000;%s\">" % (font_size, self._stroke, align)
         return svg_string
 
     def _background(self, scale):
-        return self._svg_rect(59.5 * scale, 44.5 * scale, 1, 1, 0.25, 0.25)
+        return self._svg_rect(79.5 * scale, 59.5 * scale, 1, 1, 0.25, 0.25)
 
     def header(self, scale=1, background=True):
         svg_string = "<?xml version=\"1.0\" encoding=\"UTF-8\""
@@ -77,9 +77,9 @@ stroke:#000000;%s\">" % (font_size, self._stroke, align)
         svg_string += "   xmlns:svg=\"http://www.w3.org/2000/svg\"\n"
         svg_string += "   xmlns=\"http://www.w3.org/2000/svg\"\n"
         svg_string += "   version=\"1.0\"\n"
-        svg_string += "%s%f%s" % ("   width=\"", scale * 60 * self._scale,
+        svg_string += "%s%f%s" % ("   width=\"", scale * 80 * self._scale,
                                   "\"\n")
-        svg_string += "%s%f%s" % ("   height=\"", scale * 45 * self._scale,
+        svg_string += "%s%f%s" % ("   height=\"", scale * 60 * self._scale,
                                   "\">\n")
         svg_string += "%s%f%s%f%s" % ("<g\n       transform=\"matrix(",
                                       self._scale, ",0,0,", self._scale,
@@ -112,10 +112,10 @@ def generate_card(string='a', colors=['#FF0000', '#FFFFFF'],
     svg.set_colors(colors)
     svg_string = svg.header(background=background)
     if center:
-        x = 30
+        x = 40
     else:
         x = 5
-    svg_string += svg._svg_text(x, 35, font_size, string, stroke=stroke,
+    svg_string += svg._svg_text(x, 45, font_size, string, stroke=stroke,
                                     center=center)
     svg_string += svg.footer()
     return svg_string
