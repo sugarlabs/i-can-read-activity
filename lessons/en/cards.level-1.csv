@@ -1,0 +1,21 @@
+# Copyright (c) 2011 Walter Bender,,,,,,
+# Copyright (c) 2011 Educational Solutions,,,,,,
+# This work is licensed under a Creative Commons,,,,,,
+# Attribution-NonCommercial 3.0 Unported License.,,,,,,
+# These words represent Level 1 in English,,,,,,
+# Use CAPS for highlighted letter in phrase.,,,,,,
+# letter, phrase, RGB color, color name, outline stroke (True or False), vowel or consonant , sound file
+A, pAt, #BA6C71, light-pink, False, vowel, a-as-in-pat.ogg
+U, Up, #FFFCC0, yellow, True, vowel, u-as-in-up.ogg
+I, It, #EF2891, pink, False, vowel, i-as-in-it.ogg
+E, pEt, #70A9CE, blue, False, vowel, e-as-in-pet.ogg
+O, pOt, #FFFFFF, white, True, vowel, o-as-in-pot.ogg
+Y, tummY, #DE1C23, red, False, vowel, y-as-in-tummy.ogg
+P, Pat, #A4221E, brown, False, consonant, p-as-in-pat.ogg
+N, Not-teNNis, #7A6BBD, purple, False, consonant, n-as-in-not.ogg
+T, Tap, #C72098, dark-pink, False, consonant, t-as-in-tap.ogg
+D, DaD, #2EA539, green, False, consonant, d-as-in-dog.ogg
+S, iS-aS-waS-sayS, #B139A2, purple, False, consonant, s-as-in-is.ogg
+M, MoM, #EE3C1E, dark-pink, False, consonant, m-as-in-mom.ogg
+S, Sam-Stop-it'S, #7EC93C, curly-green, False, consonant, s-as-in-sam.ogg
+A, read-A-book, #FFF200, bright-yellow, True, light, a-as-in-read-a-book.ogg
