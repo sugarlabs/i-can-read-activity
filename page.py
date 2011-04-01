@@ -18,7 +18,6 @@ from random import uniform, randrange
 
 from utils.gplay import play_audio_from_file
 
-from gettext import gettext as _
 import logging
 _logger = logging.getLogger('infused-activity')
 
@@ -138,7 +137,7 @@ class Page():
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
 
-        self._x_pos, self._y_pos = self._margin, self._lead
+        self._x_pos, self._y_pos = self._margin, 0
 
         # Each list is a collection of phrases, separated by spaces
         for i, card in enumerate(self._card_data):
@@ -416,13 +415,10 @@ class Page():
                 if self.page < len(self._card_data):
                     if os.path.exists(os.path.join(
                             os.path.abspath('.'), 'sounds',
-                            self._sound_data[self.page][0])):
+                            self._sound_data[self.page])):
                         play_audio_from_file(self, os.path.join(
                                 os.path.abspath('.'), 'sounds',
-                                self._sound_data[self.page][0]))
-                    else:
-                        os.system('espeak "%s" --stdout | aplay' % (
-                                self._sound_data[self.page][1]))
+                                self._sound_data[self.page]))
 
     def _keypress_cb(self, area, event):
         ''' No keyboard shortcuts at the moment. Perhaps jump to the page
@@ -450,37 +446,38 @@ class Page():
         self._msg_data = []
         self._align_data = []
         self._sound_data = []
-        f = file(os.path.join(path, 'cards' + '.' + level), 'r')
+        f = file(os.path.join(path, 'cards' + '.' + level + '.csv'), 'r')
         for line in f:
-            if len(line) > 0 and line[0] != '#':
-                word = line.split()
-                self._card_data.append([word[0], word[1]])
-                if word[4] == 'False':
-                    self._color_data.append([word[2], word[3], False])
+            if len(line) > 0 and line[0] not in '#\n':
+                words = line.split(', ')
+                print words
+                self._card_data.append([words[0], words[1].replace('-', ', ')])
+                if words[4] == 'False':
+                    self._color_data.append([words[2], words[3], False])
                 else:
-                    self._color_data.append([word[2], word[3], True])
+                    self._color_data.append([words[2], words[3], True])
                 if len(self._msg_data) == 0:
                     self._msg_data.append(FIRST_CARD)
-                elif word[5] == 'vowel':
+                elif words[5] == 'vowel':
                     self._msg_data.append(VOWEL)
-                elif word[5] == 'light':
+                elif words[5] == 'light':
                     self._msg_data.append(LIGHT)
-                elif word[5] == 'consonant':
+                elif words[5] == 'consonant':
                     self._msg_data.append(CONSONANT)
                 else:
-                    print 'unknown message id %s' % (word[5])
+                    print 'unknown message id %s' % (words[5])
                     self._msg_data.append(CONSONANT)
-                self._sound_data.append([word[6], word[7]])
+                self._sound_data.append(words[6])
         f.close()
 
         self._word_data = []
-        f = file(os.path.join(path, 'words' + '.' + level), 'r')
+        f = file(os.path.join(path, 'words' + '.' + level + '.csv'), 'r')
         for line in f:
             if len(line) > 0 and line[0] != '#':
                 self._word_data.append(line)
         f.close()
 
-        f = file(os.path.join(path, 'tests' + '.' + level), 'r')
+        f = file(os.path.join(path, 'tests' + '.' + level + '.csv'), 'r')
         for line in f:
             if len(line) > 0 and line[0] != '#':
                 self._test_data = line

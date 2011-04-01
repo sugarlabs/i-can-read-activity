@@ -27,7 +27,7 @@ from sugar.graphics.toolbutton import ToolButton
 from sugar.graphics.combobox import ComboBox
 from sugar.graphics.toolcombobox import ToolComboBox
 
-from gettext import gettext as _
+import gettextutil
 import os.path
 
 from page import Page
