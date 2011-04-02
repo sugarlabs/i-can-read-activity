@@ -129,9 +129,6 @@ class Page():
         save_page = self.page
         self._clear_all()
 
-        if self._sugar:
-            self._activity.status.set_label(
-                _('Select a page.'))
         rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
@@ -139,6 +136,21 @@ class Page():
 
         self._x_pos, self._y_pos = self._margin, 0
 
+        for i, phrase in enumerate(self.get_phrase_list()):
+            if i < len(self._colored_letters):
+                self.page = i
+                self._render_phrase(phrase, self._my_canvas, self._my_gc)
+            else:
+                self._render_phrase(phrase.lower(), self._my_canvas,
+                                    self._my_gc)
+            self._x_pos = self._margin
+            self._y_pos += self._lead
+
+        self.page = save_page
+        self._looking_at_word_list = True
+
+    def get_phrase_list(self):
+        phrase_list = []
         # Each list is a collection of phrases, separated by spaces
         for i, card in enumerate(self._card_data):
             if card[0] == '':
@@ -146,28 +158,18 @@ class Page():
             if card[0] in 'AEIOUY':
                 connector = ' ' + _('like') + ' '
             else:
-                connector = ' ' + _('as-in') + ' '
-            if i < len(self._colored_letters):
-                self.page = i
-                self._render_phrase(card[0] + connector + card[1],
-                                    self._my_canvas, self._my_gc)
-            else:
-                self._render_phrase(
-                    card[0].lower() + connector + card[1].lower(),
-                    self._my_canvas, self._my_gc)
-
-            self._x_pos = self._margin
-            self._y_pos += self._lead
-
-        self.page = save_page
-        self._looking_at_word_list = True
+                connector = ' ' + _('as in') + ' '
+            phrase_list.append(card[0] + connector + card[1])
+        return phrase_list
 
     def new_page(self):
         ''' Load a new page: a card and a message '''
         if self.page == len(self._word_data):
             self.page = 0
         if self._sugar:
-            self._activity.status.set_label('')
+            if self.page < len(self._card_data):
+                if hasattr(self._activity, 'sounds_combo'):
+                    self._activity.sounds_combo.set_active(self.page)
         if self.page == len(self._cards) and \
            self.page < len(self._card_data):
             self._cards.append(Sprite(self._sprites, self._left,

@@ -14,7 +14,7 @@ import gtk
 
 from sugar.activity import activity
 try:
-    from sugar.graphics.toolbarbox import ToolbarBox
+    from sugar.graphics.toolbarbox import ToolbarBox, ToolbarButton
     _HAVE_TOOLBOX = True
 except ImportError:
     _HAVE_TOOLBOX = False
@@ -76,9 +76,11 @@ def _combo_factory(options, tooltip, toolbar, callback, default=0):
         combo.set_tooltip_text(tooltip)
     combo.connect('changed', callback)
     for i, option in enumerate(options):
-        combo.append_item(i, option, None)
+        combo.append_item(i, option.replace('-', ' '), None)
     combo.set_active(default)
+    combo.show()
     tool = ToolComboBox(combo)
+    tool.show()
     toolbar.insert(tool, -1)
     return combo
 
@@ -137,6 +139,9 @@ class InfusedActivity(activity.Activity):
         else:
             self._page.new_page()
 
+        # Set up sound combo box
+        self._reload_sound_combo()
+
     def _setup_toolbars(self):
         ''' Setup the toolbars.. '''
 
@@ -152,19 +157,35 @@ class InfusedActivity(activity.Activity):
             toolbox.toolbar.insert(activity_button, 0)
             activity_button.show()
 
+            lesson_toolbar = gtk.Toolbar()
+            lesson_toolbar_button = ToolbarButton(label=_('Select a lesson'),
+                                                page=lesson_toolbar,
+                                                icon_name='text-x-generic')
+            record_toolbar = gtk.Toolbar()
+            record_toolbar_button = ToolbarButton(label=_('Record a sound'),
+                                                page=record_toolbar,
+                                                icon_name='microphone')
+
             self.set_toolbar_box(toolbox)
             toolbox.show()
-            toolbar = toolbox.toolbar
+            lesson_toolbar_button.show()
+            toolbox.toolbar.insert(lesson_toolbar_button, -1)
+            record_toolbar_button.show()
+            toolbox.toolbar.insert(record_toolbar_button, -1)
+            primary_toolbar = toolbox.toolbar
 
         else:
             # Use pre-0.86 toolbar design
             page_toolbar = gtk.Toolbar()
             toolbox = activity.ActivityToolbox(self)
             self.set_toolbox(toolbox)
-            toolbox.add_toolbar(_('Page'), page_toolbar)
+            toolbox.add_toolbar(_('Page'), primary_toolbar)
+            toolbox.show()
+            toolbox.add_toolbar(_('Lesson'), lesson_toolbar)
+            toolbox.show()
+            toolbox.add_toolbar(_('Record'), record_toolbar)
             toolbox.show()
             toolbox.set_current_toolbar(1)
-            toolbar = page_toolbar
 
             # no sharing
             if hasattr(toolbox, 'share'):
@@ -172,35 +193,44 @@ class InfusedActivity(activity.Activity):
             elif hasattr(toolbox, 'props'):
                 toolbox.props.visible = False
 
+        _label_factory(_('Select a lesson') + ':', lesson_toolbar)
         self._levels = self._get_levels(self._path)
-        self._levels_combo = _combo_factory(self._levels, _('Select lesson'),
-                                            toolbar, self._levels_cb)
+        self._levels_combo = _combo_factory(self._levels, _('Select a lesson'),
+                                            lesson_toolbar, self._levels_cb)
 
-        _separator_factory(toolbar)
+        _label_factory(_('Record a sound') + ':', record_toolbar)
+        self._sounds = self._get_sounds()
+        self._sounds_combo = _combo_factory(self._sounds, _('Record a sound'),
+                                            record_toolbar, self._sounds_cb)
+
+        _separator_factory(primary_toolbar)
 
         self._list_button = _button_factory(
-            'format-justify-fill', _('Letter list'), self._list_cb, toolbar)
+            'format-justify-fill', _('Letter list'), self._list_cb,
+            primary_toolbar)
 
-        _separator_factory(toolbar)
+        _separator_factory(primary_toolbar)
 
         self._prev_page_button = _button_factory(
-            'list-remove', _('Previous letter'), self._prev_page_cb, toolbar)
+            'list-remove', _('Previous letter'), self._prev_page_cb,
+            primary_toolbar)
 
         self._next_page_button = _button_factory(
-            'list-add', _('Next letter'), self._next_page_cb, toolbar)
+            'list-add', _('Next letter'), self._next_page_cb,
+            primary_toolbar)
 
-        _separator_factory(toolbar)
+        _separator_factory(primary_toolbar)
 
         self._read_button = _button_factory(
             'go-down', _('Read the sounds one at a time.'),
-            self._read_cb, toolbar)
+            self._read_cb, primary_toolbar)
 
-        _separator_factory(toolbar)
+        _separator_factory(primary_toolbar)
 
         self._test_button = _button_factory('go-right', _('Self test'),
-            self._test_cb, toolbar)
+            self._test_cb, primary_toolbar)
 
-        self.status = _label_factory('', toolbar)
+        self.status = _label_factory('', primary_toolbar)
 
         if _HAVE_TOOLBOX:
             _separator_factory(toolbox.toolbar, False, True)
@@ -209,6 +239,8 @@ class InfusedActivity(activity.Activity):
             stop_button.props.accelerator = '<Ctrl>q'
             toolbox.toolbar.insert(stop_button, -1)
             stop_button.show()
+        lesson_toolbar.show()
+        record_toolbar.show()
 
     def _levels_cb(self, combobox=None):
         ''' The combo box has changed. '''
@@ -219,7 +251,14 @@ class InfusedActivity(activity.Activity):
                 self._page.load_level(self._path, self._levels[self._level])
             self._page.page = 0
             self._page.new_page()
+        # TO DO: reset sound combo
         return
+
+    def _sounds_cb(self, combobox=None):
+        ''' The combo box has changed. '''
+        if hasattr(self, '_sounds_combo'):
+            i = self._sounds_combo.get_active()
+            # TO DO: something here
 
     def _list_cb(self, button=None):
         ''' Letter list '''
@@ -304,6 +343,21 @@ class InfusedActivity(activity.Activity):
                    not self._skip_this_file(filename):
                     level_files.append(filename.split('.')[1])
         return level_files
+
+    def _get_sounds(self):
+        ''' Look for sounds list. '''
+        if hasattr(self, '_page'):
+            return self._page.get_phrase_list()
+        else:
+            return([])
+
+    def _reload_sound_combo(self):
+        ''' Rebuild sounds combobox. '''
+        # TO DO: first empty list
+        self._sounds = self._get_sounds()
+        for i, sound in enumerate(self._sounds):
+            self._sounds_combo.append_item(i, sound.lower(), None)
+        self._sounds_combo.set_active(self._page.page)
 
     def _skip_this_file(self, filename):
         ''' Ignore tmp files '''
