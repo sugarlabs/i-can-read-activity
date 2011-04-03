@@ -94,6 +94,28 @@ def _separator_factory(toolbar, visible=True, expand=False):
     separator.show()
 
 
+def chooser(parent_window, filter, action):
+    ''' Choose an object from the datastore and take some action '''
+    from sugar.graphics.objectchooser import ObjectChooser
+
+    _chooser = None
+    try:
+        _chooser = ObjectChooser(parent=parent_window, what_filter=filter)
+    except TypeError:
+        _chooser = ObjectChooser(None, parent_window,
+            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT)
+    if _chooser is not None:
+        try:
+            result = _chooser.run()
+            if result == gtk.RESPONSE_ACCEPT:
+                dsobject = _chooser.get_selected_object()
+                action(dsobject)
+                dsobject.destroy()
+        finally:
+            _chooser.destroy()
+            del _chooser
+
+
 class InfusedActivity(activity.Activity):
     ''' Infused Reading guide '''
 
@@ -102,6 +124,7 @@ class InfusedActivity(activity.Activity):
         super(InfusedActivity, self).__init__(handle)
         self.reading = False
         self.testing = False
+        self.recording = False
 
         if 'LANG' in os.environ:
             language = os.environ['LANG'][0:2]
@@ -198,10 +221,29 @@ class InfusedActivity(activity.Activity):
         self._levels_combo = _combo_factory(self._levels, _('Select a lesson'),
                                             lesson_toolbar, self._levels_cb)
 
-        _label_factory(_('Record a sound') + ':', record_toolbar)
+        _separator_factory(lesson_toolbar)
+
+        self._lesson_button = _button_factory(
+            'load-from-journal', _('Load a new lesson from the Journal.'),
+            self._lesson_cb, lesson_toolbar)
+
         self._sounds = self._get_sounds()
-        self._sounds_combo = _combo_factory(self._sounds, _('Record a sound'),
+        self.sounds_combo = _combo_factory(self._sounds, _('Record a sound'),
                                             record_toolbar, self._sounds_cb)
+
+        _separator_factory(record_toolbar)
+
+        _label_factory(_('Record a sound') + ':', record_toolbar)
+        self._record_button = _button_factory(
+            'media-record', _('Start recording'),
+            self._record_cb, record_toolbar)
+
+        _separator_factory(record_toolbar)
+
+        _label_factory(_('Record a lesson') + ':', record_toolbar)
+        self._record_lesson_button = _button_factory(
+            'media-record', _('Start recording'),
+            self._record_lesson_cb, record_toolbar)
 
         _separator_factory(primary_toolbar)
 
@@ -248,16 +290,26 @@ class InfusedActivity(activity.Activity):
             i = self._levels_combo.get_active()
             if i != -1 and i != self._level:
                 self._level = i
-                self._page.load_level(self._path, self._levels[self._level])
+                # TODO: levels stored in Journal have a different path
+                try:
+                    self._page.load_level(self._path, self._levels[self._level])
+                except IndexError:
+                    print "couldn't restore level %s" % (self.metadata['level'])
+                    self._levels_combo.set_active(0)
             self._page.page = 0
             self._page.new_page()
         # TO DO: reset sound combo
         return
 
+    def _lesson_cb(self, button=None):
+        # TO DO: something here
+        chooser(self, '', self._load_lesson)
+        return
+
     def _sounds_cb(self, combobox=None):
         ''' The combo box has changed. '''
-        if hasattr(self, '_sounds_combo'):
-            i = self._sounds_combo.get_active()
+        if hasattr(self, 'sounds_combo'):
+            i = self.sounds_combo.get_active()
             # TO DO: something here
 
     def _list_cb(self, button=None):
@@ -325,7 +377,11 @@ class InfusedActivity(activity.Activity):
             level = int(self.metadata['level'])
             self._level = level
             self._levels_combo.set_active(level)
-            self._page.load_level(self._path, self._levels[self._level])
+            try:
+                self._page.load_level(self._path, self._levels[self._level])
+            except IndexError:
+                print "couldn't restore level %s" % (self.metadata['level'])
+                self._levels_combo.set_active(0)
             self._page.page = 0
             self._page.new_page()
         if 'page' in self.metadata:
@@ -339,9 +395,8 @@ class InfusedActivity(activity.Activity):
         if path is not None:
             candidates = os.listdir(path)
             for filename in candidates:
-                if filename[0:6] == 'cards.' and \
-                   not self._skip_this_file(filename):
-                    level_files.append(filename.split('.')[1])
+                if not self._skip_this_file(filename):
+                    level_files.append(filename.split('.')[0])
         return level_files
 
     def _get_sounds(self):
@@ -356,11 +411,40 @@ class InfusedActivity(activity.Activity):
         # TO DO: first empty list
         self._sounds = self._get_sounds()
         for i, sound in enumerate(self._sounds):
-            self._sounds_combo.append_item(i, sound.lower(), None)
-        self._sounds_combo.set_active(self._page.page)
+            self.sounds_combo.append_item(i, sound.lower(), None)
+        self.sounds_combo.set_active(self._page.page)
+
+    def _record_cb(self, button=None):
+        # TO DO: the actual recording and saving to Journal
+        if self.recording:
+            self.recording = False
+            self._record_button.set_icon('media-record')
+            self._record_button.set_tooltip(_('Start recording'))
+        else:
+            self.recording = True
+            self._record_button.set_icon('media-recording')
+            self._record_button.set_tooltip(_('Stop recording'))
+
+    def _record_lesson_cb(self, button=None):
+        # TO DO: the actual recording and saving to Journal
+        if self.recording:
+            self.recording = False
+            self._record_button.set_icon('media-record')
+            self._record_button.set_tooltip(_('Start recording'))
+        else:
+            self.recording = True
+            self._record_button.set_icon('media-recording')
+            self._record_button.set_tooltip(_('Stop recording'))
 
     def _skip_this_file(self, filename):
         ''' Ignore tmp files '''
         if filename[0] in '#.' or filename[-1] == '~':
             return True
         return False
+
+    def _load_lesson(self, dsobject):
+        # TODO: load level and set combo to proper entry
+        # save levels for latter restoring
+        print dsobject.metadata['title']
+        self._levels_combo.append_item(0, dsobject.metadata['title'], None)
+        self._levels_combo.set_active(0)

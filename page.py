@@ -199,9 +199,6 @@ class Page():
                             font_size=12 * self._scale,
                             background=False, stroke=stroke))))
 
-            if self._sugar:
-                self._activity.status.set_label('')
-
         self._hide_cards()
         if self.page >= len(self._card_data):
             self.read()
@@ -448,41 +445,35 @@ class Page():
         self._msg_data = []
         self._align_data = []
         self._sound_data = []
-        f = file(os.path.join(path, 'cards' + '.' + level + '.csv'), 'r')
+        self._word_data = []
+        f = file(os.path.join(path, level + '.csv'), 'r')
         for line in f:
             if len(line) > 0 and line[0] not in '#\n':
                 words = line.split(', ')
                 print words
-                self._card_data.append([words[0], words[1].replace('-', ', ')])
-                if words[4] == 'False':
-                    self._color_data.append([words[2], words[3], False])
+                if not words[0] in '-+':
+                    self._card_data.append([words[0],
+                                            words[1].replace('-', ', ')])
+                    if words[4] == 'False':
+                        self._color_data.append([words[2], words[3], False])
+                    else:
+                        self._color_data.append([words[2], words[3], True])
+                    if len(self._msg_data) == 0:
+                        self._msg_data.append(FIRST_CARD)
+                    elif words[5] == 'vowel':
+                        self._msg_data.append(VOWEL)
+                    elif words[5] == 'light':
+                        self._msg_data.append(LIGHT)
+                    elif words[5] == 'consonant':
+                        self._msg_data.append(CONSONANT)
+                    else:
+                        print 'unknown message id %s' % (words[5])
+                        self._msg_data.append(CONSONANT)
+                    self._sound_data.append(words[6])
+                if words[0] == '+':
+                    self._test_data = words[7]
                 else:
-                    self._color_data.append([words[2], words[3], True])
-                if len(self._msg_data) == 0:
-                    self._msg_data.append(FIRST_CARD)
-                elif words[5] == 'vowel':
-                    self._msg_data.append(VOWEL)
-                elif words[5] == 'light':
-                    self._msg_data.append(LIGHT)
-                elif words[5] == 'consonant':
-                    self._msg_data.append(CONSONANT)
-                else:
-                    print 'unknown message id %s' % (words[5])
-                    self._msg_data.append(CONSONANT)
-                self._sound_data.append(words[6])
-        f.close()
-
-        self._word_data = []
-        f = file(os.path.join(path, 'words' + '.' + level + '.csv'), 'r')
-        for line in f:
-            if len(line) > 0 and line[0] != '#':
-                self._word_data.append(line)
-        f.close()
-
-        f = file(os.path.join(path, 'tests' + '.' + level + '.csv'), 'r')
-        for line in f:
-            if len(line) > 0 and line[0] != '#':
-                self._test_data = line
+                    self._word_data.append(words[7])
         f.close()
 
         self._clear_all()
