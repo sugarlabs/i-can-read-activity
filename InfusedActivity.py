@@ -292,13 +292,14 @@ class InfusedActivity(activity.Activity):
                 self._level = i
                 # TODO: levels stored in Journal have a different path
                 try:
-                    self._page.load_level(self._path, self._levels[self._level])
+                    self._page.load_level(os.path.join(
+                            self._path, self._levels[self._level] + '.csv'))
                 except IndexError:
                     print "couldn't restore level %s" % (self.metadata['level'])
                     self._levels_combo.set_active(0)
             self._page.page = 0
             self._page.new_page()
-        # TO DO: reset sound combo
+            # TO DO: reset sound combo
         return
 
     def _lesson_cb(self, button=None):
@@ -378,7 +379,8 @@ class InfusedActivity(activity.Activity):
             self._level = level
             self._levels_combo.set_active(level)
             try:
-                self._page.load_level(self._path, self._levels[self._level])
+                self._page.load_level(os.path.join(
+                        self._path, self._levels[self._level] + '.csv'))
             except IndexError:
                 print "couldn't restore level %s" % (self.metadata['level'])
                 self._levels_combo.set_active(0)
@@ -448,3 +450,7 @@ class InfusedActivity(activity.Activity):
         print dsobject.metadata['title']
         self._levels_combo.append_item(0, dsobject.metadata['title'], None)
         self._levels_combo.set_active(0)
+        self._page.load_level(dsobject.file_path)
+        self._page.page = 0
+        self._page.new_page()
+        # TO DO: reset sound combo

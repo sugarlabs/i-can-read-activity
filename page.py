@@ -116,7 +116,7 @@ class Page():
                                                 font_size=12 * self._scale,
                                                 background=False))))
 
-        self.load_level(path, level)
+        self.load_level(os.path.join(path, level + '.csv'))
         self.new_page()
 
     def page_list(self):
@@ -438,15 +438,15 @@ class Page():
         self._canvas.window.invalidate_rect(
             gtk.gdk.Rectangle(int(x), int(y), int(w), int(h)), False)
 
-    def load_level(self, path, level):
-        ''' Load a level from the lessons subdirectory '''
+    def load_level(self, path):
+        ''' Load a level (CSV) from path '''
         self._card_data = []
         self._color_data = []
         self._msg_data = []
         self._align_data = []
         self._sound_data = []
         self._word_data = []
-        f = file(os.path.join(path, level + '.csv'), 'r')
+        f = file(path, 'r')
         for line in f:
             if len(line) > 0 and line[0] not in '#\n':
                 words = line.split(', ')
