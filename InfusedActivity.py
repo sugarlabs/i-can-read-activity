@@ -27,7 +27,7 @@ from sugar.graphics.toolbutton import ToolButton
 from sugar.graphics.combobox import ComboBox
 from sugar.graphics.toolcombobox import ToolComboBox
 
-import gettextutil
+from gettext import gettext as _
 import os.path
 
 from page import Page
@@ -303,7 +303,7 @@ class InfusedActivity(activity.Activity):
         return
 
     def _lesson_cb(self, button=None):
-        # TO DO: something here
+        ''' Chose a lesson file from the Sugar Journal. '''
         chooser(self, '', self._load_lesson)
         return
 

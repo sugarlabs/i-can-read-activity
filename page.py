@@ -14,6 +14,8 @@
 import gtk
 import os
 
+from gettext import gettext as _
+
 from random import uniform, randrange
 
 from utils.gplay import play_audio_from_file
@@ -51,7 +53,8 @@ ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 # Rendering-related constants
 KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
-        'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6}
+        'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.6, 'j': 0.6,
+        'J': 0.6}
 # ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZáéíñóabcdefghijklmnopqrstuvwxyz:.,'!"
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!"
 
