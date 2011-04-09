@@ -31,10 +31,11 @@ from gettext import gettext as _
 import os.path
 
 from page import Page
+from utils.grecord import Grecord
 
 SERVICE = 'org.sugarlabs.InfusedActivity'
 IFACE = SERVICE
-PATH = '/org/augarlabs/InfusedActivity'
+PATH = '/org/sugarlabs/InfusedActivity'
 
 
 def _button_factory(icon_name, tooltip, callback, toolbar, cb_arg=None,
@@ -125,6 +126,8 @@ class InfusedActivity(activity.Activity):
         self.reading = False
         self.testing = False
         self.recording = False
+        self.grecord = None
+        self.datapath = get_path(activity, 'data')
 
         if 'LANG' in os.environ:
             language = os.environ['LANG'][0:2]
@@ -417,23 +420,31 @@ class InfusedActivity(activity.Activity):
         self.sounds_combo.set_active(self._page.page)
 
     def _record_cb(self, button=None):
-        # TO DO: the actual recording and saving to Journal
+        if self.grecord is None:
+            self.grecord = Grecord(self)
         if self.recording:
+            self.grecord.stop_recording_audio()
             self.recording = False
             self._record_button.set_icon('media-record')
             self._record_button.set_tooltip(_('Start recording'))
         else:
+            self.grecord.record_audio()
+            # TO DO: save to Journal
             self.recording = True
             self._record_button.set_icon('media-recording')
             self._record_button.set_tooltip(_('Stop recording'))
 
     def _record_lesson_cb(self, button=None):
-        # TO DO: the actual recording and saving to Journal
+        if self.grecord is None:
+            self.grecord = Grecord(self)
         if self.recording:
+            self.grecord.stop_recording_audio()
             self.recording = False
             self._record_button.set_icon('media-record')
             self._record_button.set_tooltip(_('Start recording'))
         else:
+            self.grecord.record_audio()
+            # TO DO: save to Journal
             self.recording = True
             self._record_button.set_icon('media-recording')
             self._record_button.set_tooltip(_('Stop recording'))
@@ -454,3 +465,13 @@ class InfusedActivity(activity.Activity):
         self._page.page = 0
         self._page.new_page()
         # TO DO: reset sound combo
+
+
+def get_path(activity, subpath):
+    """ Find a Rainbow-approved place for temporary files. """
+    try:
+        return(os.path.join(activity.get_activity_root(), subpath))
+    except:
+        # Early versions of Sugar didn't support get_activity_root()
+        return(os.path.join(
+                os.environ['HOME'], ".sugar/default", SERVICE, subpath))
