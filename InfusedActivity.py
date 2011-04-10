@@ -10,6 +10,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+
 import gtk
 
 from sugar.activity import activity
@@ -26,12 +27,15 @@ if _HAVE_TOOLBOX:
 from sugar.graphics.toolbutton import ToolButton
 from sugar.graphics.combobox import ComboBox
 from sugar.graphics.toolcombobox import ToolComboBox
+from sugar.datastore import datastore
+from sugar import profile
 
 from gettext import gettext as _
 import os.path
 
 from page import Page
 from utils.grecord import Grecord
+from utils.gplay import play_audio_from_file
 
 SERVICE = 'org.sugarlabs.InfusedActivity'
 IFACE = SERVICE
@@ -127,7 +131,7 @@ class InfusedActivity(activity.Activity):
         self.testing = False
         self.recording = False
         self.grecord = None
-        self.datapath = get_path(activity, 'data')
+        self.datapath = get_path(activity, 'instance')
 
         if 'LANG' in os.environ:
             language = os.environ['LANG'][0:2]
@@ -167,6 +171,8 @@ class InfusedActivity(activity.Activity):
 
         # Set up sound combo box
         self._reload_sound_combo()
+        self._selected_sound = self.sounds_combo.get_active()
+
 
     def _setup_toolbars(self):
         ''' Setup the toolbars.. '''
@@ -236,17 +242,20 @@ class InfusedActivity(activity.Activity):
 
         _separator_factory(record_toolbar)
 
-        _label_factory(_('Record a sound') + ':', record_toolbar)
-        self._record_button = _button_factory(
-            'media-record', _('Start recording'),
-            self._record_cb, record_toolbar)
-
-        _separator_factory(record_toolbar)
-
         _label_factory(_('Record a lesson') + ':', record_toolbar)
         self._record_lesson_button = _button_factory(
             'media-record', _('Start recording'),
             self._record_lesson_cb, record_toolbar)
+
+        _separator_factory(record_toolbar)
+
+        self._playback_button = _button_factory(
+            'media-playback-start-insensitive', '',
+            self._playback_recording_cb, record_toolbar)
+
+        self._save_recording_button = _button_factory(
+            'document-save-insensitive', '',
+            self._save_recording_cb, record_toolbar)
 
         _separator_factory(primary_toolbar)
 
@@ -302,7 +311,9 @@ class InfusedActivity(activity.Activity):
                     self._levels_combo.set_active(0)
             self._page.page = 0
             self._page.new_page()
-            # TO DO: reset sound combo
+            print 'reloading sound combo box with level sounds'
+            self._reload_sound_combo()
+            self._selected_sound = self.sounds_combo.get_active()
         return
 
     def _lesson_cb(self, button=None):
@@ -313,8 +324,7 @@ class InfusedActivity(activity.Activity):
     def _sounds_cb(self, combobox=None):
         ''' The combo box has changed. '''
         if hasattr(self, 'sounds_combo'):
-            i = self.sounds_combo.get_active()
-            # TO DO: something here
+            self._selected_sound = self.sounds_combo.get_active()
 
     def _list_cb(self, button=None):
         ''' Letter list '''
@@ -413,26 +423,11 @@ class InfusedActivity(activity.Activity):
 
     def _reload_sound_combo(self):
         ''' Rebuild sounds combobox. '''
-        # TO DO: first empty list
+        self.sounds_combo.remove_all()  # Remove old list.
         self._sounds = self._get_sounds()
         for i, sound in enumerate(self._sounds):
             self.sounds_combo.append_item(i, sound.lower(), None)
         self.sounds_combo.set_active(self._page.page)
-
-    def _record_cb(self, button=None):
-        if self.grecord is None:
-            self.grecord = Grecord(self)
-        if self.recording:
-            self.grecord.stop_recording_audio()
-            self.recording = False
-            self._record_button.set_icon('media-record')
-            self._record_button.set_tooltip(_('Start recording'))
-        else:
-            self.grecord.record_audio()
-            # TO DO: save to Journal
-            self.recording = True
-            self._record_button.set_icon('media-recording')
-            self._record_button.set_tooltip(_('Stop recording'))
 
     def _record_lesson_cb(self, button=None):
         if self.grecord is None:
@@ -440,14 +435,35 @@ class InfusedActivity(activity.Activity):
         if self.recording:
             self.grecord.stop_recording_audio()
             self.recording = False
-            self._record_button.set_icon('media-record')
-            self._record_button.set_tooltip(_('Start recording'))
+            self._record_lesson_button.set_icon('media-record')
+            self._record_lesson_button.set_tooltip(_('Start recording'))
+            self._playback_button.set_icon('media-playback-start')
+            self._playback_button.set_tooltip(_('Play recording'))
+            self._save_recording_button.set_icon('document-save')
+            self._save_recording_button.set_tooltip(_('Save recording'))
         else:
             self.grecord.record_audio()
-            # TO DO: save to Journal
             self.recording = True
-            self._record_button.set_icon('media-recording')
-            self._record_button.set_tooltip(_('Stop recording'))
+            self._record_lesson_button.set_icon('media-recording')
+            self._record_lesson_button.set_tooltip(_('Stop recording'))
+
+    def _playback_recording_cb(self, button=None):
+        play_audio_from_file(self._page, os.path.join(self.datapath,
+                                                      'output.ogg'))
+        return
+
+    def _save_recording_cb(self, button=None):
+        savename = self._sounds[self._selected_sound].lower() + '.ogg'
+        if os.path.exists(os.path.join(self.datapath, 'output.ogg')):
+            dsobject = datastore.create()
+            dsobject.metadata['title'] = savename
+            dsobject.metadata['icon-color'] = \
+                profile.get_color().to_string()
+            dsobject.metadata['mime_type'] = 'audio/ogg'
+            dsobject.set_file_path(os.path.join(self.datapath, 'output.ogg'))
+            datastore.write(dsobject)
+            dsobject.destroy()
+        return
 
     def _skip_this_file(self, filename):
         ''' Ignore tmp files '''

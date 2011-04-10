@@ -55,8 +55,13 @@ ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
         'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.6, 'j': 0.6,
         'J': 0.6}
-# ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZáéíñóabcdefghijklmnopqrstuvwxyz:.,'!"
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!"
+ALPHABET += unichr(241)  # ñ
+ALPHABET += unichr(225)  # á
+ALPHABET += unichr(233)  # é
+ALPHABET += unichr(237)  # í
+ALPHABET += unichr(243)  # ó
+ALPHABET += unichr(250)  # ú
 
 
 class Page():
@@ -173,6 +178,7 @@ class Page():
             if self.page < len(self._card_data):
                 if hasattr(self._activity, 'sounds_combo'):
                     self._activity.sounds_combo.set_active(self.page)
+                    # print 'calling up sounds combo page', self.page
         if self.page == len(self._cards) and \
            self.page < len(self._card_data):
             self._cards.append(Sprite(self._sprites, self._left,
@@ -354,15 +360,18 @@ class Page():
                         self._colored_letters[self.page].images[0],
                         self._x_pos, self._y_pos, canvas, gc)
                 else:
-                    if word[c] in ALPHABET:
-                        i = ALPHABET.index(word[c])
-                        self._draw_pixbuf(self._letters[i].images[0],
-                                          self._x_pos, self._y_pos, canvas, gc)
+                    try:
+                        if word[c] in ALPHABET:
+                            i = ALPHABET.index(word[c])
+                            self._draw_pixbuf(self._letters[i].images[0],
+                                              self._x_pos, self._y_pos, canvas, gc)
+                    except UnicodeDecodeError:
+                        print word
+
                 if word[c] in KERN:
                     self._x_pos += self._offset * KERN[word[c]]
                 else:
                     self._x_pos += self._offset
-
             self._final_x = self._x_pos
             # Put a space after each word
             if self._x_pos > self._margin:
@@ -453,14 +462,15 @@ class Page():
         for line in f:
             if len(line) > 0 and line[0] not in '#\n':
                 words = line.split(', ')
-                print words
                 if not words[0] in '-+':
                     self._card_data.append([words[0],
-                                            words[1].replace('-', ', ')])
+                        self._unicode_map(words[1]).replace('-', ', ')])
                     if words[4] == 'False':
-                        self._color_data.append([words[2], words[3], False])
+                        self._color_data.append(
+                            [words[2], self._unicode_map(words[3]), False])
                     else:
-                        self._color_data.append([words[2], words[3], True])
+                        self._color_data.append(
+                            [words[2], self._unicode_map(words[3]), True])
                     if len(self._msg_data) == 0:
                         self._msg_data.append(FIRST_CARD)
                     elif words[5] == 'vowel':
@@ -474,15 +484,25 @@ class Page():
                         self._msg_data.append(CONSONANT)
                     self._sound_data.append(words[6])
                 if words[0] == '+':
-                    self._test_data = words[7]
+                    self._test_data = self._unicode_map(words[7])
                 else:
-                    self._word_data.append(words[7])
+                    self._word_data.append(self._unicode_map(words[7]))
         f.close()
 
         self._clear_all()
         self._cards = []
         self._double_cards = []
         self._colored_letters = []
+
+    def _unicode_map(self, word):
+        ''' Map base10 representation to unicode '''
+        word = word.replace('\xc3\xb1', unichr(241))  # ñ
+        word = word.replace('\xc3\xa1', unichr(225))  # á
+        word = word.replace('\xc3\xa9', unichr(233))  # é
+        word = word.replace('\xc3\xad', unichr(237))  # í
+        word = word.replace('\xc3\xb3', unichr(243))  # ó
+        word = word.replace('\xc3\xba', unichr(250))  # ú
+        return word
 
     def _clear_all(self):
         ''' Hide everything so we can begin a new page. '''
