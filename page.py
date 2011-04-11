@@ -96,6 +96,7 @@ class Page():
         self._double_cards = []
         self._letters = []
         self._colored_letters = []
+        self._picture = None
         self._press = None
         self._release = None
         self.gplay = None
@@ -264,6 +265,22 @@ class Page():
                 self._lead
             self._render_phrase(MSGS[SECOND_CARD].split('\n')[1],
                                 self._my_canvas, self._my_gc, align=True)
+
+        # Is there a picture for this page?
+        if os.path.exists(os.path.join(os.path.abspath('.'), 'images',
+            self._card_data[self.page][1].lower() + '.jpg')):
+            pixbuf = image_file_to_pixbuf(os.path.join(os.path.abspath('.'),
+                'images', self._card_data[self.page][1].lower() + '.jpg'),
+                self._scale / 4)
+            if self._picture is None:
+                self._picture = Sprite(self._sprites,
+                                  int(self._width - 320 * self._scale / 2.5),
+                                       GRID_CELL_SIZE, pixbuf)
+            else:
+                self._picture.images[0] = pixbuf
+            self._picture.set_layer(2)
+        elif self._picture is not None:
+            self._picture.set_layer(0)
 
         # Hide all the letter sprites.
         for l in self._letters:
@@ -526,3 +543,10 @@ def svg_str_to_pixbuf(svg_string):
     pl.close()
     pixbuf = pl.get_pixbuf()
     return pixbuf
+
+
+def image_file_to_pixbuf(file_path, scale):
+    ''' Load pixbuf from file '''
+    return gtk.gdk.pixbuf_new_from_file_at_size(
+        file_path, int(scale * 320), int(scale * 240))
+
