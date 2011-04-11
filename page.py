@@ -34,7 +34,7 @@ from utils.sprites import Sprites, Sprite
 
 # TRANS: e.g., This yellow sign is said u like up.
 MSGS = [_('This %s sign is said') + '\n%s '  + _('like') + ' %s.\n' + \
-        _('Reading from left to right,\nread the sounds one at a time.') + \
+        _('Reading from left to right, read the sounds one at a time.') + \
         '\n' + _('You can use your finger to') + '\n' + _('follow along.'),
         _('This %s sign is said') + '\n%s ' + _('like') + ' %s.',
         _('This %s sign is') +'\n' + _('lightly said') + '\n%s ' + _('like') + \
@@ -52,9 +52,9 @@ SECOND_CARD = 4
 ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 # Rendering-related constants
-KERN = {'i': 0.6, 'I': 0.7, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
+KERN = {'i': 0.6, 'I': 0.7, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.7, 'm': 1.5,
         'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
-        'J': 0.8}
+        'J': 0.8, 'c': 0.9, 'z': 0.9, 's': 0.8, 'U': 1.1}
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!"
 ALPHABET += unichr(241)  # ñ
 ALPHABET += unichr(225)  # á
@@ -106,7 +106,7 @@ class Page():
         self._left = self._margin  # int((self._width - self._scale * 60) / 2.)
         self._x_pos = self._margin
         self._y_pos = self._lead
-        self._offset = int(self._scale * 8)  # self._width / 30.)
+        self._offset = int(self._scale * 9)  # self._width / 30.)
         self._looking_at_word_list = False
 
         self._my_canvas = Sprite(self._sprites, 0, 0,
@@ -412,10 +412,10 @@ class Page():
         ''' Increment the xy postion for drawing the next phrase,
         possibly with left-justified alignment. '''
         if align:
-            return 10, int(self._height / 10.0) + y
+            return 10, self._lead + y
         else:
             return int(uniform(self._margin, self._width / 8.0)), \
-                   int(uniform(self._lead, self._height / 10.0)) + y
+                   self._lead + y
 
     def _button_press_cb(self, win, event):
         ''' Either a card or list entry was pressed. '''
