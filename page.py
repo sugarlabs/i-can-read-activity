@@ -52,9 +52,9 @@ SECOND_CARD = 4
 ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 
 # Rendering-related constants
-KERN = {'i': 0.6, 'I': 0.6, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
-        'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.6, 'j': 0.6,
-        'J': 0.6}
+KERN = {'i': 0.6, 'I': 0.7, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.8, 'm': 1.6,
+        'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
+        'J': 0.8}
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!"
 ALPHABET += unichr(241)  # ñ
 ALPHABET += unichr(225)  # á
@@ -355,26 +355,28 @@ class Page():
             if self._x_pos + len(word) * self._offset > \
                self._width - self._margin:
                 self._x_pos, self._y_pos = self._increment_xy(self._y_pos,
-                                                            align=align)
+                                                              align=align)
 
             # Process each character in the word
-            for c in range(len(word)):
+            for char in range(len(word)):
                 if self.page < len(self._card_data) and \
-                   word[c] == self._card_data[self.page][0]:
+                   word[char] == self._card_data[self.page][0]:
                     self._draw_pixbuf(
                         self._colored_letters[self.page].images[0],
                         self._x_pos, self._y_pos, canvas, gc)
+                    kern_char = word[char].lower()
                 else:
                     try:
-                        if word[c] in ALPHABET:
-                            i = ALPHABET.index(word[c])
+                        if word[char] in ALPHABET:
+                            i = ALPHABET.index(word[char])
                             self._draw_pixbuf(self._letters[i].images[0],
-                                              self._x_pos, self._y_pos, canvas, gc)
+                                self._x_pos, self._y_pos, canvas, gc)
                     except UnicodeDecodeError:
                         print word
+                    kern_char = word[char]
 
-                if word[c] in KERN:
-                    self._x_pos += self._offset * KERN[word[c]]
+                if kern_char in KERN:
+                    self._x_pos += self._offset * KERN[kern_char]
                 else:
                     self._x_pos += self._offset
             self._final_x = self._x_pos
