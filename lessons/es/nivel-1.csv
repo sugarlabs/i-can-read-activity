@@ -4,28 +4,27 @@
 # These words represent Nivel 1 in Spanish,,,,,,
 # Use CAPS for highlighted letter in phrase.,,,,,,
 # letter, phrase, RGB color, color name, vowel or consonant , sound file,
-A, AnA, #BA6C71, rosa, vowel, a-como-ana.ogg, A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A
-U, Uva, #FFFCC0, amarillo, vowel, u-como-uva.ogg, a/U/a/a/a/a/a/U/a/a/U/a/a/U/a/U/a/a/a/U/U/a/U/a/a/a/a/a/U/a/a/a/a/a
-I, IglesIa, #EF2891, rosa, vowel, i-como-iglesia.ogg, a/I/u/a/I/a/I/a/I/I/I/I/a/a/I/u/I/a/a/u/a/I/I/u/a/I/a/u/a/I/a/a/I/a
+A, AnA, #FFFFFF, blanco, vowel, a-como-ana.ogg, A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A
+U, Uva, #00A000, verde, vowel, u-como-uva.ogg, a/U/a/a/a/a/a/U/a/a/U/a/a/U/a/U/a/a/a/U/U/a/U/a/a/a/a/a/U/a/a/a/a/a
+I, IglesIa, #DE1C23, rosa, vowel, i-como-iglesia.ogg, a/I/u/a/I/a/I/a/I/I/I/I/a/a/I/u/I/a/a/u/a/I/I/u/a/I/a/u/a/I/a/a/I/a
 E, Ema, #70A9CE, azul, vowel, e-como-ema.ogg, a/i/u/a/i/a/i/E/a/i/i/E/i/i/a/a/i/u/i/a/a/u/a/i/i/u/a/a/i/E/a/E/a/a
-O, OjO, #FFFFFF, blanco, vowel, o-como-ojo.ogg, a/i/u/a/i/O/a/i/e/a/i/O/a/i/e/O/O/i/i/a/e/i/u/e/a/O/e/i/i/O/a/O/a/O
-L, Lana, #7A6BBD, morado, consonant, l-como-lana.ogg, aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee/aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee/aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee
-M, Mano, #C72098, rosa, consonant, m-como-mano.ogg, Mula/Mil/Mala/Miel/MaMa
-N, NeNe, #2EA539, verde, consonant, n-como-nene.ogg, mama/moNo/ama/maNo/leoN/muela/meloN/mama/moNo/ama/maNo/leoN/muela/meloN/lola/uNa/liNea/mia/luNa/alumNa/auN/ilumiNa/No/eN/moliNo/Ni/uN/aNimal/alamo/limoN
+O, OjO, #A4221E, marrón, vowel, o-como-ojo.ogg, a/i/u/a/i/O/a/i/e/a/i/O/a/i/e/O/O/i/i/a/e/i/u/e/a/O/e/i/i/O/a/O/a/O
+L, Lana, #00A0FF, azul, consonant, l-como-lana.ogg, aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee/aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee/aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee
+M, Mano, #C72020, rosa, consonant, m-como-mano.ogg, Mula/Mil/Mala/Miel/MaMa
+N, NeNe, #7A6BBD, morado, consonant, n-como-nene.ogg, mama/moNo/ama/maNo/leoN/muela/meloN/mama/moNo/ama/maNo/leoN/muela/meloN/lola/uNa/liNea/mia/luNa/alumNa/auN/ilumiNa/No/eN/moliNo/Ni/uN/aNimal/alamo/limoN
 S, Sol, #7EC93C, verde, consonant, s-como-sol.ogg, Son/Sin/eSo/aSi/noS/miSmo/Soy/menoS/eS/Sal/SomoS/Sol/Se
-P, Perro, #B139A2, morado, consonant, p-como-perro.ogg, Pan/Pena/PaPa/Pon/Pues/Ponemos/Pisa/solo/salio/soPa/isla/su/Palomas/mesa/semana/Peso/usamos/limpia/muy/mas/lunes
-F, Foco, #FFF200, amarillo, consonant, f-como-foco.ogg, 
-T, Tapa, #EE3C1E, rosa, consonant, t-como-tapa.ogg, 
-B, BeBe, #A4221E, marrón, consonant, b-como-bebe.ogg, 
-N, No, #7A6BBD, morado, consonant, n-como-no.ogg, 
-Q, Queso, #C72098, rosa, consonant, q-como-queso.ogg, 
-R, Rata, #2EA539, verde, consonant, r-como-rata.ogg, 
-V, Vaca, #B139A2, morado, consonant, v-como-vaca.ogg, 
-B, Barco, #FFF200, amarillo, consonant, b-como-barco.ogg, 
-Z, Zapato, #EE3C1E, rosa, consonant, z-como-zapato.ogg, 
-C, Casa, #7EC93C, verde, consonant, c-como-casa.ogg, 
-D, DeDo, #A4221E, marrón, consonant, d-como-dedo.ogg, 
-G, Gato, #7A6BBD, morado, consonant, g-como-gato.ogg, 
-K, Kilo, #C72098, rosa, consonant, k-como-kilo.ogg, 
-H, Hora, #2EA539, verde, consonant, h-como-hora.ogg, 
-Y, Yolanda, #7EC93C, verde, consonant, y-como-yolanda.ogg, 
+P, Perro, #A4221E, marrón, consonant, p-como-perro.ogg, Pan/Pena/PaPa/Pon/Pues/Ponemos/Pisa/solo/salio/soPa/isla/su/Palomas/mesa/semana/Peso/usamos/limpia/muy/mas/lunes
+F, Foco, #C160D2, morado, consonant, f-como-foco.ogg, 
+T, Tapa, #EE3C8E, rosa, consonant, t-como-tapa.ogg, 
+N, No, #80C040, verde, consonant, n-como-no.ogg, 
+Q, Queso, #FFC040, amarillo, consonant, q-como-queso.ogg, 
+R, Rata, #F08020, naranja, consonant, r-como-rata.ogg, 
+V, Vaca, #2080A0, azul, consonant, v-como-vaca.ogg, 
+B, Barco, #2080A0, azul, consonant, b-como-barco.ogg, 
+Z, Zapato, #7EC93C, verde, consonant, z-como-zapato.ogg, 
+C, Casa, #FFC040, amarillo, consonant, c-como-casa.ogg, 
+D, DeDo, #20C060, verde, consonant, d-como-dedo.ogg, 
+G, Gato, #A0A0A0, gris, consonant, g-como-gato.ogg, 
+K, Kilo, #FFC040, amarillo, consonant, k-como-kilo.ogg, 
+H, Hora, #FFFFFF, blanco, consonant, h-como-hora.ogg, 
+Y, Yolanda, #BA6C71, rosa, consonant, y-como-yolanda.ogg, 
