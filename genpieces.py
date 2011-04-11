@@ -42,7 +42,7 @@ class SVG:
             svg_string += "style=\"font-size:%dpx;font-weight:bold;font-family:Sans;fill:%s;\
 stroke:#000000;%s\">" % (font_size, self._stroke, align)
         else:
-            svg_string += "style=\"font-size:%dpx;font-family:Sans;fill:%s;\
+            svg_string += "style=\"font-size:%dpx;font-weight:bold;font-family:Sans;fill:%s;\
 %s\">" % (font_size, self._stroke, align)
         svg_string += "<tspan x=\"%d\" y=\"%d\">%s</tspan></text>" % \
             (x, y, text_string)
