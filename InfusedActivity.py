@@ -254,7 +254,7 @@ class InfusedActivity(activity.Activity):
             self._playback_recording_cb, record_toolbar)
 
         self._save_recording_button = _button_factory(
-            'document-save-insensitive', '',
+            'sound-save-insensitive', '',
             self._save_recording_cb, record_toolbar)
 
         _separator_factory(primary_toolbar)
@@ -439,7 +439,7 @@ class InfusedActivity(activity.Activity):
             self._record_lesson_button.set_tooltip(_('Start recording'))
             self._playback_button.set_icon('media-playback-start')
             self._playback_button.set_tooltip(_('Play recording'))
-            self._save_recording_button.set_icon('document-save')
+            self._save_recording_button.set_icon('sound-save')
             self._save_recording_button.set_tooltip(_('Save recording'))
         else:
             self.grecord.record_audio()
