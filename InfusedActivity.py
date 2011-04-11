@@ -250,11 +250,11 @@ class InfusedActivity(activity.Activity):
         _separator_factory(record_toolbar)
 
         self._playback_button = _button_factory(
-            'media-playback-start-insensitive', '',
+            'media-playback-start-insensitive', _('Nothing to play'),
             self._playback_recording_cb, record_toolbar)
 
         self._save_recording_button = _button_factory(
-            'sound-save-insensitive', '',
+            'sound-save-insensitive', _('Nothing to save'),
             self._save_recording_cb, record_toolbar)
 
         _separator_factory(primary_toolbar)

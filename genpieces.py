@@ -39,7 +39,7 @@ class SVG:
             align = ''
         svg_string = "<text x=\"%d\" y=\"%d\" " % (x, y)
         if stroke:
-            svg_string += "style=\"font-size:%dpx;font-family:Sans;fill:%s;\
+            svg_string += "style=\"font-size:%dpx;font-weight:bold;font-family:Sans;fill:%s;\
 stroke:#000000;%s\">" % (font_size, self._stroke, align)
         else:
             svg_string += "style=\"font-size:%dpx;font-family:Sans;fill:%s;\

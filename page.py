@@ -197,10 +197,7 @@ class Page():
                             scale=self._scale,
                             font_size=40,
                             center=True))))
-            if self._color_data[self.page][2]:
-                stroke = True
-            else:
-                stroke = False
+            stroke = self._test_for_stroke()
             self._colored_letters.append(Sprite(
                     self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
                             string=self._card_data[self.page][0].lower(),
@@ -214,6 +211,14 @@ class Page():
         else:
             self._load_card()
         self._looking_at_word_list = False
+
+    def _test_for_stroke(self):
+        ''' Light colors get a surrounding stroke '''
+        # TODO: better value test
+        if self._color_data[self.page][0][0:4] == '#FFF':
+            return True
+        else:
+            return False
 
     def _load_card(self):
         ''' a card is a sprite and a message. '''
@@ -465,28 +470,24 @@ class Page():
                 if not words[0] in '-+':
                     self._card_data.append([words[0],
                         self._unicode_map(words[1]).replace('-', ', ')])
-                    if words[4] == 'False':
-                        self._color_data.append(
-                            [words[2], self._unicode_map(words[3]), False])
-                    else:
-                        self._color_data.append(
-                            [words[2], self._unicode_map(words[3]), True])
+                    self._color_data.append(
+                        [words[2], self._unicode_map(words[3])])
                     if len(self._msg_data) == 0:
                         self._msg_data.append(FIRST_CARD)
-                    elif words[5] == 'vowel':
+                    elif words[4] == 'vowel':
                         self._msg_data.append(VOWEL)
-                    elif words[5] == 'light':
+                    elif words[4] == 'light':
                         self._msg_data.append(LIGHT)
-                    elif words[5] == 'consonant':
+                    elif words[4] == 'consonant':
                         self._msg_data.append(CONSONANT)
                     else:
-                        print 'unknown message id %s' % (words[5])
+                        print 'unknown message id %s' % (words[4])
                         self._msg_data.append(CONSONANT)
-                    self._sound_data.append(words[6])
+                    self._sound_data.append(words[5])
                 if words[0] == '+':
-                    self._test_data = self._unicode_map(words[7])
+                    self._test_data = self._unicode_map(words[6])
                 else:
-                    self._word_data.append(self._unicode_map(words[7]))
+                    self._word_data.append(self._unicode_map(words[6]))
         f.close()
 
         self._clear_all()

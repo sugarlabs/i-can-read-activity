@@ -208,17 +208,3 @@ class Grecord:
             # message.parse_error()
             pass
 
-    def abandonMedia(self):
-        self.stop()
-
-        if self._audio_transcode_handler:
-            gobject.source_remove(self._audio_transcode_handler)
-            self._audio_transcode_handler = None
-        if self._transcode_id:
-            gobject.source_remove(self._transcode_id)
-            self._transcode_id = None
-
-        wav_path = os.path.join(Instance.instancePath, "output.wav")
-        if os.path.exists(wav_path):
-            os.remove(wav_path)
-

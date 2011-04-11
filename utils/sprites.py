@@ -347,8 +347,10 @@ class Sprite:
         for k in range(len(self.labels)):
             label_segments = self.labels[k].split('\n')
             for i in range(len(label_segments)):
-                pl = self._sprites.canvas.create_pango_layout(
-                    str(label_segments[i]))
+                pl = self._sprites.canvas.create_pango_layout.set_markup_with_accel(
+                    pango.parse_markup('<b><i>' + str(label_segments[i]) + '</i></b>',
+                                                   accel_marker=u'\x00')
+                                       )
                 self._fd.set_size(int(self._scale[k] * pango.SCALE))
                 pl.set_font_description(self._fd)
                 w = pl.get_size()[0] / pango.SCALE
