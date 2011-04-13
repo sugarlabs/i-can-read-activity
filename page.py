@@ -41,12 +41,15 @@ MSGS = [_('This %s sign is said') + '\n%s '  + _('like') + ' %s.\n' + \
        ' %s.',
         _('This %s sign is said') + '\n' + _('together with other sounds') + \
         '\n' +  _('as in:') + '%s',
+        _('This %s sign is said') + '\n' + _('together with other sounds') + \
+        '\n' +  _('as in:') + '%s',
         _('When it looks like this') + '\n' + _('we read it the same way.')]
 FIRST_CARD = 0
 VOWEL = 1
 LIGHT = 2
 CONSONANT = 3
-SECOND_CARD = 4
+DOUBLE = 4
+SECOND_CARD = 5
 
 # TODO: make this a property of the word list
 ALIGN = 11  # Beginning with Card 11, start left-justifying the text
@@ -235,6 +238,9 @@ class Page():
         if self._msg_data[self.page] == CONSONANT:
             text = MSGS[CONSONANT] % (self._color_data[self.page][1],
                                       self._card_data[self.page][1])
+        elif self._msg_data[self.page] == DOUBLE:
+            text = MSGS[DOUBLE] % (self._color_data[self.page][1],
+                                   self._card_data[self.page][1])
         elif self._msg_data[self.page] == LIGHT:
             text = MSGS[LIGHT] % (self._color_data[self.page][1],
                                   self._card_data[self.page][0],
@@ -251,7 +257,7 @@ class Page():
             self._x_pos = self._margin
             self._y_pos += self._lead
 
-        if self._msg_data[self.page] == CONSONANT:
+        if self._msg_data[self.page] == DOUBLE:
             self._y_pos += self._lead
             self._render_phrase(MSGS[SECOND_CARD].split('\n')[0],
                                 self._my_canvas, self._my_gc, align=True)
@@ -499,6 +505,8 @@ class Page():
                         self._msg_data.append(LIGHT)
                     elif words[4] == 'consonant':
                         self._msg_data.append(CONSONANT)
+                    elif words[4] == 'double':
+                        self._msg_data.append(DOUBLE)
                     else:
                         print 'unknown message id %s' % (words[4])
                         self._msg_data.append(CONSONANT)
@@ -527,6 +535,8 @@ class Page():
     def _clear_all(self):
         ''' Hide everything so we can begin a new page. '''
         self._hide_cards()
+        if self._picture is not None:
+            self._picture.set_layer(0)
 
     def _hide_cards(self):
         ''' Hide any cards that might be around. '''
