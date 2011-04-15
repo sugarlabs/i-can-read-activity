@@ -204,8 +204,9 @@ class Page():
             stroke = self._test_for_stroke()
             self._colored_letters.append(Sprite(
                     self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
-                            string=self._card_data[self.page][0].lower(),
-                            colors=[self._color_data[self.page][0], '#000000'],
+                            string=self._card_data[self.page][0][0].lower(),
+                            colors=[self._color_data[self.page][0],
+                                    '#000000'],
                             font_size=12 * self._scale,
                             background=False, stroke=stroke))))
 
@@ -383,7 +384,7 @@ class Page():
             # Process each character in the word
             for char in range(len(word)):
                 if self.page < len(self._card_data) and \
-                   word[char] == self._card_data[self.page][0]:
+                   word[char] == self._card_data[self.page][0][0]:
                     self._draw_pixbuf(
                         self._colored_letters[self.page].images[0],
                         self._x_pos, self._y_pos, canvas, gc)
