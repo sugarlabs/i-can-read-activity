@@ -13,6 +13,7 @@
 
 import gtk
 import os
+import codecs
 
 from gettext import gettext as _
 
@@ -33,17 +34,17 @@ from genpieces import generate_card
 from utils.sprites import Sprites, Sprite
 
 # TRANS: e.g., This yellow sign is said u like up.
-MSGS = [_('This %s sign is said') + '\n%s '  + _('like') + ' %s.\n' + \
-        _('Reading from left to right, read the sounds one at a time.') + \
-        '\n' + _('You can use your finger to') + '\n' + _('follow along.'),
-        _('This %s sign is said') + '\n%s ' + _('like') + ' %s.',
-        _('This %s sign is') +'\n' + _('lightly said') + '\n%s ' + _('like') + \
+MSGS = [_('This %s sign is said') + ' %s '  + _('like') + ' %s.\n\n' + \
+        _('Reading from left to right, read the sounds one at a time. You  \
+can use your finger to follow along.'),
+        _('This %s sign is said') + ' %s ' + _('like') + ' %s.',
+        _('This %s sign is lightly said') + ' %s ' + _('like') + \
        ' %s.',
-        _('This %s sign is said') + '\n' + _('together with other sounds') + \
-        '\n' +  _('as in:') + '%s',
-        _('This %s sign is said') + '\n' + _('together with other sounds') + \
-        '\n' +  _('as in:') + '%s',
-        _('When it looks like this') + '\n' + _('we read it the same way.')]
+        _('This %s sign is said together with other sounds') + \
+        ' ' +  _('as in:') + '%s',
+        _('This %s sign is said together with other sounds') + \
+        ' ' +  _('as in:') + '%s',
+        _('When it looks like this' + '\n' + 'we read it the same way.')]
 FIRST_CARD = 0
 VOWEL = 1
 LIGHT = 2
@@ -58,12 +59,7 @@ ALIGN = 11  # Beginning with Card 11, start left-justifying the text
 KERN = {'i': 0.6, 'I': 0.7, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.7, 'm': 1.5,
         'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
         'J': 0.8, 'c': 0.9, 'z': 0.9, 's': 0.8, 'U': 1.1}
-ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!"
-ALPHABET += unichr(241)  # ñ
-ALPHABET += unichr(225)  # á
-ALPHABET += unichr(233)  # é
-ALPHABET += unichr(237)  # í
-ALPHABET += unichr(243)  # ó
+ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!Ññáéíóú"
 ALPHABET += unichr(250)  # ú
 
 
@@ -182,33 +178,69 @@ class Page():
             if self.page < len(self._card_data):
                 if hasattr(self._activity, 'sounds_combo'):
                     self._activity.sounds_combo.set_active(self.page)
-                    # print 'calling up sounds combo page', self.page
         if self.page == len(self._cards) and \
            self.page < len(self._card_data):
-            self._cards.append(Sprite(self._sprites, self._left,
-                                      GRID_CELL_SIZE,
-                                      svg_str_to_pixbuf(generate_card(
-                            string=self._card_data[self.page][0].lower(),
-                            colors=[self._color_data[self.page][0], '#000000'],
-                            scale=self._scale,
-                            center=True))))
-            self._double_cards.append(Sprite(self._sprites, self._left,
-                                             self._height + GRID_CELL_SIZE * 2,
+            # Two-tone cards add some complexity.
+            if type(self._color_data[self.page][0]) == type([]):
+                top = svg_str_to_pixbuf(generate_card(
+                        string=self._card_data[self.page][0].lower(),
+                        colors=[self._color_data[self.page][0][0], '#000000'],
+                        scale=self._scale,
+                        center=True))
+                bot = svg_str_to_pixbuf(generate_card(
+                        string=self._card_data[self.page][0].lower(),
+                        colors=[self._color_data[self.page][0][1], '#000000'],
+                        scale=self._scale,
+                        center=True))
+                w = top.get_width()
+                h = top.get_height()
+                bot.composite(top, 0, int(h/2), w, int(h/2), 0, 0, 1, 1,
+                              gtk.gdk.INTERP_NEAREST, 255)
+                self._cards.append(Sprite(self._sprites, self._left,
+                                          GRID_CELL_SIZE, top))
+                stroke = self._test_for_stroke()
+                top = svg_str_to_pixbuf(generate_card(
+                                string=self._card_data[self.page][0][0].lower(),
+                                colors=[self._color_data[self.page][0][0],
+                                        '#000000'],
+                                font_size=12 * self._scale,
+                                background=False, stroke=stroke))
+                bot = svg_str_to_pixbuf(generate_card(
+                                string=self._card_data[self.page][0][0].lower(),
+                                colors=[self._color_data[self.page][0][1],
+                                        '#000000'],
+                                font_size=12 * self._scale,
+                                background=False, stroke=stroke))
+                w = top.get_width()
+                h = top.get_height()
+                bot.composite(top, 0, int(h/2), w, int(h/2), 0, 0, 1, 1,
+                              gtk.gdk.INTERP_NEAREST, 255)
+                self._colored_letters.append(Sprite(self._sprites, 0, 0, top))
+            else:
+                self._cards.append(Sprite(self._sprites, self._left,
+                                          GRID_CELL_SIZE,
+                                          svg_str_to_pixbuf(generate_card(
+                                string=self._card_data[self.page][0].lower(),
+                                colors=[self._color_data[self.page][0],
+                                        '#000000'],
+                                scale=self._scale, center=True))))
+                self._double_cards.append(Sprite(self._sprites, self._left,
+                                                 self._height + \
+                                                     GRID_CELL_SIZE * 2,
                                              svg_str_to_pixbuf(generate_card(
-                            string=self._card_data[self.page][0].lower()
-                                 + self._card_data[self.page][0].lower(),
-                            colors=[self._color_data[self.page][0], '#000000'],
-                            scale=self._scale,
-                            font_size=40,
-                            center=True))))
-            stroke = self._test_for_stroke()
-            self._colored_letters.append(Sprite(
-                    self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
-                            string=self._card_data[self.page][0][0].lower(),
-                            colors=[self._color_data[self.page][0],
-                                    '#000000'],
-                            font_size=12 * self._scale,
-                            background=False, stroke=stroke))))
+                                string=self._card_data[self.page][0].lower()
+                                + self._card_data[self.page][0].lower(),
+                                colors=[self._color_data[self.page][0],
+                                        '#000000'],
+                                scale=self._scale, font_size=40, center=True))))
+                stroke = self._test_for_stroke()
+                self._colored_letters.append(Sprite(
+                        self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
+                                string=self._card_data[self.page][0][0].lower(),
+                                colors=[self._color_data[self.page][0],
+                                        '#000000'],
+                                font_size=12 * self._scale,
+                                background=False, stroke=stroke))))
 
         self._hide_cards()
         if self.page >= len(self._card_data):
@@ -227,6 +259,11 @@ class Page():
 
     def _load_card(self):
         ''' a card is a sprite and a message. '''
+
+        vadj = self._activity.scrolled_window.get_vadjustment()
+        vadj.set_value(0)
+        self._activity.scrolled_window.set_vadjustment(vadj)
+
         self._cards[self.page].set_layer(2)
 
         self._x_pos = self._margin
@@ -383,21 +420,26 @@ class Page():
 
             # Process each character in the word
             for char in range(len(word)):
-                if self.page < len(self._card_data) and \
-                   word[char] == self._card_data[self.page][0][0]:
-                    self._draw_pixbuf(
-                        self._colored_letters[self.page].images[0],
-                        self._x_pos, self._y_pos, canvas, gc)
-                    kern_char = word[char].lower()
-                else:
-                    try:
-                        if word[char] in ALPHABET:
-                            i = ALPHABET.index(word[char])
-                            self._draw_pixbuf(self._letters[i].images[0],
-                                self._x_pos, self._y_pos, canvas, gc)
-                    except UnicodeDecodeError:
-                        print word
-                    kern_char = word[char]
+                try:
+                    if self.page < len(self._card_data) and \
+                            word[char] == self._card_data[self.page][0][0]:
+                        self._draw_pixbuf(
+                            self._colored_letters[self.page].images[0],
+                            self._x_pos, self._y_pos, canvas, gc)
+                        kern_char = word[char].lower()
+                    else:
+                        try:
+                            if word[char] in ALPHABET:
+                                i = ALPHABET.index(word[char])
+                                self._draw_pixbuf(self._letters[i].images[0],
+                                                  self._x_pos, self._y_pos,
+                                                  canvas, gc)
+                        except UnicodeDecodeError:
+                            print word
+                        kern_char = word[char]
+                except:
+                    print 'UnicodeWarning:', word[char], \
+                          self._card_data[self.page][0][0]
 
                 if kern_char in KERN:
                     self._x_pos += self._offset * KERN[kern_char]
@@ -489,15 +531,20 @@ class Page():
         self._align_data = []
         self._sound_data = []
         self._word_data = []
-        f = file(path, 'r')
+        # f = file(path, 'r')
+        f = codecs.open(path, encoding='utf-8')
         for line in f:
             if len(line) > 0 and line[0] not in '#\n':
                 words = line.split(', ')
                 if not words[0] in '-+':
                     self._card_data.append([words[0],
-                        self._unicode_map(words[1]).replace('-', ', ')])
-                    self._color_data.append(
-                        [words[2], self._unicode_map(words[3])])
+                        words[1].replace('-', ', ')])
+                    if words[2].count('#') > 1:
+                        self._color_data.append(
+                            [words[2].split('/'), words[3]])
+                    else:
+                        self._color_data.append(
+                            [words[2], words[3]])
                     if len(self._msg_data) == 0:
                         self._msg_data.append(FIRST_CARD)
                     elif words[4] == 'vowel':
@@ -513,25 +560,15 @@ class Page():
                         self._msg_data.append(CONSONANT)
                     self._sound_data.append(words[5])
                 if words[0] == '+':
-                    self._test_data = self._unicode_map(words[6])
+                    self._test_data = words[6]
                 else:
-                    self._word_data.append(self._unicode_map(words[6]))
+                    self._word_data.append(words[6])
         f.close()
 
         self._clear_all()
         self._cards = []
         self._double_cards = []
         self._colored_letters = []
-
-    def _unicode_map(self, word):
-        ''' Map base10 representation to unicode '''
-        word = word.replace('\xc3\xb1', unichr(241))  # ñ
-        word = word.replace('\xc3\xa1', unichr(225))  # á
-        word = word.replace('\xc3\xa9', unichr(233))  # é
-        word = word.replace('\xc3\xad', unichr(237))  # í
-        word = word.replace('\xc3\xb3', unichr(243))  # ó
-        word = word.replace('\xc3\xba', unichr(250))  # ú
-        return word
 
     def _clear_all(self):
         ''' Hide everything so we can begin a new page. '''
