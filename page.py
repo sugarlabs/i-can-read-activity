@@ -17,7 +17,7 @@ import codecs
 
 from gettext import gettext as _
 
-from random import uniform, randrange
+from random import randrange
 
 from utils.gplay import play_audio_from_file
 
@@ -52,15 +52,13 @@ CONSONANT = 3
 DOUBLE = 4
 SECOND_CARD = 5
 
-# TODO: make this a property of the word list
-ALIGN = 11  # Beginning with Card 11, start left-justifying the text
-
 # Rendering-related constants
-KERN = {'i': 0.6, 'I': 0.7, 'l': 0.6, 't': 0.8, 'T': 0.8, 'r': 0.7, 'm': 1.5,
+KERN = {'i': 0.5, 'I': 0.7, 'l': 0.6, 't': 0.7, 'T': 1.0, 'r': 0.7, 'm': 1.4,
         'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
-        'J': 0.8, 'c': 0.9, 'z': 0.9, 's': 0.8, 'U': 1.1}
-ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,'!Ññáéíóú"
-ALPHABET += unichr(250)  # ú
+        'J': 0.8, 'c': 0.9, 'z': 0.9, 's': 0.8, 'U': 1.1, ' ':0.7, '.':0.5,
+        'y':0.8}
+ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,' " + \
+    u'!Ññáéíóú'
 
 
 class Page():
@@ -69,6 +67,7 @@ class Page():
     def __init__(self, canvas, path, level, parent=None):
         ''' The general stuff we need to track '''
         self._activity = parent
+        print ALPHABET
 
         # Starting from command line
         if self._activity is None:
@@ -100,7 +99,7 @@ class Page():
         self._release = None
         self.gplay = None
         self._final_x = 0
-        self._lead = int(self._scale * 12)
+        self._lead = int(self._scale * 15)
         self._margin = int(self._scale * 3)
         self._left = self._margin  # int((self._width - self._scale * 60) / 2.)
         self._x_pos = self._margin
@@ -192,10 +191,12 @@ class Page():
                         colors=[self._color_data[self.page][0][1], '#000000'],
                         scale=self._scale,
                         center=True))
-                w = top.get_width()
-                h = top.get_height()
-                bot.composite(top, 0, int(h/2), w, int(h/2), 0, 0, 1, 1,
-                              gtk.gdk.INTERP_NEAREST, 255)
+                # Where to draw the line
+                h1 = 9 / 16.
+                h2 = 1.0 - h1
+                bot.composite(top, 0, int(h1 * top.get_height()),
+                              top.get_width(), int(h2 * top.get_height()),
+                              0, 0, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
                 self._cards.append(Sprite(self._sprites, self._left,
                                           GRID_CELL_SIZE, top))
                 stroke = self._test_for_stroke()
@@ -211,10 +212,9 @@ class Page():
                                         '#000000'],
                                 font_size=12 * self._scale,
                                 background=False, stroke=stroke))
-                w = top.get_width()
-                h = top.get_height()
-                bot.composite(top, 0, int(h/2), w, int(h/2), 0, 0, 1, 1,
-                              gtk.gdk.INTERP_NEAREST, 255)
+                bot.composite(top, 0, int(h1 * top.get_height()),
+                              top.get_width(), int(h2 * top.get_height()),
+                              0, 0, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
                 self._colored_letters.append(Sprite(self._sprites, 0, 0, top))
             else:
                 self._cards.append(Sprite(self._sprites, self._left,
@@ -290,15 +290,14 @@ class Page():
                 self._card_data[self.page][1])
 
         for phrase in text.split('\n'):
-            self._render_phrase(phrase, self._my_canvas, self._my_gc,
-                                align=True)
+            self._render_phrase(phrase, self._my_canvas, self._my_gc)
             self._x_pos = self._margin
             self._y_pos += self._lead
 
         if self._msg_data[self.page] == DOUBLE:
             self._y_pos += self._lead
             self._render_phrase(MSGS[SECOND_CARD].split('\n')[0],
-                                self._my_canvas, self._my_gc, align=True)
+                                self._my_canvas, self._my_gc)
             self._x_pos = self._margin
             self._y_pos += self._lead * 2
             self._double_cards[self.page].move((self._left, self._y_pos))
@@ -308,7 +307,7 @@ class Page():
                 self._double_cards[self.page].images[0].get_height() + \
                 self._lead
             self._render_phrase(MSGS[SECOND_CARD].split('\n')[1],
-                                self._my_canvas, self._my_gc, align=True)
+                                self._my_canvas, self._my_gc)
 
         # Is there a picture for this page?
         if os.path.exists(os.path.join(os.path.abspath('.'), 'images',
@@ -353,28 +352,15 @@ class Page():
 
         my_list = self._word_data[self.page].split('/')
 
-        if self.page > ALIGN:
-            align = True
-        else:
-            align = False
-
-        if align:  # Some pages are aligned left
-            self._x_pos, self._y_pos = self._margin, self._lead
-        else:
-            self._x_pos, self._y_pos = self._increment_xy(0)
+        self._x_pos, self._y_pos = self._margin, self._lead
 
         for phrase in my_list:
-            self._render_phrase(phrase, self._my_canvas, self._my_gc,
-                                align=align)
+            self._render_phrase(phrase, self._my_canvas, self._my_gc)
 
             # Put a longer space between each phrase
-            if align:
-                self._x_pos += self._offset
-            else:
-                self._x_pos += int(uniform(self._margin, self._width / 8))
+            self._x_pos += self._offset
             if self._x_pos > self._width * 7 / 8.0:
-                self._x_pos, self._y_pos = self._increment_xy(self._y_pos,
-                                                            align=align)
+                self._x_pos, self._y_pos = self._increment_xy(self._y_pos)
 
         self._looking_at_word_list = False
 
@@ -399,56 +385,58 @@ class Page():
         self._x_pos, self._y_pos = self._margin, self._lead
 
         for phrase in phrase_list:
-            self._render_phrase(phrase, self._my_canvas, self._my_gc,
-                                align=True)
-            self._x_pos, self._y_pos = self._increment_xy(self._y_pos,
-                                                          align=True)
+            self._render_phrase(phrase, self._my_canvas, self._my_gc)
+            self._x_pos, self._y_pos = self._increment_xy(self._y_pos)
             if self._y_pos > self._height * 2 - self._lead:
                 break
 
         self._looking_at_word_list = False
 
-    def _render_phrase(self, phrase, canvas, gc, align=False):
+    def _render_phrase(self, phrase, canvas, gc):
         ''' Draw an individual phase onto the canvas. '''
-        words = phrase.split()
-        for word in words:
-            # Will word run off the right edge?
-            if self._x_pos + len(word) * self._offset > \
-               self._width - self._margin:
-                self._x_pos, self._y_pos = self._increment_xy(self._y_pos,
-                                                              align=align)
 
-            # Process each character in the word
-            for char in range(len(word)):
-                try:
-                    if self.page < len(self._card_data) and \
-                            word[char] == self._card_data[self.page][0][0]:
-                        self._draw_pixbuf(
-                            self._colored_letters[self.page].images[0],
-                            self._x_pos, self._y_pos, canvas, gc)
-                        kern_char = word[char].lower()
-                    else:
-                        try:
-                            if word[char] in ALPHABET:
-                                i = ALPHABET.index(word[char])
-                                self._draw_pixbuf(self._letters[i].images[0],
-                                                  self._x_pos, self._y_pos,
-                                                  canvas, gc)
-                        except UnicodeDecodeError:
-                            print word
-                        kern_char = word[char]
-                except:
-                    print 'UnicodeWarning:', word[char], \
-                          self._card_data[self.page][0][0]
+        # Either we are rendering complete lines or phrases
+        lines = phrase.split('\\')
+        if len(lines) == 1:  # split a phrase into words
+            words = phrase.split()
+            for word in words:
+                # Will line run off the right edge?
+                if self._x_pos + len(word) * self._offset > \
+                        self._width - self._margin:
+                    self._x_pos, self._y_pos = self._increment_xy(self._y_pos)
+                self._draw_a_word(word, canvas, gc)
 
-                if kern_char in KERN:
-                    self._x_pos += self._offset * KERN[kern_char]
-                else:
-                    self._x_pos += self._offset
-            self._final_x = self._x_pos
-            # Put a space after each word
-            if self._x_pos > self._margin:
-                self._x_pos += int(self._offset / 1.6)
+        else:  # render each line as a unit
+            for line in lines:
+                self._draw_a_word(line, canvas, gc)
+                self._x_pos, self._y_pos = self._increment_xy(self._y_pos)
+
+    def _draw_a_word(self, word, canvas, gc):
+        ''' Process each character in the word '''
+        for char in range(len(word)):
+            if self.page < len(self._card_data) and \
+               word[char] == self._card_data[self.page][0][0]:
+                self._draw_pixbuf(
+                    self._colored_letters[self.page].images[0],
+                    self._x_pos, self._y_pos, canvas, gc)
+                kern_char = word[char].lower()
+            else:
+                if word[char] in ALPHABET:
+                    i = ALPHABET.index(word[char])
+                    self._draw_pixbuf(self._letters[i].images[0],
+                                      self._x_pos, self._y_pos,
+                                      canvas, gc)
+                    kern_char = word[char]
+
+            if kern_char in KERN:
+                self._x_pos += self._offset * KERN[kern_char]
+            else:
+                self._x_pos += self._offset
+
+        self._final_x = self._x_pos
+        # Put a space after each word
+        if self._x_pos > self._margin:
+            self._x_pos += int(self._offset / 1.6)
 
     def _draw_pixbuf(self, pixbuf, x, y, canvas, gc):
         ''' Draw a pixbuf onto the canvas '''
@@ -457,14 +445,10 @@ class Page():
         canvas.images[0].draw_pixbuf(gc, pixbuf, 0, 0, int(x), int(y))
         self.invalt(x, y, w, h)
 
-    def _increment_xy(self, y, align=False):
-        ''' Increment the xy postion for drawing the next phrase,
-        possibly with left-justified alignment. '''
-        if align:
-            return 10, self._lead + y
-        else:
-            return int(uniform(self._margin, self._width / 8.0)), \
-                   self._lead + y
+    def _increment_xy(self, y):
+        ''' Increment the xy postion for drawing the next phrase, with
+        left-justified alignment. '''
+        return 10, self._lead + y
 
     def _button_press_cb(self, win, event):
         ''' Either a card or list entry was pressed. '''
@@ -528,7 +512,6 @@ class Page():
         self._card_data = []
         self._color_data = []
         self._msg_data = []
-        self._align_data = []
         self._sound_data = []
         self._word_data = []
         # f = file(path, 'r')
