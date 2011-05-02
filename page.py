@@ -34,17 +34,17 @@ from genpieces import generate_card
 from utils.sprites import Sprites, Sprite
 
 # TRANS: e.g., This yellow sign is said u like up.
-MSGS = [_('This %s sign is said') + ' %s '  + _('like') + ' %s.\n\n' + \
-        _('Reading from left to right, read the sounds one at a time. You  \
+MSGS = [_('This {0} sign is said {1} like {2}').format('%s', '%s', '%s\n\n') + \
+        _('Reading from left to right, read the sounds one at a time. You \
 can use your finger to follow along.'),
-        _('This %s sign is said') + ' %s ' + _('like') + ' %s.',
-        _('This %s sign is lightly said') + ' %s ' + _('like') + \
-       ' %s.',
-        _('This %s sign is said together with other sounds') + \
-        ' ' +  _('as in:') + '%s',
-        _('This %s sign is said together with other sounds') + \
-        ' ' +  _('as in:') + '%s',
-        _('When it looks like this' + '\n' + 'we read it the same way.')]
+        _('This {0} sign is said {1} like {2}').format('%s', '%s', '%s'),
+        _('This {0} sign is lightly said {1} like {2}').format('%s', '%s',
+                                                               '%s'),
+        _('This {0} sign is said together with other sounds as in: {1}').format(
+        '%s', '%s'),
+        _('This {0} sign is said together with other sounds as in: {1}').format(
+        '%s', '%s'),
+        _('When it looks like this \n we read it the same way.')]
 FIRST_CARD = 0
 VOWEL = 1
 LIGHT = 2
@@ -236,7 +236,7 @@ class Page():
                 stroke = self._test_for_stroke()
                 self._colored_letters.append(Sprite(
                         self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
-                                string=self._card_data[self.page][0][0].lower(),
+                                string=self._card_data[self.page][0].lower(),
                                 colors=[self._color_data[self.page][0],
                                         '#000000'],
                                 font_size=12 * self._scale,
@@ -311,9 +311,9 @@ class Page():
 
         # Is there a picture for this page?
         if os.path.exists(os.path.join(os.path.abspath('.'), 'images',
-            self._card_data[self.page][1].lower() + '.jpg')):
+            self._card_data[self.page][1].lower() + '.png')):
             pixbuf = image_file_to_pixbuf(os.path.join(os.path.abspath('.'),
-                'images', self._card_data[self.page][1].lower() + '.jpg'),
+                'images', self._card_data[self.page][1].lower() + '.png'),
                 self._scale / 4)
             if self._picture is None:
                 self._picture = Sprite(self._sprites,
@@ -411,15 +411,36 @@ class Page():
                 self._draw_a_word(line, canvas, gc)
                 self._x_pos, self._y_pos = self._increment_xy(self._y_pos)
 
+    def _letter_match(self, word, char, n):
+        ''' Does the current position in the word match the letters on
+        the card for the current page? '''
+        if not self.page < len(self._card_data):
+            return False
+        if n == 1 and word[char] == self._card_data[self.page][0][0]:
+            return True
+        if len(word) - char < n:
+            return False
+        if word[char:char+n] == self._card_data[self.page][0]:
+            return True
+        return False
+
     def _draw_a_word(self, word, canvas, gc):
         ''' Process each character in the word '''
+
+        # some colored text is multiple characters
+        n = len(self._card_data[self.page][0])
+
+        skip_count = 0
         for char in range(len(word)):
-            if self.page < len(self._card_data) and \
-               word[char] == self._card_data[self.page][0][0]:
+            if skip_count > 0:
+                skip_count -= 1
+            elif self._letter_match(word, char, n):
                 self._draw_pixbuf(
                     self._colored_letters[self.page].images[0],
                     self._x_pos, self._y_pos, canvas, gc)
                 kern_char = word[char].lower()
+                if n > 1:
+                    skip_count = n - 1
             else:
                 if word[char] in ALPHABET:
                     i = ALPHABET.index(word[char])
