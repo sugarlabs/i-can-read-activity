@@ -428,7 +428,10 @@ class Page():
         ''' Process each character in the word '''
 
         # some colored text is multiple characters
-        n = len(self._card_data[self.page][0])
+        if self.page < len(self._card_data):
+            n = len(self._card_data[self.page][0])
+        else:
+            n = 1
 
         skip_count = 0
         for char in range(len(word)):
