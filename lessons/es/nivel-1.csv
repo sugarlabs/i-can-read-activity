@@ -4,27 +4,19 @@
 # These words represent Nivel 1 in Spanish,,,,,,
 # Use CAPS for highlighted letter in phrase.,,,,,,
 # letter, phrase, RGB color, color name, vowel or consonant , sound file,
-A, AnA, #FFFFFF, blanco, vowel, a-como-ana.ogg, A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A/A
-U, Uva, #00A000, verde, vowel, u-como-uva.ogg, a/U/a/a/a/a/a/U/a/a/U/a/a/U/a/U/a/a/a/U/U/a/U/a/a/a/a/a/U/a/a/a/a/a
-I, IglesIa, #DE1C23, rosa, vowel, i-como-iglesia.ogg, a/I/u/a/I/a/I/a/I/I/I/I/a/a/I/u/I/a/a/u/a/I/I/u/a/I/a/u/a/I/a/a/I/a
-E, Ema, #70A9CE, azul, vowel, e-como-ema.ogg, a/i/u/a/i/a/i/E/a/i/i/E/i/i/a/a/i/u/i/a/a/u/a/i/i/u/a/a/i/E/a/E/a/a
-O, OjO, #A4221E, marrón, vowel, o-como-ojo.ogg, a/i/u/a/i/O/a/i/e/a/i/O/a/i/e/O/O/i/i/a/e/i/u/e/a/O/e/i/i/O/a/O/a/O
-L, Lana, #00A0FF, azul, consonant, l-como-lana.ogg, aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee/aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee/aL/eL/Leo/Lo/La/Le/aLa/oLia/oLa/Lee
-M, Mano, #C72020, rosa, consonant, m-como-mano.ogg, Mula/Mil/Mala/Miel/MaMa
-N, NeNe, #7A6BBD, morado, consonant, n-como-nene.ogg, mama/moNo/ama/maNo/leoN/muela/meloN/mama/moNo/ama/maNo/leoN/muela/meloN/lola/uNa/liNea/mia/luNa/alumNa/auN/ilumiNa/No/eN/moliNo/Ni/uN/aNimal/alamo/limoN
-S, Sol, #7EC93C, verde, consonant, s-como-sol.ogg, Son/Sin/eSo/aSi/noS/miSmo/Soy/menoS/eS/Sal/SomoS/Sol/Se
-P, Perro, #A4221E, marrón, consonant, p-como-perro.ogg, Pan/Pena/PaPa/Pon/Pues/Ponemos/Pisa/solo/salio/soPa/isla/su/Palomas/mesa/semana/Peso/usamos/limpia/muy/mas/lunes
-F, Foco, #C160D2, morado, consonant, f-como-foco.ogg, 
-T, Tapa, #EE3C8E, rosa, consonant, t-como-tapa.ogg, 
-N, No, #80C040, verde, consonant, n-como-no.ogg, 
-Q, Queso, #FFC040, amarillo, consonant, q-como-queso.ogg, 
-R, Rata, #F08020, naranja, consonant, r-como-rata.ogg, 
-V, Vaca, #2080A0, azul, consonant, v-como-vaca.ogg, 
-B, Barco, #2080A0, azul, consonant, b-como-barco.ogg, 
-Z, Zapato, #7EC93C, verde, consonant, z-como-zapato.ogg, 
-C, Casa, #FFC040, amarillo, consonant, c-como-casa.ogg, 
-D, DeDo, #20C060, verde, consonant, d-como-dedo.ogg, 
-G, Gato, #A0A0A0, gris, consonant, g-como-gato.ogg, 
-K, Kilo, #FFC040, amarillo, consonant, k-como-kilo.ogg, 
-H, Hora, #FFFFFF, blanco, consonant, h-como-hora.ogg, 
-Y, Yolanda, #BA6C71, rosa, consonant, y-como-yolanda.ogg, 
+A, Ave, #FFFFFF, blanco, vowel, a-como-ave.ogg,                A   A     \ A  A A   A A A A A  A  A A\    A A   A A  A  A        \                    A   \ A  A A        A  A  A A   \ A A              A       A \       A  A    A    A    A \     A  A A           A \   A     A     A   A    \      A    A    A  A A A 
+U, Uva, #00A000, verde, vowel, u-como-uva.ogg,                a   a     \ a  a a   a a a a a  a  a a\    a a   a a  a  a        \         U          a   \ a  a a      U a  a  a a   \ a a              a       a \     U a  a    a    a    a \     a  a a  U        a \ U a     a     a   a    \      a    a    a  a a a 
+I, IglesIa, #DE1C23, rosa, vowel, i-como-iglesia.ogg,  I I           a   a     \ a  a a   a a a a a  a  a a\    a a   a a  a  a        \         u          a   \ a  a a      u a  a  a a   \ a a             Ia     I a \     u a  a  I a    a  I a \  I  a  a a  u      I a \ u a    Ia     a I a    \      a    a    a  a a a 
+E, ElEfantE, #70A9CE, azul, vowel, e-como-elefante.ogg,  i i    E E    a   a E E \ a  a a   a a a a a  a  a a\E   a a   a a  a  a      E \E        u E  EE    a E \ a  a a      u a  a  a a  E\ a a  E       E  ia E   i a \ E E u a  a  i a    a  i a \  i  a Ea a  u      i a \ u a    ia     a i a   E\ E    a    a E  a  a a a 
+O, OsO, #A4221E, marrón, vowel, o-como-ojo.ogg,  i i    e e  O a   a e e \ a  a a   a a a a a  a  a a\e   a a   a a  a  a  O O e \e   O    u e  ee  O a e \ a  a a   O  u a  a  a a  e\ a a  e  O O  e  ia e   i a \ e e u a  a  i a    a  i a \O I  a ea a  u O O  i a \ u a    ia  O  a i a   e\ eO   a  O a e  a  a a a 
+L, Loro, #00A0FF, azul, consonant, l-como-loro.ogg,  i i    e e  o a   a e e \La  aLa   a a a a a La  a a\e   a a   a a  aL a  oLo e \eL  oL  Lu e Lee  oLa e \La  aLa   oL u a La  aLa  e\ a a  eL o o  e  ia e  LiLa \ e e u a La Li a   La  iLa \o i  a ea a  u o o LiLa \LuLa   Lia  o  a i a   e\ eo  La  o a e  a  aLa a 
+M, Mesa, #C72020, rosa, consonant, m-como-mesa.ogg, MiMi    e e  oMa  Ma e e \la  ala  MaMa aMa a la Ma a\e   a a   a a  al a  olo e \el  ol  lu e lee  ola e \la  ala   ol u a la  ala  e\ a a  el o o  e Mia e  lila \ e e u a la liMa   la  ila \o i  a ea a  u o o lila \lula   lia  o  aMi a   e\ eo  la  o a e  a  ala a 
+N, Nube, #7A6BBD, morado, consonant, n-como-nube.ogg, mimi    e e  omaN ma e eN\la  ala  mama ama a la ma a\eN  a a   a a  al a  olo eN\el  ol  lu e lee  ola eN\la  ala   ol u a la  ala  e\ a a  el o o  e mia e  lila \ e e u a la lima   la  ila \o i  a ea a  u o o lila \lula   lia  oN ami a   e\ eo  la  o a e  a  ala a 
+S, Sapo, #7EC93C, verde, consonant, s-como-sapo.ogg, mimi    e e  oman ma e en\la Sala  mama amaSa la maSa\en  aSa   a a Sal a Solo en\el Sol  lu e lee Sola en\la Sala  Sol uSa la  ala  e\ a a  el oSo  e mia eS lila \ e e uSa la lima   la  ila \o i  aSea a Su oSo lila \lula   lia Son ami aS  e\ eo  la So a eS a Sala a 
+P, Pato, #A4221E, marrón, consonant, p-como-pato.ogg, mimi   PePe  oman ma e en\la sala  mama amasa la masa\en  asa   a a sal a solo en\el sol  luPe lee sola en\la sala  sol usa la Pala  e\PaPa  el oso  e mia es lila \PePe usa la lima   la Pila \o i Pasea a su oso lila \lula   lia son ami as  e\ eo  la soPa es a sala a 
+T, Taza, #EE3C8E, rosa, consonant, t-como-taza.ogg, mimi   pepe Toman maTe en\la sala  mama amasa la masa\en  asa  TaTa salTa solo en\el sol  lupe lee sola en\la sala  sol usa la pala  e\papa  el oso  e mia es lila \pepe usa la lima   la pila \o i pasea a su oso lila \lula   lia son ami as  e\Teo  la sopa esTa sala a 
+C, Conejo, #FFC040, amarillo, consonant, c-como-conejo.ogg, mimi   pepe toman mate en\la sala  mama amasa la masa\en Casa  tata salta solo en\el sol  lupe lee sola en\la sala  sol usa la pala  e\papa  el oso  e mia es lila \pepe usa la lima   la pila \o i pasea a su oso lila \lula   lia son ami as  e\teo  la sopa esta sala a 
+D, DaDo, #20C060, verde, consonant, d-como-dado.ogg, mimi   pepe toman mate en\la sala  mama amasa la masa\en casa  tata salta solo en\el sol  lupe lee sola en\la sala  sol usa la pala De\papa  el oso De mia es lila \pepe usa la lima   la pila \oDi pasea a su oso lila \lula   lia son ami as De\teo  la sopa esta salaDa 
+G, Gato, #A0A0A0, gris, consonant, g-como-gato.ogg, mimi   pepe toman mate en\la sala  mama amasa la masa\en casa  tata salta solo en\el sol  lupe lee sola en\la sala  sol usa la pala de\papa  el oso de mia es lila \pepe usa la lima   la pila \odi pasea a su oso lila \lula   lia son amiGas de\teo  la sopa esta salada 
+Y, Yate, #BA6C71, rosa, consonant, y-como-yate.ogg, mimi Y pepe toman mate en\la sala  mama amasa la masa\en casa  tata salta solo en\el sol  lupe lee sola en\la sala  sol usa la pala de\papa  el oso de mia es lila \pepe usa la lima Y la pila \odi pasea a su oso lila \lula Y lia son amigas de\teo  la sopa esta salada 
+-, , , , , , mimi y pepe toman mate en\la sala. mama amasa la masa\en casa. tata salta solo en\el sol. lupe lee sola en\la sala. sol usa la pala de\papa. el oso de mia es lila \pepe usa la lima y la pila \odi pasea a su oso lila \lula y lia son amigas de\teo. la sopa esta salada.
