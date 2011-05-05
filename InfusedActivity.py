@@ -233,8 +233,18 @@ class InfusedActivity(activity.Activity):
         _separator_factory(lesson_toolbar)
 
         self._lesson_button = _button_factory(
-            'load-from-journal', _('Load a new lesson from the Journal.'),
+            'load-from-journal', _('Load a new lesson from the Journal'),
             self._lesson_cb, lesson_toolbar)
+
+        _separator_factory(lesson_toolbar)
+
+        self._create_lesson_button = _button_factory(
+            'view-source-insensitive', _('Create a new lesson'),
+            self._create_lesson_cb, lesson_toolbar)
+
+        self._save_lesson_button = _button_factory(
+            'save-to-journal-insensitive', _('Nothing to save'),
+            self._save_lesson_cb, lesson_toolbar)
 
         self._sounds = self._get_sounds()
         self.sounds_combo = _combo_factory(self._sounds, _('Record a sound'),
@@ -276,7 +286,7 @@ class InfusedActivity(activity.Activity):
         _separator_factory(primary_toolbar)
 
         self._read_button = _button_factory(
-            'go-down', _('Read the sounds one at a time.'),
+            'go-down', _('Read the sounds one at a time'),
             self._read_cb, primary_toolbar)
 
         _separator_factory(primary_toolbar)
@@ -321,6 +331,20 @@ class InfusedActivity(activity.Activity):
         chooser(self, '', self._load_lesson)
         return
 
+    def _create_lesson_cb(self, button=None):
+        ''' Chose a lesson file from the Sugar Journal. '''
+        # Do something here:
+        #    We need a place to add and edit text
+        #    We need a place to select phonemes and assign colors
+        return
+
+    def _save_lesson_cb(self, button=None):
+        ''' Save a lesson file to the Sugar Journal. '''
+        if self._nothing_to_save:
+            return
+        # Do something here
+        return
+
     def _sounds_cb(self, combobox=None):
         ''' The combo box has changed. '''
         if hasattr(self, 'sounds_combo'):
@@ -363,7 +387,7 @@ class InfusedActivity(activity.Activity):
             self.testing = False
             self._page.reload()
             self._read_button.set_icon('go-down')
-            self._read_button.set_tooltip(_('Read the sounds one at a time.'))
+            self._read_button.set_tooltip(_('Read the sounds one at a time'))
 
     def _test_cb(self, button=None):
         ''' Start a test. '''
