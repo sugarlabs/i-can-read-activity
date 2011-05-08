@@ -1,6 +1,6 @@
 [Activity]
-name = Infused
-activity_version = 1
+name = I Can Read
+activity_version = 3
 license = GPLv3
 bundle_id = org.sugarlabs.InfusedActivity
 exec = sugar-activity InfusedActivity.InfusedActivity
