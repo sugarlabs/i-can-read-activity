@@ -1,10 +1,10 @@
 """
- gplay.py
+ tagplay.py
  refactored based on Jukebox Activity
  Copyright (C) 2007 Andy Wingo <wingo@pobox.com>
  Copyright (C) 2007 Red Hat, Inc.
  Copyright (C) 2008-2010 Kushal Das <kushal@fedoraproject.org>
- Copyright (C) 2010-11 Walter Bender
+ Copyright (C) 2010-2011 Walter Bender
 """
 
 # This program is free software; you can redistribute it and/or
@@ -42,29 +42,79 @@ import urllib
 
 def play_audio_from_file(lc, file_path):
     """ Called from Show block of audio media """
+    if lc.gplay is not None and lc.gplay.player is not None:
+        if lc.gplay.player.playing:
+            lc.gplay.player.stop()
+        if lc.gplay.bin is not None:
+            lc.gplay.bin.destroy()
+
     lc.gplay = Gplay(lc)
     lc.gplay.start(file_path)
+
+
+def play_movie_from_file(lc, filepath, x, y, w, h):
+    """ Called from Show block of video media """
+    if lc.gplay is not None and lc.gplay.player is not None:
+        if lc.gplay.player.playing:
+            lc.gplay.player.stop()
+        if lc.gplay.bin is not None:
+            lc.gplay.bin.destroy()
+
+    lc.gplay = Gplay(lc, x, y, w, h)
+    lc.gplay.start(filepath)
+
+
+def stop_media(lc):
+    """ Called from Clean block and toolbar Stop button """
+    if lc.gplay == None:
+        return
+
+    if lc.gplay.player is not None:
+        lc.gplay.player.stop()
+    if lc.gplay.bin != None:
+        lc.gplay.bin.destroy()
+
+    lc.gplay = None
+
+
+def media_playing(lc):
+    if lc.gplay == None:
+        return False
+    return lc.gplay.player.is_playing()
 
 
 class Gplay():
     UPDATE_INTERVAL = 500
 
-    def __init__(self, lc):
+    def __init__(self, lc, x=0, y=0, w=0, h=0):
 
         self.player = None
         self.uri = None
         self.playlist = []
         self.jobjectlist = []
         self.playpath = None
-        self.only_audio = True
+        if w == 0:
+            self.only_audio = True
+        else:
+            self.only_audio = False
         self.got_stream_info = False
         self.currentplaying = 0
 
+        self.bin = gtk.Window()
+
         self.videowidget = VideoWidget()
+        self.bin.add(self.videowidget)
+        self.bin.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_NORMAL)
+        self.bin.set_decorated(False)
+
+        self.bin.move(int(x), int(y))
+        self.bin.resize(int(w), int(h))
+        self.bin.show_all()
+
         self._want_document = True
 
     def _player_eos_cb(self, widget):
-        pass
+        logging.debug('end of stream')
 
     def _player_error_cb(self, widget, message, detail):
         self.player.stop()
@@ -173,13 +223,48 @@ class GstPlayer(gobject.GObject):
                           self.player.props.stream_info_value_array)
 
     def _init_video_sink(self):
-        return
+        self.bin = gst.Bin()
+        videoscale = gst.element_factory_make('videoscale')
+        self.bin.add(videoscale)
+        pad = videoscale.get_pad('sink')
+        ghostpad = gst.GhostPad('sink', pad)
+        self.bin.add_pad(ghostpad)
+        videoscale.set_property('method', 0)
+
+        caps_string = 'video/x-raw-yuv, '
+        r = self.videowidget.get_allocation()
+        if r.width > 500 and r.height > 500:
+            # Sigh... xvimagesink on the XOs will scale the video to fit
+            # but ximagesink in Xephyr does not.  So we live with unscaled
+            # video in Xephyr so that the XO can work right.
+            w = 480
+            h = float(w) / float(float(r.width) / float(r.height))
+            caps_string += 'width=%d, height=%d' % (w, h)
+        else:
+            caps_string += 'width=480, height=360'
+
+        caps = gst.Caps(caps_string)
+        self.filter = gst.element_factory_make('capsfilter', 'filter')
+        self.bin.add(self.filter)
+        self.filter.set_property('caps', caps)
+
+        conv = gst.element_factory_make('ffmpegcolorspace', 'conv')
+        self.bin.add(conv)
+        videosink = gst.element_factory_make('autovideosink')
+        self.bin.add(videosink)
+        gst.element_link_many(videoscale, self.filter, conv, videosink)
+        self.player.set_property('video-sink', self.bin)
+
+    def pause(self):
+        self.player.set_state(gst.STATE_PAUSED)
+        self.playing = False
+        logging.debug('pausing player')
 
     def play(self):
         self.player.set_state(gst.STATE_PLAYING)
         self.playing = True
         self.error = False
-        # logging.debug('playing player')
+        logging.debug('playing player')
 
     def stop(self):
         self.player.set_state(gst.STATE_NULL)

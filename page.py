@@ -19,7 +19,7 @@ from gettext import gettext as _
 
 from random import randrange
 
-from utils.gplay import play_audio_from_file
+from utils.gplay import play_audio_from_file, play_movie_from_file
 
 import logging
 _logger = logging.getLogger('infused-activity')
@@ -488,7 +488,7 @@ class Page():
         return True
 
     def _button_release_cb(self, win, event):
-        ''' Play a sound or jump to a card as indexed in the list. '''
+        ''' Play a sound or video or jump to a card as indexed in the list. '''
         win.grab_focus()
 
         if self._looking_at_word_list:
@@ -507,10 +507,20 @@ class Page():
                 if self.page < len(self._card_data):
                     if os.path.exists(os.path.join(
                             os.path.abspath('.'), 'sounds',
-                            self._sound_data[self.page])):
+                            self._media_data[self.page])):
                         play_audio_from_file(self, os.path.join(
                                 os.path.abspath('.'), 'sounds',
-                                self._sound_data[self.page]))
+                                self._media_data[self.page]))
+                    if os.path.exists(os.path.join(
+                            os.path.abspath('.'), 'videos',
+                            self._media_data[self.page])):
+                        play_movie_from_file(self, os.path.join(
+                                os.path.abspath('.'), 'videos',
+                                self._media_data[self.page]),
+                                self._width - 320 * self._scale / 2.5,
+                                          GRID_CELL_SIZE + 15 * self._scale,
+                                             80 * self._scale,
+                                             60 * self._scale)
 
     def _keypress_cb(self, area, event):
         ''' No keyboard shortcuts at the moment. Perhaps jump to the page
@@ -536,7 +546,7 @@ class Page():
         self._card_data = []
         self._color_data = []
         self._msg_data = []
-        self._sound_data = []
+        self._media_data = []
         self._word_data = []
         # f = file(path, 'r')
         f = codecs.open(path, encoding='utf-8')
@@ -565,7 +575,7 @@ class Page():
                     else:
                         print 'unknown message id %s' % (words[4])
                         self._msg_data.append(CONSONANT)
-                    self._sound_data.append(words[5])
+                    self._media_data.append(words[5])
                 if words[0] == '+':
                     self._test_data = words[6]
                 else:
