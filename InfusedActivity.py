@@ -208,7 +208,9 @@ class InfusedActivity(activity.Activity):
 
         else:
             # Use pre-0.86 toolbar design
-            page_toolbar = gtk.Toolbar()
+            primary_toolbar = gtk.Toolbar()
+            lesson_toolbar = gtk.Toolbar()
+            record_toolbar = gtk.Toolbar()
             toolbox = activity.ActivityToolbox(self)
             self.set_toolbox(toolbox)
             toolbox.add_toolbar(_('Page'), primary_toolbar)
