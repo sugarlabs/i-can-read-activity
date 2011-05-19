@@ -278,11 +278,11 @@ class InfusedActivity(activity.Activity):
         _separator_factory(primary_toolbar)
 
         self._prev_page_button = _button_factory(
-            'list-remove', _('Previous letter'), self._prev_page_cb,
-            primary_toolbar)
+            'previous-letter-insensitive', _('Previous letter'),
+            self._prev_page_cb, primary_toolbar)
 
         self._next_page_button = _button_factory(
-            'list-add', _('Next letter'), self._next_page_cb,
+            'next-letter', _('Next letter'), self._next_page_cb,
             primary_toolbar)
 
         _separator_factory(primary_toolbar)
@@ -361,6 +361,8 @@ class InfusedActivity(activity.Activity):
         ''' Start a new letter. '''
         if self._page.page > 0:
             self._page.page -= 1
+        if self._page.page == 0:
+            self._prev_page_button.set_icon('previous-letter-insensitive')
         self._page.new_page()
         self.reading = False
         self.testing = False
@@ -375,6 +377,7 @@ class InfusedActivity(activity.Activity):
         self.testing = False
         self._read_button.set_icon('go-down')
         self._read_button.set_tooltip(_('Show letter'))
+        self._prev_page_button.set_icon('previous-letter')
 
     def _read_cb(self, button=None):
         ''' Start a new page. '''
