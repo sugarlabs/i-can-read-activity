@@ -503,7 +503,7 @@ class Page():
         else:
             x, y = map(int, event.get_coords())
             spr = self._sprites.find_sprite((x, y))
-            if spr == self._cards[self.page]:
+            if spr == self._cards[self.page] or spr == self._picture:
                 if self.page < len(self._card_data):
                     if os.path.exists(os.path.join(
                             os.path.abspath('.'), 'sounds',
