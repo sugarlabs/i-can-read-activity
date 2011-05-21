@@ -288,7 +288,7 @@ class InfusedActivity(activity.Activity):
         _separator_factory(primary_toolbar)
 
         self._read_button = _button_factory(
-            'go-down', _('Read the sounds one at a time'),
+            'read', _('Read the sounds one at a time'),
             self._read_cb, primary_toolbar)
 
         _separator_factory(primary_toolbar)
@@ -366,8 +366,10 @@ class InfusedActivity(activity.Activity):
         self._page.new_page()
         self.reading = False
         self.testing = False
-        self._read_button.set_icon('go-down')
+        self._read_button.set_icon('read')
         self._read_button.set_tooltip(_('Show letter'))
+        self._test_button.set_icon('go-right')
+        self._test_button.set_tooltip(_('Self test'))
 
     def _next_page_cb(self, button=None):
         ''' Start a new letter. '''
@@ -375,9 +377,11 @@ class InfusedActivity(activity.Activity):
         self._page.new_page()
         self.reading = False
         self.testing = False
-        self._read_button.set_icon('go-down')
+        self._read_button.set_icon('read')
         self._read_button.set_tooltip(_('Show letter'))
         self._prev_page_button.set_icon('previous-letter')
+        self._test_button.set_icon('go-right')
+        self._test_button.set_tooltip(_('Self test'))
 
     def _read_cb(self, button=None):
         ''' Start a new page. '''
@@ -385,14 +389,18 @@ class InfusedActivity(activity.Activity):
             self.reading = True
             self.testing = False
             self._page.read()
-            self._read_button.set_icon('go-up')
+            self._read_button.set_icon('listen')
             self._read_button.set_tooltip(_('Show letter'))
+            self._test_button.set_icon('go-right')
+            self._test_button.set_tooltip(_('Self test'))
         else:
             self.reading = False
             self.testing = False
             self._page.reload()
-            self._read_button.set_icon('go-down')
+            self._read_button.set_icon('read')
             self._read_button.set_tooltip(_('Read the sounds one at a time'))
+            self._test_button.set_icon('go-right')
+            self._test_button.set_tooltip(_('Self test'))
 
     def _test_cb(self, button=None):
         ''' Start a test. '''
