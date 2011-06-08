@@ -40,63 +40,59 @@ import gtk
 import urllib
 
 
-def play_audio_from_file(lc, file_path):
+def play_audio_from_file(parent, file_path):
     """ Called from Show block of audio media """
-    if lc.gplay is not None and lc.gplay.player is not None:
-        if lc.gplay.player.playing:
-            lc.gplay.player.stop()
-        if lc.gplay.bin is not None:
-            lc.gplay.bin.destroy()
+    if parent.gplay is not None and parent.gplay.player is not None:
+        if parent.gplay.player.playing:
+            parent.gplay.player.stop()
+        if parent.gplay.bin is not None:
+            parent.gplay.bin.destroy()
 
-    lc.gplay = Gplay(lc)
-    lc.gplay.start(file_path)
+    parent.gplay = Gplay(gtk.gdk.screen_width(), gtk.gdk.screen_height(), 4, 3)
+    parent.gplay.start(file_path)
 
 
-def play_movie_from_file(lc, filepath, x, y, w, h):
+def play_movie_from_file(parent, filepath, x, y, w, h):
     """ Called from Show block of video media """
-    if lc.gplay is not None and lc.gplay.player is not None:
-        if lc.gplay.player.playing:
-            lc.gplay.player.stop()
-        if lc.gplay.bin is not None:
-            lc.gplay.bin.destroy()
+    if parent.gplay is not None and parent.gplay.player is not None:
+        if parent.gplay.player.playing:
+            parent.gplay.player.stop()
+        if parent.gplay.bin is not None:
+            parent.gplay.bin.destroy()
 
-    lc.gplay = Gplay(lc, x, y, w, h)
-    lc.gplay.start(filepath)
+    parent.gplay = Gplay(x, y, w, h)
+    parent.gplay.start(filepath)
 
 
-def stop_media(lc):
+def stop_media(parent):
     """ Called from Clean block and toolbar Stop button """
-    if lc.gplay == None:
+    if parent.gplay == None:
         return
 
-    if lc.gplay.player is not None:
-        lc.gplay.player.stop()
-    if lc.gplay.bin != None:
-        lc.gplay.bin.destroy()
+    if parent.gplay.player is not None:
+        parent.gplay.player.stop()
+    if parent.gplay.bin != None:
+        parent.gplay.bin.destroy()
 
-    lc.gplay = None
+    parent.gplay = None
 
 
-def media_playing(lc):
-    if lc.gplay == None:
+def media_playing(parent):
+    if parent.gplay == None:
         return False
-    return lc.gplay.player.is_playing()
+    return parent.gplay.player.is_playing()
 
 
 class Gplay():
     UPDATE_INTERVAL = 500
 
-    def __init__(self, lc, x=0, y=0, w=0, h=0):
+    def __init__(self, x=0, y=0, w=0, h=0):
 
         self.player = None
         self.uri = None
         self.playlist = []
         self.jobjectlist = []
         self.playpath = None
-        if w == 0:
-            self.only_audio = True
-        else:
-            self.only_audio = False
         self.got_stream_info = False
         self.currentplaying = 0
 
@@ -126,12 +122,6 @@ class Gplay():
             return
 
         GST_STREAM_TYPE_VIDEO = 2
-
-        only_audio = True
-        for item in stream_info:
-            if item.props.type == GST_STREAM_TYPE_VIDEO:
-                only_audio = False
-        self.only_audio = only_audio
         self.got_stream_info = True
 
     def start(self, uri=None):

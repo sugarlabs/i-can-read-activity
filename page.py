@@ -511,7 +511,7 @@ class Page():
                         play_audio_from_file(self, os.path.join(
                                 os.path.abspath('.'), 'sounds',
                                 self._media_data[self.page]))
-                    if os.path.exists(os.path.join(
+                    elif os.path.exists(os.path.join(
                             os.path.abspath('.'), 'videos',
                             self._media_data[self.page])):
                         play_movie_from_file(self, os.path.join(
