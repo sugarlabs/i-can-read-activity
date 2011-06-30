@@ -1,5 +1,5 @@
 """
- tagplay.py
+ play_video.py
  refactored based on Jukebox Activity
  Copyright (C) 2007 Andy Wingo <wingo@pobox.com>
  Copyright (C) 2007 Red Hat, Inc.
@@ -40,50 +40,38 @@ import gtk
 import urllib
 
 
-def play_audio_from_file(parent, file_path):
-    """ Called from Show block of audio media """
-    if parent.gplay is not None and parent.gplay.player is not None:
-        if parent.gplay.player.playing:
-            parent.gplay.player.stop()
-        if parent.gplay.bin is not None:
-            parent.gplay.bin.destroy()
-
-    parent.gplay = Gplay(gtk.gdk.screen_width(), gtk.gdk.screen_height(), 4, 3)
-    parent.gplay.start(file_path)
-
-
 def play_movie_from_file(parent, filepath, x, y, w, h):
-    """ Called from Show block of video media """
-    if parent.gplay is not None and parent.gplay.player is not None:
-        if parent.gplay.player.playing:
-            parent.gplay.player.stop()
-        if parent.gplay.bin is not None:
-            parent.gplay.bin.destroy()
+    """ Video media """
+    if parent.vplay is not None and parent.vplay.player is not None:
+        if parent.vplay.player.playing:
+            parent.vplay.player.stop()
+        if parent.vplay.bin is not None:
+            parent.vplay.bin.destroy()
 
-    parent.gplay = Gplay(x, y, w, h)
-    parent.gplay.start(filepath)
+    parent.vplay = Vplay(x, y, w, h)
+    parent.vplay.start(filepath)
 
 
 def stop_media(parent):
     """ Called from Clean block and toolbar Stop button """
-    if parent.gplay == None:
+    if parent.vplay == None:
         return
 
-    if parent.gplay.player is not None:
-        parent.gplay.player.stop()
-    if parent.gplay.bin != None:
-        parent.gplay.bin.destroy()
+    if parent.vplay.player is not None:
+        parent.vplay.player.stop()
+    if parent.vplay.bin != None:
+        parent.vplay.bin.destroy()
 
-    parent.gplay = None
+    parent.vplay = None
 
 
 def media_playing(parent):
-    if parent.gplay == None:
+    if parent.vplay == None:
         return False
-    return parent.gplay.player.is_playing()
+    return parent.vplay.player.is_playing()
 
 
-class Gplay():
+class Vplay():
     UPDATE_INTERVAL = 500
 
     def __init__(self, x=0, y=0, w=0, h=0):
