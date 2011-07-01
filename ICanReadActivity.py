@@ -35,11 +35,11 @@ import os.path
 
 from page import Page
 from utils.grecord import Grecord
-from utils.gplay import play_audio_from_file
+from utils.play_audio import play_audio_from_file
 
-SERVICE = 'org.sugarlabs.InfusedActivity'
+SERVICE = 'org.sugarlabs.ICanReadActivity'
 IFACE = SERVICE
-PATH = '/org/sugarlabs/InfusedActivity'
+PATH = '/org/sugarlabs/ICanReadActivity'
 
 
 def _button_factory(icon_name, tooltip, callback, toolbar, cb_arg=None,
@@ -121,12 +121,12 @@ def chooser(parent_window, filter, action):
             del _chooser
 
 
-class InfusedActivity(activity.Activity):
-    ''' Infused Reading guide '''
+class ICanReadActivity(activity.Activity):
+    ''' ICanRead Reading guide '''
 
     def __init__(self, handle):
         ''' Initialize the toolbars and the reading board '''
-        super(InfusedActivity, self).__init__(handle)
+        super(ICanReadActivity, self).__init__(handle)
         self.reading = False
         self.testing = False
         self.recording = False
@@ -138,9 +138,9 @@ class InfusedActivity(activity.Activity):
         elif 'LANGUAGE' in os.environ:
             language = os.environ['LANGUAGE'][0:2]
         else:
-            language = 'en'
-        if os.path.exists(os.path.join('~', 'Activities', 'Infused.activity')):
-            self._path = os.path.join('~', 'Activities', 'Infused.activity',
+            language = 'es'  # default to Spanish
+        if os.path.exists(os.path.join('~', 'Activities', 'ICanRead.activity')):
+            self._path = os.path.join('~', 'Activities', 'ICanRead.activity',
                                       'lessons', language)
         else:
             self._path = os.path.join('.', 'lessons', language)
@@ -449,6 +449,7 @@ class InfusedActivity(activity.Activity):
             for filename in candidates:
                 if not self._skip_this_file(filename):
                     level_files.append(filename.split('.')[0])
+        level_files.reverse()
         return level_files
 
     def _get_sounds(self):
