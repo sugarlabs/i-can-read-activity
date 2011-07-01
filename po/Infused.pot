@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-26 16:10-0400\n"
+"POT-Creation-Date: 2011-05-02 05:09-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,134 +21,119 @@ msgstr ""
 msgid "Infused"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:193
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:228
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:230
+#: InfusedActivity.py:193 InfusedActivity.py:228 InfusedActivity.py:230
 msgid "Select a lesson"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:197
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:240
+#: InfusedActivity.py:197 InfusedActivity.py:250
 msgid "Record a sound"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:214
+#: InfusedActivity.py:214
 msgid "Page"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:216
+#: InfusedActivity.py:216
 msgid "Lesson"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:218
+#: InfusedActivity.py:218
 msgid "Record"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:236
+#: InfusedActivity.py:236
 msgid "Load a new lesson from the Journal."
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:245
-msgid "Record a lesson"
+#: InfusedActivity.py:242
+msgid "Create a new lesson"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:247
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:439
-msgid "Start recording"
-msgstr ""
-
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:253
-msgid "Nothing to play"
-msgstr ""
-
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:257
+#: InfusedActivity.py:246 InfusedActivity.py:267
 msgid "Nothing to save"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:263
+#: InfusedActivity.py:255
+msgid "Record a lesson"
+msgstr ""
+
+#: InfusedActivity.py:257 InfusedActivity.py:463
+msgid "Start recording"
+msgstr ""
+
+#: InfusedActivity.py:263
+msgid "Nothing to play"
+msgstr ""
+
+#: InfusedActivity.py:273
 msgid "Letter list"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:269
+#: InfusedActivity.py:279
 msgid "Previous letter"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:273
+#: InfusedActivity.py:283
 msgid "Next letter"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:279
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:366
+#: InfusedActivity.py:289 InfusedActivity.py:390
 msgid "Read the sounds one at a time."
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:284
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:379
+#: InfusedActivity.py:294 InfusedActivity.py:403
 msgid "Self test"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:342
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:351
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:360
+#: InfusedActivity.py:366 InfusedActivity.py:375 InfusedActivity.py:384
 msgid "Show letter"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:374
+#: InfusedActivity.py:398
 msgid "Return to reading"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:441
+#: InfusedActivity.py:465
 msgid "Play recording"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:443
+#: InfusedActivity.py:467
 msgid "Save recording"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/InfusedActivity.py:448
+#: InfusedActivity.py:472
 msgid "Stop recording"
 msgstr ""
 
 #. TRANS: e.g., This yellow sign is said u like up.
-#: /home/walter/Desktop/Activities/infused/page.py:37
-#: /home/walter/Desktop/Activities/infused/page.py:40
-#, python-format
-msgid "This %s sign is said"
+#: page.py:37 page.py:40
+msgid "This {0} sign is said {1} like {2}"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/page.py:37
-#: /home/walter/Desktop/Activities/infused/page.py:40
-#: /home/walter/Desktop/Activities/infused/page.py:41
-#: /home/walter/Desktop/Activities/infused/page.py:167
-msgid "like"
-msgstr ""
-
-#: /home/walter/Desktop/Activities/infused/page.py:38
+#: page.py:38
 msgid ""
-"Reading from left to right, read the sounds one at a time. You  can use your "
+"Reading from left to right, read the sounds one at a time. You can use your "
 "finger to follow along."
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/page.py:41
-#, python-format
-msgid "This %s sign is lightly said"
+#: page.py:41
+msgid "This {0} sign is lightly said {1} like {2}"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/page.py:43
-#: /home/walter/Desktop/Activities/infused/page.py:45
-#, python-format
-msgid "This %s sign is said together with other sounds"
+#: page.py:43 page.py:45
+msgid "This {0} sign is said together with other sounds as in: {1}"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/page.py:44
-#: /home/walter/Desktop/Activities/infused/page.py:46
-msgid "as in:"
+#: page.py:47
+msgid ""
+"When it looks like this \n"
+" we read it the same way."
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/page.py:47
-msgid "When it looks like this"
+#: page.py:166
+msgid "like"
 msgstr ""
 
-#: /home/walter/Desktop/Activities/infused/page.py:169
+#: page.py:168
 msgid "as in"
 msgstr ""

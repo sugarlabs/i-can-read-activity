@@ -1,8 +1,8 @@
 [Activity]
 name = I Can Read
-activity_version = 3
+activity_version = 6
 license = GPLv3
-bundle_id = org.sugarlabs.InfusedActivity
-exec = sugar-activity InfusedActivity.InfusedActivity
-icon = activity-infused
+bundle_id = org.sugarlabs.ICanReadActivity
+exec = sugar-activity ICanReadActivity.ICanReadActivity
+icon = activity-icanread
 show_launcher = yes

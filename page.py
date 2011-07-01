@@ -19,7 +19,9 @@ from gettext import gettext as _
 
 from random import randrange
 
-from utils.gplay import play_audio_from_file, play_movie_from_file
+# from utils.gplay import play_audio_from_file, play_movie_from_file
+from utils.play_audio import play_audio_from_file
+from utils.play_video import play_movie_from_file
 
 import logging
 _logger = logging.getLogger('infused-activity')
@@ -97,7 +99,9 @@ class Page():
         self._picture = None
         self._press = None
         self._release = None
-        self.gplay = None
+        # self.gplay = None
+        self.aplay = None
+        self.vplay = None
         self._final_x = 0
         self._lead = int(self._scale * 15)
         self._margin = int(self._scale * 3)
@@ -197,7 +201,8 @@ class Page():
                 bot.composite(top, 0, int(h1 * top.get_height()),
                               top.get_width(), int(h2 * top.get_height()),
                               0, 0, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-                self._cards.append(Sprite(self._sprites, self._left,
+                self._cards.append(Sprite(self._sprites, # self._left,
+                                          int(self._width - 320 * self._scale / 2.5),
                                           GRID_CELL_SIZE, top))
                 stroke = self._test_for_stroke()
                 top = svg_str_to_pixbuf(generate_card(
@@ -217,7 +222,8 @@ class Page():
                               0, 0, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
                 self._colored_letters.append(Sprite(self._sprites, 0, 0, top))
             else:
-                self._cards.append(Sprite(self._sprites, self._left,
+                self._cards.append(Sprite(self._sprites, # self._left,
+                                          int(self._width - 320 * self._scale / 2.5),
                                           GRID_CELL_SIZE,
                                           svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0].lower(),
@@ -273,6 +279,8 @@ class Page():
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, int(self._height * 2))
 
+        text = self._card_data[self.page][1]
+        """
         if self._msg_data[self.page] == CONSONANT:
             text = MSGS[CONSONANT] % (self._color_data[self.page][1],
                                       self._card_data[self.page][1])
@@ -288,12 +296,15 @@ class Page():
                 self._color_data[self.page][1],
                 self._card_data[self.page][0],
                 self._card_data[self.page][1])
+        """
 
         for phrase in text.split('\n'):
+            self._x_pos = self._margin * 2
             self._render_phrase(phrase, self._my_canvas, self._my_gc)
-            self._x_pos = self._margin
+            # self._x_pos = self._margin
             self._y_pos += self._lead
 
+        """
         if self._msg_data[self.page] == DOUBLE:
             self._y_pos += self._lead
             self._render_phrase(MSGS[SECOND_CARD].split('\n')[0],
@@ -308,16 +319,19 @@ class Page():
                 self._lead
             self._render_phrase(MSGS[SECOND_CARD].split('\n')[1],
                                 self._my_canvas, self._my_gc)
+        """
 
         # Is there a picture for this page?
+        phrases = self._card_data[self.page][1].lower().split(' ')
         if os.path.exists(os.path.join(os.path.abspath('.'), 'images',
-            self._card_data[self.page][1].lower() + '.png')):
+            phrases[-1] + '.png')):
             pixbuf = image_file_to_pixbuf(os.path.join(os.path.abspath('.'),
-                'images', self._card_data[self.page][1].lower() + '.png'),
+                'images', phrases[-1] + '.png'),
                 self._scale / 4)
             if self._picture is None:
                 self._picture = Sprite(self._sprites,
-                                  int(self._width - 320 * self._scale / 2.5),
+                                  # int(self._width - 320 * self._scale / 2.5),
+                                       self._left,
                                        GRID_CELL_SIZE, pixbuf)
             else:
                 self._picture.images[0] = pixbuf
