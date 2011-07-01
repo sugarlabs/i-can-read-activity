@@ -323,10 +323,16 @@ class Page():
 
         # Is there a picture for this page?
         phrases = self._card_data[self.page][1].lower().split(' ')
+        imagefilename = phrases[-1].replace('á', 'a')
+        imagefilename = imagefilename.replace('é', 'e')
+        imagefilename = imagefilename.replace('í', 'i')
+        imagefilename = imagefilename.replace('ó', 'o')
+        imagefilename = imagefilename.replace('ú', 'u')
+        imagefilename = imagefilename.replace('ñ', 'n')
         if os.path.exists(os.path.join(os.path.abspath('.'), 'images',
-            phrases[-1] + '.png')):
+            imagefilename + '.png')):
             pixbuf = image_file_to_pixbuf(os.path.join(os.path.abspath('.'),
-                'images', phrases[-1] + '.png'),
+                'images', imagefilename + '.png'),
                 self._scale / 4)
             if self._picture is None:
                 self._picture = Sprite(self._sprites,
@@ -568,8 +574,8 @@ class Page():
             if len(line) > 0 and line[0] not in '#\n':
                 words = line.split(', ')
                 if not words[0] in '-+':
-                    self._card_data.append([words[0],
-                        words[1].replace('-', ', ')])
+                    self._card_data.append([words[0], 
+                       words[1].replace('-', ', ')])
                     if words[2].count('#') > 1:
                         self._color_data.append(
                             [words[2].split('/'), words[3]])
