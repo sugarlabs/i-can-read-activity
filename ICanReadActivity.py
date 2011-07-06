@@ -154,7 +154,7 @@ class ICanReadActivity(activity.Activity):
         self.scrolled_window.show()
         canvas = gtk.DrawingArea()
         width = gtk.gdk.screen_width()
-        height = gtk.gdk.screen_height() * 2
+        height = int(gtk.gdk.screen_height() * 2.5)
         canvas.set_size_request(width, height)
         self.scrolled_window.add_with_viewport(canvas)
         canvas.show()

@@ -114,7 +114,7 @@ class Page():
         self._my_canvas = Sprite(self._sprites, 0, 0,
                                 gtk.gdk.Pixmap(self._canvas.window,
                                                self._width,
-                                               self._height * 2, -1))
+                                               int(self._height * 2.5), -1))
         self._my_canvas.set_layer(0)
         self._my_gc = self._my_canvas.images[0].new_gc()
         self._my_gc.set_foreground(
@@ -140,7 +140,7 @@ class Page():
         save_page = self.page
         self._clear_all()
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.5))
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
@@ -275,9 +275,9 @@ class Page():
         self._x_pos = self._margin
         self._y_pos = self._cards[self.page].rect.y + \
                       self._cards[self.page].images[0].get_height() + self._lead
-        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.5))
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
-        self.invalt(0, 0, self._width, int(self._height * 2))
+        self.invalt(0, 0, self._width, int(self._height * 2.5))
 
         text = self._card_data[self.page][1]
         """
@@ -365,7 +365,7 @@ class Page():
         ''' Read a word list '''
         self._clear_all()
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.5))
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
@@ -388,7 +388,7 @@ class Page():
         ''' Generate a randomly ordered list of phrases. '''
         self._clear_all()
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, self._height * 2)
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.5))
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
