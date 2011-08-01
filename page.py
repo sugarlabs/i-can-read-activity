@@ -148,13 +148,13 @@ class Page():
 
         self._x_pos, self._y_pos = self._margin, 0
 
+        # _logger.debug('%s' % (self.get_phrase_list()))
         for i, phrase in enumerate(self.get_phrase_list()):
             if i < len(self._colored_letters_lower):
                 self.page = i
-                self._render_phrase(phrase, self._my_canvas, self._my_gc)
             else:
-                self._render_phrase(phrase.lower(), self._my_canvas,
-                                    self._my_gc)
+                self.page = -1
+            self._render_phrase(phrase, self._my_canvas, self._my_gc)
             self._x_pos = self._margin
             self._y_pos += self._lead
 
@@ -171,7 +171,8 @@ class Page():
                 connector = ' ' + _('like') + ' '
             else:
                 connector = ' ' + _('as in') + ' '
-            phrase_list.append(card[0] + connector + card[1])
+            phrase_list.append(
+                '(' + card[0].lower() + ')' + connector + card[1])
         return phrase_list
 
     def new_page(self):
@@ -486,7 +487,7 @@ class Page():
         ''' Process each character in the word '''
 
         # some colored text is multiple characters
-        if self.page < len(self._card_data):
+        if self.page != -1 and self.page < len(self._card_data):
             n = len(self._card_data[self.page][0])
         else:
             n = 1
@@ -501,7 +502,7 @@ class Page():
                 draw_in_color = True
             elif word[char] == ')' and draw_in_color:
                 draw_in_color = False
-            elif draw_in_color:
+            elif draw_in_color and self.page != -1:
                 if word[char].islower():
                     self._draw_pixbuf(
                         self._colored_letters_lower[self.page].images[0],
