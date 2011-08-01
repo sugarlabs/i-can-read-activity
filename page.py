@@ -55,10 +55,10 @@ DOUBLE = 4
 SECOND_CARD = 5
 
 # Rendering-related constants
-KERN = {'i': 0.5, 'I': 0.7, 'l': 0.6, 't': 0.7, 'T': 1.0, 'r': 0.7, 'm': 1.4,
-        'w': 1.3, "'": 0.4, 'M': 1.6, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
-        'J': 0.8, 'c': 0.9, 'z': 0.9, 's': 0.8, 'U': 1.1, ' ':0.7, '.':0.5,
-        'y':0.8}
+KERN = {'i': 0.5, 'I': 0.7, 'l': 0.5, 't': 0.7, 'T': 0.9, 'r': 0.7, 'm': 1.4,
+        'w': 1.3, "'": 0.4, 'M': 1.4, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
+        'J': 0.7, 'c': 0.9, 'z': 0.9, 's': 0.8, 'U': 1.1, ' ':0.7, '.':0.5,
+        'y':0.8, 'O': 1.1, 'K': 1.1, 'A': 1.1, 'Ñ': 1.1, 'N': 1.1}
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,' " + \
     u'!Ññáéíóú'
 
@@ -95,7 +95,8 @@ class Page():
         self._cards = []
         self._double_cards = []
         self._letters = []
-        self._colored_letters = []
+        self._colored_letters_lower = []
+        self._colored_letters_upper = []
         self._picture = None
         self._press = None
         self._release = None
@@ -114,7 +115,7 @@ class Page():
         self._my_canvas = Sprite(self._sprites, 0, 0,
                                 gtk.gdk.Pixmap(self._canvas.window,
                                                self._width,
-                                               int(self._height * 2.5), -1))
+                                               int(self._height * 2.75), -1))
         self._my_canvas.set_layer(0)
         self._my_gc = self._my_canvas.images[0].new_gc()
         self._my_gc.set_foreground(
@@ -140,7 +141,7 @@ class Page():
         save_page = self.page
         self._clear_all()
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.5))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.75))
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
@@ -148,7 +149,7 @@ class Page():
         self._x_pos, self._y_pos = self._margin, 0
 
         for i, phrase in enumerate(self.get_phrase_list()):
-            if i < len(self._colored_letters):
+            if i < len(self._colored_letters_lower):
                 self.page = i
                 self._render_phrase(phrase, self._my_canvas, self._my_gc)
             else:
@@ -202,7 +203,7 @@ class Page():
                               top.get_width(), int(h2 * top.get_height()),
                               0, 0, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
                 self._cards.append(Sprite(self._sprites, # self._left,
-                                          int(self._width - 320 * self._scale / 2.5),
+                    int(self._width - 320 * self._scale / 2.5),
                                           GRID_CELL_SIZE, top))
                 stroke = self._test_for_stroke()
                 top = svg_str_to_pixbuf(generate_card(
@@ -220,10 +221,28 @@ class Page():
                 bot.composite(top, 0, int(h1 * top.get_height()),
                               top.get_width(), int(h2 * top.get_height()),
                               0, 0, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-                self._colored_letters.append(Sprite(self._sprites, 0, 0, top))
+                self._colored_letters_lower.append(Sprite(
+                        self._sprites, 0, 0, top))
+                top = svg_str_to_pixbuf(generate_card(
+                                string=self._card_data[self.page][0][0].upper(),
+                                colors=[self._color_data[self.page][0][0],
+                                        '#000000'],
+                                font_size=12 * self._scale,
+                                background=False, stroke=stroke))
+                bot = svg_str_to_pixbuf(generate_card(
+                                string=self._card_data[self.page][0][0].upper(),
+                                colors=[self._color_data[self.page][0][1],
+                                        '#000000'],
+                                font_size=12 * self._scale,
+                                background=False, stroke=stroke))
+                bot.composite(top, 0, int(h1 * top.get_height()),
+                              top.get_width(), int(h2 * top.get_height()),
+                              0, 0, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                self._colored_letters_upper.append(Sprite(
+                        self._sprites, 0, 0, top))
             else:
                 self._cards.append(Sprite(self._sprites, # self._left,
-                                          int(self._width - 320 * self._scale / 2.5),
+                    int(self._width - 320 * self._scale / 2.5),
                                           GRID_CELL_SIZE,
                                           svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0].lower(),
@@ -240,9 +259,16 @@ class Page():
                                         '#000000'],
                                 scale=self._scale, font_size=40, center=True))))
                 stroke = self._test_for_stroke()
-                self._colored_letters.append(Sprite(
+                self._colored_letters_lower.append(Sprite(
                         self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0].lower(),
+                                colors=[self._color_data[self.page][0],
+                                        '#000000'],
+                                font_size=12 * self._scale,
+                                background=False, stroke=stroke))))
+                self._colored_letters_upper.append(Sprite(
+                        self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
+                                string=self._card_data[self.page][0].upper(),
                                 colors=[self._color_data[self.page][0],
                                         '#000000'],
                                 font_size=12 * self._scale,
@@ -323,7 +349,8 @@ class Page():
 
         # Is there a picture for this page?
         phrases = self._card_data[self.page][1].lower().split(' ')
-        imagefilename = phrases[-1].replace('á', 'a')
+        imagefilename = self._strip(phrases[-1], ['(', ')'])
+        imagefilename = imagefilename.replace('á', 'a')
         imagefilename = imagefilename.replace('é', 'e')
         imagefilename = imagefilename.replace('í', 'i')
         imagefilename = imagefilename.replace('ó', 'o')
@@ -348,9 +375,20 @@ class Page():
         # Hide all the letter sprites.
         for l in self._letters:
             l.set_layer(0)
-        for l in self._colored_letters:
+        for l in self._colored_letters_lower:
+            l.set_layer(0)
+        for l in self._colored_letters_upper:
             l.set_layer(0)
         self._my_canvas.set_layer(0)
+
+    def _strip(self, word, tokens):
+        whole = word
+        for t in tokens:
+            parts = whole.split(t)
+            whole = ''
+            for p in parts:
+                whole += p
+        return whole
 
     def reload(self):
         ''' Switch back and forth between reading and displaying a card. '''
@@ -365,7 +403,7 @@ class Page():
         ''' Read a word list '''
         self._clear_all()
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.5))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.75))
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
@@ -388,7 +426,7 @@ class Page():
         ''' Generate a randomly ordered list of phrases. '''
         self._clear_all()
 
-        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.5))
+        rect = gtk.gdk.Rectangle(0, 0, self._width, int(self._height * 2.75))
         self._my_canvas.images[0].draw_rectangle(self._my_gc, True, *rect)
         self.invalt(0, 0, self._width, self._height)
         self._my_canvas.set_layer(1)
@@ -454,14 +492,26 @@ class Page():
             n = 1
 
         skip_count = 0
+        # Draw letters enclosed in () in color
+        draw_in_color = False
         for char in range(len(word)):
             if skip_count > 0:
                 skip_count -= 1
-            elif self._letter_match(word, char, n):
-                self._draw_pixbuf(
-                    self._colored_letters[self.page].images[0],
-                    self._x_pos, self._y_pos, canvas, gc)
-                kern_char = word[char].lower()
+            elif word[char] == '(' and not draw_in_color:
+                draw_in_color = True
+            elif word[char] == ')' and draw_in_color:
+                draw_in_color = False
+            elif draw_in_color:
+                if word[char].islower():
+                    self._draw_pixbuf(
+                        self._colored_letters_lower[self.page].images[0],
+                        self._x_pos, self._y_pos, canvas, gc)
+                    kern_char = word[char].lower()
+                else:
+                    self._draw_pixbuf(
+                        self._colored_letters_upper[self.page].images[0],
+                        self._x_pos, self._y_pos, canvas, gc)
+                    kern_char = word[char].upper()
                 if n > 1:
                     skip_count = n - 1
             else:
@@ -472,10 +522,11 @@ class Page():
                                       canvas, gc)
                     kern_char = word[char]
 
-            if kern_char in KERN:
-                self._x_pos += self._offset * KERN[kern_char]
-            else:
-                self._x_pos += self._offset
+            if word[char] not in '()':
+                if kern_char in KERN:
+                    self._x_pos += self._offset * KERN[kern_char]
+                else:
+                    self._x_pos += self._offset
 
         self._final_x = self._x_pos
         # Put a space after each word
@@ -605,7 +656,8 @@ class Page():
         self._clear_all()
         self._cards = []
         self._double_cards = []
-        self._colored_letters = []
+        self._colored_letters_lower = []
+        self._colored_letters_upper = []
 
     def _clear_all(self):
         ''' Hide everything so we can begin a new page. '''

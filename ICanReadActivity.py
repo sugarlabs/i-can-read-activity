@@ -139,6 +139,10 @@ class ICanReadActivity(activity.Activity):
             language = os.environ['LANGUAGE'][0:2]
         else:
             language = 'es'  # default to Spanish
+
+        # FIXME: find some reasonable default situation
+        language = 'es'
+
         if os.path.exists(os.path.join('~', 'Activities', 'ICanRead.activity')):
             self._path = os.path.join('~', 'Activities', 'ICanRead.activity',
                                       'lessons', language)
@@ -154,7 +158,7 @@ class ICanReadActivity(activity.Activity):
         self.scrolled_window.show()
         canvas = gtk.DrawingArea()
         width = gtk.gdk.screen_width()
-        height = int(gtk.gdk.screen_height() * 2.5)
+        height = int(gtk.gdk.screen_height() * 2.75)
         canvas.set_size_request(width, height)
         self.scrolled_window.add_with_viewport(canvas)
         canvas.show()
