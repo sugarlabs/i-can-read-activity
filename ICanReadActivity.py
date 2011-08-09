@@ -276,10 +276,8 @@ class ICanReadActivity(activity.Activity):
         _separator_factory(primary_toolbar)
 
         self._list_button = _button_factory(
-            'format-justify-fill', _('Letter list'), self._list_cb,
+            'letter-list', _('Letter list'), self._list_cb,
             primary_toolbar)
-
-        _separator_factory(primary_toolbar)
 
         self._prev_page_button = _button_factory(
             'previous-letter-insensitive', _('Previous letter'),
