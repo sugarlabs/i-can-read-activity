@@ -258,7 +258,7 @@ class ICanReadActivity(activity.Activity):
 
         _separator_factory(record_toolbar)
 
-        _label_factory(_('Record a lesson') + ':', record_toolbar)
+        _label_factory(_('Record a sound') + ':', record_toolbar)
         self._record_lesson_button = _button_factory(
             'media-record', _('Start recording'),
             self._record_lesson_cb, record_toolbar)
@@ -457,7 +457,11 @@ class ICanReadActivity(activity.Activity):
     def _get_sounds(self):
         ''' Look for sounds list. '''
         if hasattr(self, '_page'):
-            return self._page.get_phrase_list()
+            sound_list = self._page.get_phrase_list()
+            for i in range(len(sound_list)):
+                sound_list[i] = sound_list[i].replace('(','')
+                sound_list[i] = sound_list[i].replace(')','')
+            return sound_list
         else:
             return([])
 
