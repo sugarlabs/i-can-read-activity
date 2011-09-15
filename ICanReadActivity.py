@@ -144,11 +144,14 @@ class ICanReadActivity(activity.Activity):
         language = 'es'
 
         if os.path.exists(os.path.join('~', 'Activities', 'ICanRead.activity')):
-            self._path = os.path.join('~', 'Activities', 'ICanRead.activity',
-                                      'lessons', language)
+            self._lessons_path = os.path.join('~', 'Activities',
+                                              'ICanRead.activity',
+                                              'lessons', language)
         else:
-            self._path = os.path.join('.', 'lessons', language)
+            self._lessons_path = os.path.join('.', 'lessons', language)
 
+        self._images_path = self._lessons_path.replace('lessons', 'images')
+        self._sounds_path = self._lessons_path.replace('lessons', 'sounds')
         self._setup_toolbars()
 
         # Create a canvas
@@ -164,7 +167,9 @@ class ICanReadActivity(activity.Activity):
         canvas.show()
 
         self._level = self._levels_combo.get_active()
-        self._page = Page(canvas, self._path, self._levels[self._level],
+        self._page = Page(canvas, self._lessons_path,
+                          self._images_path, self._sounds_path,
+                          self._levels[self._level],
                           parent=self)
 
         # Restore state from Journal or start new session
@@ -232,7 +237,7 @@ class ICanReadActivity(activity.Activity):
                 toolbox.props.visible = False
 
         _label_factory(_('Select a lesson') + ':', lesson_toolbar)
-        self._levels = self._get_levels(self._path)
+        self._levels = self._get_levels(self._lessons_path)
         self._levels_combo = _combo_factory(self._levels, _('Select a lesson'),
                                             lesson_toolbar, self._levels_cb)
 
@@ -319,7 +324,8 @@ class ICanReadActivity(activity.Activity):
                 # TODO: levels stored in Journal have a different path
                 try:
                     self._page.load_level(os.path.join(
-                            self._path, self._levels[self._level] + '.csv'))
+                            self._lessons_path,
+                            self._levels[self._level] + '.csv'))
                 except IndexError:
                     print "couldn't restore level %s" % (self.metadata['level'])
                     self._levels_combo.set_active(0)
@@ -432,7 +438,8 @@ class ICanReadActivity(activity.Activity):
             self._levels_combo.set_active(level)
             try:
                 self._page.load_level(os.path.join(
-                        self._path, self._levels[self._level] + '.csv'))
+                        self._lessons_path,
+                        self._levels[self._level] + '.csv'))
             except IndexError:
                 print "couldn't restore level %s" % (self.metadata['level'])
                 self._levels_combo.set_active(0)

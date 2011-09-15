@@ -35,25 +35,6 @@ except ImportError:
 from genpieces import generate_card
 from utils.sprites import Sprites, Sprite
 
-# TRANS: e.g., This yellow sign is said u like up.
-MSGS = [_('This {0} sign is said {1} like {2}').format('%s', '%s', '%s\n\n') + \
-        _('Reading from left to right, read the sounds one at a time. You \
-can use your finger to follow along.'),
-        _('This {0} sign is said {1} like {2}').format('%s', '%s', '%s'),
-        _('This {0} sign is lightly said {1} like {2}').format('%s', '%s',
-                                                               '%s'),
-        _('This {0} sign is said together with other sounds as in: {1}').format(
-        '%s', '%s'),
-        _('This {0} sign is said together with other sounds as in: {1}').format(
-        '%s', '%s'),
-        _('When it looks like this \n we read it the same way.')]
-FIRST_CARD = 0
-VOWEL = 1
-LIGHT = 2
-CONSONANT = 3
-DOUBLE = 4
-SECOND_CARD = 5
-
 # Rendering-related constants
 KERN = {'i': 0.5, 'I': 0.7, 'l': 0.5, 't': 0.7, 'T': 0.9, 'r': 0.7, 'm': 1.4,
         'w': 1.3, "'": 0.4, 'M': 1.4, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
@@ -66,9 +47,20 @@ ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,' " + \
 class Page():
     ''' Pages from Infuse Reading method '''
 
-    def __init__(self, canvas, path, level, parent=None):
+    def __init__(self, canvas, lessons_path, images_path, sounds_path, level,
+                 parent=None):
         ''' The general stuff we need to track '''
         self._activity = parent
+        self._lessons_path = lessons_path
+        self._images_path = images_path
+        self._sounds_path = sounds_path
+
+        self._card_data = []
+        self._color_data = []
+        self._image_data = []
+        self._media_data = []  # (image sound, letter sound)
+        self._word_data = []
+
         print ALPHABET
 
         # Starting from command line
@@ -93,7 +85,6 @@ class Page():
         self._sprites = Sprites(self._canvas)
         self.page = 0
         self._cards = []
-        self._double_cards = []
         self._letters = []
         self._colored_letters_lower = []
         self._colored_letters_upper = []
@@ -128,7 +119,7 @@ class Page():
                                                 font_size=12 * self._scale,
                                                 background=False))))
 
-        self.load_level(os.path.join(path, level + '.csv'))
+        self.load_level(os.path.join(self._lessons_path, level + '.csv'))
         self.new_page()
 
     def page_list(self):
@@ -250,15 +241,6 @@ class Page():
                                 colors=[self._color_data[self.page][0],
                                         '#000000'],
                                 scale=self._scale, center=True))))
-                self._double_cards.append(Sprite(self._sprites, self._left,
-                                                 self._height + \
-                                                     GRID_CELL_SIZE * 2,
-                                             svg_str_to_pixbuf(generate_card(
-                                string=self._card_data[self.page][0].lower()
-                                + self._card_data[self.page][0].lower(),
-                                colors=[self._color_data[self.page][0],
-                                        '#000000'],
-                                scale=self._scale, font_size=40, center=True))))
                 stroke = self._test_for_stroke()
                 self._colored_letters_lower.append(Sprite(
                         self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
@@ -307,23 +289,6 @@ class Page():
         self.invalt(0, 0, self._width, int(self._height * 2.5))
 
         text = self._card_data[self.page][1]
-        """
-        if self._msg_data[self.page] == CONSONANT:
-            text = MSGS[CONSONANT] % (self._color_data[self.page][1],
-                                      self._card_data[self.page][1])
-        elif self._msg_data[self.page] == DOUBLE:
-            text = MSGS[DOUBLE] % (self._color_data[self.page][1],
-                                   self._card_data[self.page][1])
-        elif self._msg_data[self.page] == LIGHT:
-            text = MSGS[LIGHT] % (self._color_data[self.page][1],
-                                  self._card_data[self.page][0],
-                                  self._card_data[self.page][1])
-        else:
-            text = MSGS[self._msg_data[self.page]] % (
-                self._color_data[self.page][1],
-                self._card_data[self.page][0],
-                self._card_data[self.page][1])
-        """
 
         for phrase in text.split('\n'):
             self._x_pos = self._margin * 2
@@ -331,37 +296,11 @@ class Page():
             # self._x_pos = self._margin
             self._y_pos += self._lead
 
-        """
-        if self._msg_data[self.page] == DOUBLE:
-            self._y_pos += self._lead
-            self._render_phrase(MSGS[SECOND_CARD].split('\n')[0],
-                                self._my_canvas, self._my_gc)
-            self._x_pos = self._margin
-            self._y_pos += self._lead * 2
-            self._double_cards[self.page].move((self._left, self._y_pos))
-            self._double_cards[self.page].set_layer(2)
-            self._x_pos = self._margin
-            self._y_pos = self._double_cards[self.page].rect.y + \
-                self._double_cards[self.page].images[0].get_height() + \
-                self._lead
-            self._render_phrase(MSGS[SECOND_CARD].split('\n')[1],
-                                self._my_canvas, self._my_gc)
-        """
-
         # Is there a picture for this page?
-        phrases = self._card_data[self.page][1].lower().split(' ')
-        imagefilename = self._strip(phrases[-1], ['(', ')'])
-        imagefilename = imagefilename.replace('á', 'a')
-        imagefilename = imagefilename.replace('é', 'e')
-        imagefilename = imagefilename.replace('í', 'i')
-        imagefilename = imagefilename.replace('ó', 'o')
-        imagefilename = imagefilename.replace('ú', 'u')
-        imagefilename = imagefilename.replace('ñ', 'n')
-        if os.path.exists(os.path.join(os.path.abspath('.'), 'images',
-            imagefilename + '.png')):
-            pixbuf = image_file_to_pixbuf(os.path.join(os.path.abspath('.'),
-                'images', imagefilename + '.png'),
-                self._scale / 4)
+        imagefilename = self._image_data[self.page]
+        if os.path.exists(os.path.join(self._images_path, imagefilename)):
+            pixbuf = image_file_to_pixbuf(os.path.join(
+                    self._images_path, imagefilename), self._scale / 4)
             if self._picture is None:
                 self._picture = Sprite(self._sprites,
                                   # int(self._width - 320 * self._scale / 2.5),
@@ -575,14 +514,23 @@ class Page():
         else:
             x, y = map(int, event.get_coords())
             spr = self._sprites.find_sprite((x, y))
-            if spr == self._cards[self.page] or spr == self._picture:
+            if spr == self._picture:
                 if self.page < len(self._card_data):
                     if os.path.exists(os.path.join(
-                            os.path.abspath('.'), 'sounds',
-                            self._media_data[self.page])):
+                            self._sounds_path,
+                            self._media_data[self.page][0])):
                         play_audio_from_file(self, os.path.join(
-                                os.path.abspath('.'), 'sounds',
-                                self._media_data[self.page]))
+                                self._sounds_path,
+                                self._media_data[self.page][0]))
+            elif spr == self._cards[self.page]:
+                if self.page < len(self._card_data):
+                    if os.path.exists(os.path.join(
+                            self._sounds_path,
+                            self._media_data[self.page][1])):
+                        play_audio_from_file(self, os.path.join(
+                                self._sounds_path,
+                                self._media_data[self.page][1]))
+                    '''
                     elif os.path.exists(os.path.join(
                             os.path.abspath('.'), 'videos',
                             self._media_data[self.page])):
@@ -593,6 +541,7 @@ class Page():
                                           GRID_CELL_SIZE + 15 * self._scale,
                                              80 * self._scale,
                                              60 * self._scale)
+                    '''
 
     def _keypress_cb(self, area, event):
         ''' No keyboard shortcuts at the moment. Perhaps jump to the page
@@ -614,13 +563,13 @@ class Page():
             gtk.gdk.Rectangle(int(x), int(y), int(w), int(h)), False)
 
     def load_level(self, path):
-        ''' Load a level (CSV) from path '''
+        ''' Load a level (CSV) from path: letter, word, color, image,
+            image sound, letter sound, text '''
         self._card_data = []
         self._color_data = []
-        self._msg_data = []
-        self._media_data = []
+        self._image_data = []
+        self._media_data = []  # (image sound, letter sound)
         self._word_data = []
-        # f = file(path, 'r')
         f = codecs.open(path, encoding='utf-8')
         for line in f:
             if len(line) > 0 and line[0] not in '#\n':
@@ -630,24 +579,12 @@ class Page():
                        words[1].replace('-', ', ')])
                     if words[2].count('#') > 1:
                         self._color_data.append(
-                            [words[2].split('/'), words[3]])
+                            [words[2].split('/')])
                     else:
                         self._color_data.append(
-                            [words[2], words[3]])
-                    if len(self._msg_data) == 0:
-                        self._msg_data.append(FIRST_CARD)
-                    elif words[4] == 'vowel':
-                        self._msg_data.append(VOWEL)
-                    elif words[4] == 'light':
-                        self._msg_data.append(LIGHT)
-                    elif words[4] == 'consonant':
-                        self._msg_data.append(CONSONANT)
-                    elif words[4] == 'double':
-                        self._msg_data.append(DOUBLE)
-                    else:
-                        print 'unknown message id %s' % (words[4])
-                        self._msg_data.append(CONSONANT)
-                    self._media_data.append(words[5])
+                            [words[2]])
+                    self._image_data.append(words[3])
+                    self._media_data.append((words[4], words[5]))
                 if words[0] == '+':
                     self._test_data = words[6]
                 else:
@@ -656,7 +593,6 @@ class Page():
 
         self._clear_all()
         self._cards = []
-        self._double_cards = []
         self._colored_letters_lower = []
         self._colored_letters_upper = []
 
@@ -670,9 +606,6 @@ class Page():
         ''' Hide any cards that might be around. '''
         for card in self._cards:
             card.set_layer(0)
-        for card in self._double_cards:
-            card.set_layer(0)
-
 
 def svg_str_to_pixbuf(svg_string):
     ''' Load pixbuf from SVG string. '''
