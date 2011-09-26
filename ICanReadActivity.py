@@ -205,7 +205,7 @@ class ICanReadActivity(activity.Activity):
             record_toolbar = gtk.Toolbar()
             record_toolbar_button = ToolbarButton(label=_('Record a sound'),
                                                 page=record_toolbar,
-                                                icon_name='microphone')
+                                                icon_name='media-audio')
 
             self.set_toolbar_box(toolbox)
             toolbox.show()
