@@ -25,11 +25,19 @@ class SVG:
         self._fill = '#FFFFFF'
         self._stroke = '#000000'
 
-    def _svg_style(self, extras=""):
-        return "%s%s%s%s%s%f%s%s%s" % ("style=\"fill:", self._fill, ";stroke:",
-                                       self._stroke, ";stroke-width:",
-                                       self._stroke_width, ";", extras,
-                                       "\" />\n")
+    def _svg_style(self, stroke=False, extras=""):
+        if stroke:
+            return "%s%s%s%s%s%f%s%s%s" % ("style=\"fill:", self._fill,
+                                           ";stroke:", "#000000",
+                                           ";stroke-width:",
+                                           self._stroke_width, ";", extras,
+                                           "\" />\n")
+        else:
+            return "%s%s%s%s%s%f%s%s%s" % ("style=\"fill:", self._fill,
+                                           ";stroke:", self._stroke,
+                                           ";stroke-width:",
+                                           self._stroke_width, ";", extras,
+                                           "\" />\n")
 
     def _svg_text(self, x, y, font_size, text_string, stroke=False,
                   center=False):
@@ -54,7 +62,7 @@ stroke:#000000;%s\">" % (font_size, self._stroke, align)
         svg_string += self._svg_style("stroke-linecap:square;")
         return svg_string
 
-    def _svg_rect(self, w, h, rx, ry, x, y):
+    def _svg_rect(self, w, h, rx, ry, x, y, stroke=False):
         svg_string = "       <rect\n"
         svg_string += "          width=\"%f\"\n" % (w)
         svg_string += "          height=\"%f\"\n" % (h)
@@ -63,13 +71,14 @@ stroke:#000000;%s\">" % (font_size, self._stroke, align)
         svg_string += "          x=\"%f\"\n" % (x)
         svg_string += "          y=\"%f\"\n" % (y)
         self.set_stroke_width(1.0)
-        svg_string += self._svg_style()
+        svg_string += self._svg_style(stroke=stroke)
         return svg_string
 
-    def _background(self, scale):
-        return self._svg_rect(79.5 * scale, 59.5 * scale, 1, 1, 0.25, 0.25)
+    def _background(self, scale, stroke=False):
+        return self._svg_rect(79.5 * scale, 59.5 * scale, 1, 1, 0.25, 0.25,
+                              stroke=stroke)
 
-    def header(self, scale=1, background=True):
+    def header(self, scale=1, background=True, stroke=False):
         svg_string = "<?xml version=\"1.0\" encoding=\"UTF-8\""
         svg_string += " standalone=\"no\"?>\n"
         svg_string += "<!-- Created with Emacs -->\n"
@@ -85,7 +94,7 @@ stroke:#000000;%s\">" % (font_size, self._stroke, align)
                                       self._scale, ",0,0,", self._scale,
                                       ",0,0)\">\n")
         if background:
-            svg_string += self._background(scale)
+            svg_string += self._background(scale, stroke=stroke)
         return svg_string
 
     def footer(self):
@@ -110,7 +119,7 @@ def generate_card(string='a', colors=['#FF0000', '#FFFFFF'],
     svg = SVG()
     svg.set_scale(scale)
     svg.set_colors(colors)
-    svg_string = svg.header(background=background)
+    svg_string = svg.header(background=background, stroke=stroke)
     if center:
         x = 40
     else:
