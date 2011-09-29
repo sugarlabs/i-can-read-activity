@@ -61,7 +61,7 @@ class Page():
         self._media_data = []  # (image sound, letter sound)
         self._word_data = []
 
-        print ALPHABET
+        _logger.debug(ALPHABET)
 
         # Starting from command line
         if self._activity is None:
@@ -178,14 +178,15 @@ class Page():
            self.page < len(self._card_data):
             # Two-tone cards add some complexity.
             if type(self._color_data[self.page][0]) == type([]):
+                stroke = self._test_for_stroke()
                 top = svg_str_to_pixbuf(generate_card(
                         string=self._card_data[self.page][0].lower(),
-                        colors=[self._color_data[self.page][0][0], '#000000'],
+                        colors=[self._color_data[self.page][0][0], '#FFFFFF'],
                         scale=self._scale,
                         center=True))
                 bot = svg_str_to_pixbuf(generate_card(
                         string=self._card_data[self.page][0].lower(),
-                        colors=[self._color_data[self.page][0][1], '#000000'],
+                        colors=[self._color_data[self.page][0][1], '#FFFFFF'],
                         scale=self._scale,
                         center=True))
                 # Where to draw the line
@@ -197,17 +198,16 @@ class Page():
                 self._cards.append(Sprite(self._sprites, # self._left,
                     int(self._width - 320 * self._scale / 2.5),
                                           GRID_CELL_SIZE, top))
-                stroke = self._test_for_stroke()
                 top = svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0][0].lower(),
                                 colors=[self._color_data[self.page][0][0],
-                                        '#000000'],
+                                        '#FFFFFF'],
                                 font_size=12 * self._scale,
                                 background=False, stroke=stroke))
                 bot = svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0][0].lower(),
                                 colors=[self._color_data[self.page][0][1],
-                                        '#000000'],
+                                        '#FFFFFF'],
                                 font_size=12 * self._scale,
                                 background=False, stroke=stroke))
                 bot.composite(top, 0, int(h1 * top.get_height()),
@@ -218,13 +218,13 @@ class Page():
                 top = svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0][0].upper(),
                                 colors=[self._color_data[self.page][0][0],
-                                        '#000000'],
+                                        '#FFFFFF'],
                                 font_size=12 * self._scale,
                                 background=False, stroke=stroke))
                 bot = svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0][0].upper(),
                                 colors=[self._color_data[self.page][0][1],
-                                        '#000000'],
+                                        '#FFFFFF'],
                                 font_size=12 * self._scale,
                                 background=False, stroke=stroke))
                 bot.composite(top, 0, int(h1 * top.get_height()),
@@ -233,27 +233,28 @@ class Page():
                 self._colored_letters_upper.append(Sprite(
                         self._sprites, 0, 0, top))
             else:
-                self._cards.append(Sprite(self._sprites, # self._left,
+                stroke = self._test_for_stroke()
+                self._cards.append(Sprite(self._sprites,
                     int(self._width - 320 * self._scale / 2.5),
                                           GRID_CELL_SIZE,
                                           svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0].lower(),
                                 colors=[self._color_data[self.page][0],
-                                        '#000000'],
+                                        '#FFFFFF'],
+                                stroke=stroke,
                                 scale=self._scale, center=True))))
-                stroke = self._test_for_stroke()
                 self._colored_letters_lower.append(Sprite(
                         self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0].lower(),
                                 colors=[self._color_data[self.page][0],
-                                        '#000000'],
+                                        '#FFFFFF'],
                                 font_size=12 * self._scale,
                                 background=False, stroke=stroke))))
                 self._colored_letters_upper.append(Sprite(
                         self._sprites, 0, 0, svg_str_to_pixbuf(generate_card(
                                 string=self._card_data[self.page][0].upper(),
                                 colors=[self._color_data[self.page][0],
-                                        '#000000'],
+                                        '#FFFFFF'],
                                 font_size=12 * self._scale,
                                 background=False, stroke=stroke))))
 
@@ -298,7 +299,8 @@ class Page():
 
         # Is there a picture for this page?
         imagefilename = self._image_data[self.page]
-        if os.path.exists(os.path.join(self._images_path, imagefilename)):
+        if len(imagefilename) > 4 and \
+           os.path.exists(os.path.join(self._images_path, imagefilename)):
             pixbuf = image_file_to_pixbuf(os.path.join(
                     self._images_path, imagefilename), self._scale / 4)
             if self._picture is None:
@@ -516,7 +518,8 @@ class Page():
             spr = self._sprites.find_sprite((x, y))
             if spr == self._picture:
                 if self.page < len(self._card_data):
-                    if os.path.exists(os.path.join(
+                    if len(self._media_data[self.page][0]) > 4 and \
+                       os.path.exists(os.path.join(
                             self._sounds_path,
                             self._media_data[self.page][0])):
                         play_audio_from_file(self, os.path.join(
@@ -618,6 +621,9 @@ def svg_str_to_pixbuf(svg_string):
 
 def image_file_to_pixbuf(file_path, scale):
     ''' Load pixbuf from file '''
-    return gtk.gdk.pixbuf_new_from_file_at_size(
-        file_path, int(scale * 320), int(scale * 240))
-
+    try:
+        return gtk.gdk.pixbuf_new_from_file_at_size(
+            file_path, int(scale * 320), int(scale * 240))
+    except:
+        _logger.debug('failed to load %s', file_path)
+        return None
