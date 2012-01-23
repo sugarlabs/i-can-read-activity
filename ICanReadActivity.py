@@ -141,7 +141,7 @@ class ICanReadActivity(activity.Activity):
             language = 'es'  # default to Spanish
 
         # FIXME: find some reasonable default situation
-        # language = 'es'
+        language = 'es'
 
         if os.path.exists(os.path.join('~', 'Activities', 'ICanRead.activity')):
             self._lessons_path = os.path.join('~', 'Activities',
