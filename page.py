@@ -39,9 +39,10 @@ from utils.sprites import Sprites, Sprite
 KERN = {'i': 0.5, 'I': 0.7, 'l': 0.5, 't': 0.7, 'T': 0.9, 'r': 0.7, 'm': 1.4,
         'w': 1.3, "'": 0.4, 'M': 1.4, 'f': 0.7, 'W': 1.6, 'L': 0.9, 'j': 0.6,
         'J': 0.7, 'c': 0.9, 'z': 0.9, 's': 0.8, 'U': 1.1, ' ':0.7, '.':0.5,
-        'y':0.8, 'O': 1.1, 'K': 1.1, 'A': 1.1, 'Ñ': 1.1, 'N': 1.1}
+        'y':0.8, 'O': 1.1, 'K': 1.1, 'A': 1.1, 'Ñ': 1.1, 'N': 1.1, 'Á': 1.1,
+        'Í': 0.7, 'Ó': 1.1, 'Ú': 1.1, 'Q': 1.1}
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz:.,' " + \
-    u'!Ññáéíóú'
+    u'!ÑñáéíóúÁÉÍÓÚ'
 
 
 class Page():
@@ -290,12 +291,18 @@ class Page():
         self.invalt(0, 0, self._width, int(self._height * 2.5))
 
         text = self._card_data[self.page][1]
-
+        '''
         for phrase in text.split('\n'):
             self._x_pos = self._margin * 2
             self._render_phrase(phrase, self._my_canvas, self._my_gc)
             # self._x_pos = self._margin
             self._y_pos += self._lead
+        '''
+        self._x_pos = self._margin * 2
+        self._render_phrase(text, self._my_canvas, self._my_gc)
+        self._x_pos = self._margin * 2
+        self._y_pos += self._lead
+        self._render_phrase(text.upper(), self._my_canvas, self._my_gc)
 
         # Is there a picture for this page?
         imagefilename = self._image_data[self.page]
