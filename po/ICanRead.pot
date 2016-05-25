@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-05-25 12:56-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: activity/activity.info:2
+msgid "I Can Read"
+msgstr ""
+
+#: page.py:163
+msgid "like"
+msgstr ""
+
+#: page.py:165
+msgid "as in"
+msgstr ""
+
+#: ICanReadActivity.py:202 ICanReadActivity.py:239 ICanReadActivity.py:241
+msgid "Select a lesson"
+msgstr ""
+
+#: ICanReadActivity.py:206 ICanReadActivity.py:261 ICanReadActivity.py:266
+msgid "Record a sound"
+msgstr ""
+
+#: ICanReadActivity.py:225
+msgid "Page"
+msgstr ""
+
+#: ICanReadActivity.py:227
+msgid "Lesson"
+msgstr ""
+
+#: ICanReadActivity.py:229
+msgid "Record"
+msgstr ""
+
+#: ICanReadActivity.py:247
+msgid "Load a new lesson from the Journal"
+msgstr ""
+
+#: ICanReadActivity.py:253
+msgid "Create a new lesson"
+msgstr ""
+
+#: ICanReadActivity.py:257 ICanReadActivity.py:278
+msgid "Nothing to save"
+msgstr ""
+
+#: ICanReadActivity.py:268 ICanReadActivity.py:490
+msgid "Start recording"
+msgstr ""
+
+#: ICanReadActivity.py:274
+msgid "Nothing to play"
+msgstr ""
+
+#: ICanReadActivity.py:284
+msgid "Letter list"
+msgstr ""
+
+#: ICanReadActivity.py:288
+msgid "Previous letter"
+msgstr ""
+
+#: ICanReadActivity.py:292
+msgid "Next letter"
+msgstr ""
+
+#: ICanReadActivity.py:298 ICanReadActivity.py:409
+msgid "Read the sounds one at a time"
+msgstr ""
+
+#: ICanReadActivity.py:303 ICanReadActivity.py:380 ICanReadActivity.py:392
+#: ICanReadActivity.py:403 ICanReadActivity.py:411 ICanReadActivity.py:424
+msgid "Self test"
+msgstr ""
+
+#: ICanReadActivity.py:378 ICanReadActivity.py:389 ICanReadActivity.py:401
+msgid "Show letter"
+msgstr ""
+
+#: ICanReadActivity.py:419
+msgid "Return to reading"
+msgstr ""
+
+#: ICanReadActivity.py:492
+msgid "Play recording"
+msgstr ""
+
+#: ICanReadActivity.py:494
+msgid "Save recording"
+msgstr ""
+
+#: ICanReadActivity.py:499
+msgid "Stop recording"
+msgstr ""
